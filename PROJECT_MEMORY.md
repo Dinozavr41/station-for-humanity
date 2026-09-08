@@ -112,7 +112,7 @@ The financial subsystem must fail closed rather than fail open.
 - **Every consequential financial/operator action is auditable** with actor, entity, reason and timestamp.
 - **Role separation is explicit:** contributor, operator, finance, risk, admin and auditor are different capabilities. Registration never grants privileged roles automatically.
 - **Client-facing database access is deny-by-default.** Financial, audit, control, payment and payout tables do not get ordinary client policies merely for convenience.
-- **Large or live financial actions will require additional approval rules** before real-money launch; Alpha 0.3 mock mode is not the final separation-of-duties model.
+- **Large or live financial actions will require additional approval rules** before real-money launch; Alpha mock/sandbox modes are not the final separation-of-duties model.
 
 ## Operator control direction
 
@@ -168,6 +168,39 @@ Current accepted Alpha 0.6 health state after server-side reconciliation:
 - `max_live_payment = 0 RUB`.
 
 This proves resilient sandbox financial processing and monitoring. It still does **not** authorize live-money launch.
+
+## Alpha 0.7–0.8 Digital Factory / LeadBot state
+
+The first narrow Digital Factory product is **SFH LeadBot 1.0** (`TGBOT_LEADS_V1`). Its founding base price is **14,900 RUB** and server-priced options cover additional flows, Google Sheets, calculator, external API, basic CRM, AI FAQ and priority delivery.
+
+The public factory page now creates a fixed server-side quote, persistent Factory Request, commercial Order and Quote in one audited flow. The first accepted factory request is **DF-000001 → ORD-000003 → Q-000003**, configured for lighting installation with every available option selected, total **70,900 RUB**.
+
+This first request is a production acceptance case, **not real revenue**. `ORD-000003` remains `quoted` because the live-money control plane is still OFF.
+
+A reusable **LeadBot multi-instance runtime** has been built for production fulfillment:
+
+- Telegram conversations are configuration-driven rather than hard-coded per customer;
+- persistent sessions allow multi-step questionnaires;
+- Telegram `update_id` receipts provide webhook idempotency;
+- completed leads, runtime events and integration outbox are stored in RLS-protected tables;
+- the first instance `ord-000003-lighting` contains installation estimate, engineer consultation, site visit, commercial-object and FAQ flows;
+- manager notifications are supported;
+- calculator logic exists but customer-specific rates must be explicitly configured before it emits prices;
+- Google Sheets, generic CRM and external webhook adapters are implemented;
+- AI FAQ can use the local FAQ knowledge base and an optional OpenAI-compatible provider configured at runtime;
+- Telegram tokens, webhook secrets, manager chat IDs, external URLs and API keys are stored in Supabase Vault, not GitHub or browser storage;
+- Telegram webhook requests are authenticated with the provider-supported secret-token header;
+- `anon` and ordinary `authenticated` database roles have no direct access to LeadBot instance/lead tables;
+- `leadbot-admin` gives admin-only credential setup and activation, while operator roles can read production status;
+- Operator Console exposes per-feature readiness, activation, manager binding, calculator configuration, lead list and failed integration outbox state;
+- production runtime source, database migrations and Google Sheets adapter are tracked publicly in GitHub.
+
+Two readiness levels are intentionally separate:
+
+- `core_ready` — secure Telegram runtime can be activated;
+- `delivery_ready` — every purchased integration plus manager channel and calculator rates are configured.
+
+**ORD-000003 is not delivered yet.** Runtime code and the first instance are built and audited; full acceptance still requires the external BotFather token, manager chat claim, customer-approved calculator rates, Google Sheets endpoint, CRM/API details and AI provider credentials for the options selected in DF-000001.
 
 ## Social model already agreed
 
@@ -243,7 +276,7 @@ Only real recorded events should move these counters:
 
 Until a backend records real events, public counters should remain zero rather than displaying invented traction.
 
-## Technical state at Alpha 0.6
+## Technical state at Alpha 0.8
 
 - Public domain active: `stationforhumanity.com`
 - Static production hosting: Vercel
@@ -252,27 +285,29 @@ Until a backend records real events, public counters should remain zero rather t
 - Languages currently implemented: Russian and English
 - Persistent backend: Supabase project `station-for-humanity-prod` in West EU
 - Public Founding Ticket intake is live through an Edge Function with validation, consent, honeypot and rate limiting
+- Public Digital Factory and server Pricing Engine are live at `/factory/`
 - Secured Operator Console is deployed at `/operator.html`
-- Role-gated operator and financial-health Edge Functions are active
+- Role-gated operator, factory-admin, leadbot-admin and financial-health Edge Functions are active
 - Value/financial schema includes orders, quotes, payments, refunds, double-entry ledger, allocations, payouts, approvals, audit, system controls, reconciliation runs and reconciliation incidents
 - YooKassa TEST payment and full-refund adapters are active with server-side provider verification
 - Autonomous YooKassa TEST watchdog is scheduled every 5 minutes through `pg_cron + pg_net` using a Vault-held internal token
-- Financial Health dashboard shows health state, ledger integrity, incident queue and watchdog history
+- Reusable Telegram LeadBot runtime and first ORD-000003 instance exist in production
+- LeadBot secrets are Vault-backed; lead/session/outbox tables are deny-by-default to client roles
 - Live payments, payouts and automatic refunds remain OFF; `max_live_payment` remains 0 RUB
-- Article 0 and the founding log are public repository artifacts.
+- Article 0, production migrations, LeadBot source and founding log are public repository artifacts.
 
 ## Immediate build order
 
-1. Keep the Alpha 0.6 sandbox finance path healthy under autonomous watchdog monitoring.
-2. Select the first narrow Digital Factory commercial product capable of receiving a real customer order.
-3. Define the production pricing engine: costs, provider/contractor quotes, taxes/fees, logistics, risk reserve, margin and competitive market guardrails.
-4. Complete legal/payment readiness for the operating entity and strengthen production authentication/MFA before any live-money switch.
-5. Implement the live payment adapter behind the existing fail-closed control plane and approval rules; do not enable it by default.
-6. Execute the first real customer order with QA, delivery, accounting and provider reconciliation.
-7. Create the first **real**, non-test Value Ledger event.
-8. Add the first external contributor and legitimate reward allocation.
-9. Move Dream #000001 above 0% using value produced by the system.
-10. Expand module marketplace and federation only after the first real economic loop is proven.
+1. Complete **ORD-000003** external configuration: BotFather token → Telegram webhook → manager claim → real lead acceptance.
+2. Configure customer-approved lighting calculator rates rather than inventing commercial prices.
+3. Connect the purchased Google Sheets, CRM, external API and AI FAQ providers and verify outbox delivery.
+4. Run LeadBot QA: all four flows, FAQ, duplicate update replay, manager notification, persistence, restart continuity and integration failure/recovery.
+5. Do **not** count ORD-000003 as real revenue or Value Created while it remains unpaid/internal acceptance work.
+6. Complete legal/payment readiness for the operating entity and strengthen production authentication/MFA before any live-money switch.
+7. Implement the live payment adapter behind the existing fail-closed control plane and approval rules; do not enable it by default.
+8. Acquire and execute the first genuine external customer order with payment, QA, delivery, accounting and provider reconciliation.
+9. Create the first **real**, non-test Value Ledger event and legitimate contributor attribution.
+10. Move Dream #000001 above 0% only using real station-created value.
 
 ## Anti-forgetting rule
 
