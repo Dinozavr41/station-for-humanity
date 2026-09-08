@@ -147,7 +147,53 @@ Added:
 - Client roles `anon` and `authenticated` have no direct SELECT access to LeadBot instance or lead tables.
 - Security Advisor reported only intentional deny-by-default RLS informational notices plus the pre-existing leaked-password-protection warning.
 - Production code and migrations were committed to the public repository so the module is reproducible.
-- **ORD-000003 is not marked delivered yet.** The runtime is built and audited, while BotFather token, manager-chat link, customer calculator rates and purchased external integration credentials remain required for full delivery acceptance.
+
+## 2026-09-08 — First real LeadBot lead and automatic Sheets delivery
+
+- The Telegram bot for `ord-000003-lighting` was activated with a real BotFather token and authenticated webhook.
+- The manager chat was bound through the one-time `/claim` flow without manually searching for a Telegram chat ID.
+- The first real runtime lead became **LB-000001**.
+- The full questionnaire completed with persistent answers and no active abandoned session.
+- Telegram update receipts proved idempotency: every accepted update ID was unique and no duplicate lead was created.
+- A non-binding lighting-work calculator was configured explicitly rather than inventing a fake exact commercial price.
+- For LB-000001, the calculator produced a **5,250 RUB** preliminary work estimate from the configured rule set; materials and non-standard conditions remain manager-confirmed.
+- **SFH MiniCRM** and the protected read-only client API became ready.
+- Google Sheets was first attempted through `IMPORTDATA`, but Google's external-data authorization flow proved unreliable and was deliberately removed.
+- The production integration was replaced by a real push chain:
+  `Supabase outbox → autonomous retry worker → Make webhook → Google Sheets API`.
+- Make Google Sheets authorization succeeded and a production scenario was created.
+- LB-000001 was deliberately removed from the spreadsheet and its outbox reset; the real production worker then re-sent the same lead.
+- Worker result: HTTP **200**, Make execution **success**, outbox `succeeded`, one attempt.
+- LB-000001 automatically reappeared in the Google Sheet with its current **5,250 RUB** estimate.
+- This proves the Sheets path without manual row insertion.
+
+## 2026-09-08 — Generative FAQ blocker recorded instead of hidden
+
+- The purchased AI FAQ option was not falsely marked ready merely to make the dashboard green.
+- Make keyless Gemini and OpenAI Simple Text Prompt modules were tested as a no-extra-API-key path.
+- Gemini execution reached the provider but Make generated malformed/empty content for the prompt.
+- OpenAI GPT-5 nano executions completed but provider usage showed effectively empty prompts and returned generic unrelated responses even though Make's mapper contained the intended knowledge-base text.
+- The broken Make AI FAQ scenario was disabled to prevent credit waste and misleading customer output.
+- The LeadBot retains its safe local FAQ knowledge-base fallback.
+- A provider-independent **Station AI Gateway** was promoted to a platform-level next layer so FAQ, extraction, translation, planning and other modules can share one auditable provider abstraction rather than accumulating per-bot credentials and hacks.
+
+## 2026-09-08 — Constitution Draft 0.3 and Governance 0.4 begin
+
+- The original 15-principle Constitution Draft 0.2 was expanded into **Constitution Draft 0.3**.
+- Article 0 remained unchanged and immutable.
+- Draft 0.3 added participant rights, privacy, due process, contribution attribution, protection against retroactive rule changes, truthful metrics, economic safeguards, planet/future-generation principles, AI/machine governance rules, separation of powers, transitional founding stewardship, conflict-of-interest rules, expiring emergency powers, federation, multilingual rights, anti-capture forkability and a ratification/amendment architecture.
+- A complete public Russian version was added as `CONSTITUTION_RU.md` rather than treating multilingual access as a future decoration.
+- **Governance Working Draft 0.4** was created to turn constitutional principles into testable institutions rather than ceremonial councils.
+- Proposed mature governance bodies now include:
+  - Builders & Contributors Council;
+  - Participants & Dreams Assembly;
+  - Partners & Nodes Council;
+  - Independent Rights & Audit Board;
+  - AI & Systems Advisory Forum, initially advisory without independent binding political votes.
+- Decision classes were separated into operational, economic, rights/disciplinary, constitutional and emergency decisions.
+- Founding power is explicitly described as **strong but transitional**: enough to build and defend the system before a genuine community exists, but not a permanent claim to unlimited political authority.
+- Candidate transition thresholds and shadow-governance testing were documented as proposals, not ratified rules.
+- The project roadmap was changed so constitutional development, shared platform infrastructure and real economic proof proceed on parallel rails.
 
 ## Why keep this log?
 
