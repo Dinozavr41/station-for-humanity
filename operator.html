@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Station for Humanity — Operator Console</title>
+  <link rel="stylesheet" href="operator.css">
+</head>
+<body>
+<header class="topbar">
+  <a href="/" class="brand">SFH <span>OPERATOR CONSOLE</span></a>
+  <div class="top-actions"><span id="identity">OFFLINE</span><button id="signOut" class="ghost" hidden>Выйти</button></div>
+</header>
+<main>
+  <section id="authPanel" class="panel auth-panel">
+    <div><p class="eyebrow">SECURE ENTRY</p><h1>Операторский пульт</h1><p class="muted">Авторизация через Supabase Auth. Регистрация сама по себе не даёт операторских прав: новый аккаунт получает роль contributor.</p></div>
+    <form id="authForm">
+      <label>Email<input id="email" type="email" autocomplete="email" required></label>
+      <label>Пароль<input id="password" type="password" autocomplete="current-password" minlength="8" required></label>
+      <div class="row"><button class="primary" type="submit">Войти</button><button id="signUp" type="button" class="ghost">Создать аккаунт</button></div>
+      <pre id="authMessage"></pre>
+    </form>
+  </section>
+
+  <section id="accessPanel" class="panel" hidden>
+    <p class="eyebrow">ACCESS CONTROL</p>
+    <h2 id="accessTitle">Проверяем роль…</h2>
+    <p id="accessText" class="muted"></p>
+  </section>
+
+  <section id="consolePanel" hidden>
+    <div class="hero-grid">
+      <article class="panel metric"><small>LIVE PAYMENTS</small><strong class="off">OFF</strong><span>Реальные деньги заблокированы control plane</span></article>
+      <article class="panel metric"><small>TEST PAYMENTS</small><strong class="on">ON</strong><span>Только mock-контур, без списаний</span></article>
+      <article class="panel metric"><small>AUDIT</small><strong class="on">ON</strong><span>Каждое операторское действие журналируется</span></article>
+      <article class="panel metric"><small>MODE</small><strong>ALPHA 0.3</strong><span>Operator + Finance acceptance</span></article>
+    </div>
+
+    <div class="toolbar"><h2>Founding Tickets</h2><button id="reloadTickets" class="ghost">Обновить</button></div>
+    <section id="tickets" class="cards"></section>
+
+    <div class="toolbar"><h2>Orders & Quotes</h2><div class="row"><button id="createTestOrder" class="primary">Создать TEST Order</button><button id="reloadOrders" class="ghost">Обновить</button></div></div>
+    <section id="orders" class="cards"></section>
+
+    <section class="panel log-panel"><div class="toolbar"><h2>Операционный лог</h2><button id="clearLog" class="ghost">Очистить</button></div><pre id="log"></pre></section>
+  </section>
+</main>
+<script type="module" src="operator.js"></script>
+</body>
+</html>
