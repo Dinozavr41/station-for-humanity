@@ -1,0 +1,29 @@
+{
+  "schema": "sfh/leadbot-instance/v1",
+  "order": "ORD-000003",
+  "factory_request": "DF-000001",
+  "product_code": "TGBOT_LEADS_V1",
+  "business_type": "монтаж освещения",
+  "features": {
+    "extra_flow": 3,
+    "google_sheets": true,
+    "calculator": true,
+    "webhook_api": true,
+    "crm_basic": true,
+    "ai_faq": true,
+    "priority_48h": true
+  },
+  "menu": [
+    {"code": "lighting_request", "label": "💡 Рассчитать монтаж"},
+    {"code": "consultation", "label": "🧑‍🔧 Консультация инженера"},
+    {"code": "site_visit", "label": "📍 Вызвать специалиста"},
+    {"code": "commercial_quote", "label": "🏢 Коммерческий объект"},
+    {"code": "faq", "label": "❓ Вопрос по услугам"}
+  ],
+  "calculator": {
+    "enabled": true,
+    "configured": false,
+    "note": "Customer-specific rates must be approved before automatic price output is enabled."
+  },
+  "secret_policy": "No BotFather token, webhook secret, chat ID, CRM/API key or private integration URL is stored in this file."
+}
