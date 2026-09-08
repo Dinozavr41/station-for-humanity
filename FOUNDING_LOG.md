@@ -123,6 +123,32 @@ Added:
 - Cron job `sfh-yookassa-test-watchdog` is active with schedule `*/5 * * * *`.
 - LIVE payments remained **OFF**, payouts **OFF**, automatic refunds **OFF**, and `max_live_payment` remained **0 RUB**.
 
+## 2026-09-08 — Alpha 0.7 Digital Factory Product 01
+
+- **SFH LeadBot 1.0** became the first priced Digital Factory product.
+- Public factory intake and server-side Pricing Engine were deployed at `/factory/`.
+- Base founding price: **14,900 RUB**; options are priced from database rules rather than browser constants.
+- The first Digital Factory request became **DF-000001** and generated **ORD-000003** plus **Q-000003** automatically.
+- The selected full configuration priced to **70,900 RUB** and the operator accepted the request.
+- The commercial order is deliberately still `quoted`: live charging remains disabled and no real revenue is claimed.
+
+## 2026-09-08 — Alpha 0.8 first production LeadBot runtime
+
+- A reusable multi-instance Telegram LeadBot runtime was built and deployed as the `leadbot-telegram` Edge Function.
+- **ORD-000003** received the first persistent LeadBot instance, configured for a lighting-installation business.
+- The instance contains four lead flows plus FAQ: installation estimate, engineer consultation, site visit, commercial object and questions about services.
+- Conversation state, update idempotency, leads, runtime events and integration outbox are persisted in dedicated RLS-protected tables.
+- Telegram webhook authentication uses a random secret generated server-side and stored in Supabase Vault.
+- Bot tokens and external integration credentials are stored through service-role-only Vault RPCs and are never committed to GitHub.
+- A secured `leadbot-admin` Edge Function and Operator Console production panel were added for token verification, webhook activation, manager-chat claiming, integration credentials, calculator rates and lead monitoring.
+- Google Sheets, generic CRM, external webhook and OpenAI-compatible AI FAQ adapters are implemented as configurable modules.
+- A Google Apps Script adapter for the Sheets sink is tracked in the repository.
+- The public Telegram runtime fails closed while the instance is inactive; synthetic acceptance returned `503 instance_inactive` before activation, as intended.
+- Client roles `anon` and `authenticated` have no direct SELECT access to LeadBot instance or lead tables.
+- Security Advisor reported only intentional deny-by-default RLS informational notices plus the pre-existing leaked-password-protection warning.
+- Production code and migrations were committed to the public repository so the module is reproducible.
+- **ORD-000003 is not marked delivered yet.** The runtime is built and audited, while BotFather token, manager-chat link, customer calculator rates and purchased external integration credentials remain required for full delivery acceptance.
+
 ## Why keep this log?
 
 If the project grows, its origin should remain auditable. The station is intended to be built in public: principles, architecture, mistakes, revisions and milestones should leave a historical record.
