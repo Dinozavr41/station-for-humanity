@@ -78,6 +78,19 @@ Added:
 - Live payments, payouts and automatic refunds remained disabled; `max_live_payment` remained **0 RUB**.
 - This is the first fully completed end-to-end Station for Humanity order lifecycle, executed entirely in test mode with no real money moved.
 
+## 2026-09-08 — First external YooKassa sandbox payment
+
+- **TEST Order #000002** was created with a **1,000 RUB** quote and sent to the real YooKassa sandbox checkout.
+- The buyer completed the sandbox bank-card flow including test 3-D Secure.
+- YooKassa reported the external payment as **succeeded**, `test=true`.
+- The configured webhook reached the Station backend and was independently re-verified against the YooKassa API before local processing.
+- The first webhook run exposed an important sandbox integration bug: the webhook updated the local payment row to `succeeded` before calling the reconciliation RPC, while the original RPC treated an already-succeeded payment as fully processed and returned early. As a result, the external payment was verified but the order initially remained `awaiting_payment` and no ledger transaction was created.
+- The bug was fixed immediately by replacing early-return idempotency with full state reconciliation: payment, order and ledger are now checked and repaired as one idempotent workflow.
+- **ORD-000002** was reconciled to `paid`.
+- The YooKassa TEST ledger transaction was posted with **1,000.00 RUB debit = 1,000.00 RUB credit**.
+- A second reconciliation pass produced no duplicate order event or ledger entries, demonstrating idempotent replay behavior.
+- Live payments remained **OFF**, payouts **OFF**, and `max_live_payment` remained **0 RUB** throughout the external sandbox test.
+
 ## Why keep this log?
 
 If the project grows, its origin should remain auditable. The station is intended to be built in public: principles, architecture, mistakes, revisions and milestones should leave a historical record.
