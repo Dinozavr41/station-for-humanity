@@ -1,0 +1,1 @@
+Binary hero artwork will be committed separately; this marker keeps art assets isolated from live mechanics.
