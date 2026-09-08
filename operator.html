@@ -34,12 +34,12 @@
       <article class="panel metric"><small>LIVE PAYMENTS</small><strong class="off">OFF</strong><span>Реальные деньги заблокированы control plane</span></article>
       <article class="panel metric"><small>TEST PAYMENTS</small><strong class="on">ON</strong><span>Mock + YooKassa TEST, без реальных списаний</span></article>
       <article class="panel metric"><small>AUDIT</small><strong class="on">ON</strong><span>Каждое операторское действие журналируется</span></article>
-      <article class="panel metric"><small>MODE</small><strong>ALPHA 0.4</strong><span>External sandbox payment acceptance</span></article>
+      <article class="panel metric"><small>MODE</small><strong>ALPHA 0.5</strong><span>Refunds + provider reconciliation</span></article>
     </div>
 
     <section class="panel" style="margin-top:16px">
-      <div class="toolbar"><div><p class="eyebrow">YOOKASSA SANDBOX</p><h2 style="margin:.25rem 0">Внешний тестовый провайдер</h2></div><button id="checkYooKassa" class="ghost">Проверить настройку</button></div>
-      <p class="muted">Checkout создаётся на сервере. Secret key никогда не попадает в браузер. Webhook перепроверяется запросом к API ЮKassa перед изменением заказа и бухгалтерии.</p>
+      <div class="toolbar"><div><p class="eyebrow">YOOKASSA SANDBOX</p><h2 style="margin:.25rem 0">Внешний тестовый провайдер</h2></div><div class="row"><button id="reconcileYooKassa" class="primary">Сверить с ЮKassa</button><button id="checkYooKassa" class="ghost">Проверить настройку</button></div></div>
+      <p class="muted">Checkout и возвраты создаются на сервере. Secret key никогда не попадает в браузер. Webhook и watchdog повторно запрашивают состояние у API ЮKassa; пропущенный webhook восстанавливается при сверке.</p>
       <pre id="yookassaStatus">Не проверено</pre>
     </section>
 
