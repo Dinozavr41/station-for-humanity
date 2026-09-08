@@ -32,10 +32,16 @@
   <section id="consolePanel" hidden>
     <div class="hero-grid">
       <article class="panel metric"><small>LIVE PAYMENTS</small><strong class="off">OFF</strong><span>Реальные деньги заблокированы control plane</span></article>
-      <article class="panel metric"><small>TEST PAYMENTS</small><strong class="on">ON</strong><span>Только mock-контур, без списаний</span></article>
+      <article class="panel metric"><small>TEST PAYMENTS</small><strong class="on">ON</strong><span>Mock + YooKassa TEST, без реальных списаний</span></article>
       <article class="panel metric"><small>AUDIT</small><strong class="on">ON</strong><span>Каждое операторское действие журналируется</span></article>
-      <article class="panel metric"><small>MODE</small><strong>ALPHA 0.3</strong><span>Operator + Finance acceptance</span></article>
+      <article class="panel metric"><small>MODE</small><strong>ALPHA 0.4</strong><span>External sandbox payment acceptance</span></article>
     </div>
+
+    <section class="panel" style="margin-top:16px">
+      <div class="toolbar"><div><p class="eyebrow">YOOKASSA SANDBOX</p><h2 style="margin:.25rem 0">Внешний тестовый провайдер</h2></div><button id="checkYooKassa" class="ghost">Проверить настройку</button></div>
+      <p class="muted">Checkout создаётся на сервере. Secret key никогда не попадает в браузер. Webhook перепроверяется запросом к API ЮKassa перед изменением заказа и бухгалтерии.</p>
+      <pre id="yookassaStatus">Не проверено</pre>
+    </section>
 
     <div class="toolbar"><h2>Founding Tickets</h2><button id="reloadTickets" class="ghost">Обновить</button></div>
     <section id="tickets" class="cards"></section>
