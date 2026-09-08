@@ -40,6 +40,17 @@ Added:
 - public metrics intentionally fixed at zero until real backend events exist;
 - GitHub backlog for Alpha 0.3, Digital Factory, Value Ledger, payments/compliance, Dream #000001 and governance.
 
+## 2026-09-08 — Alpha 0.3 backend comes alive
+
+- Supabase production project **station-for-humanity-prod** was created in West EU.
+- The first persistent core schema was deployed: profiles, Founding Tickets, orders, payments, refunds, ledger, allocations, payouts, approvals, audit, controls, dreams and milestones.
+- RLS was enabled and the server-side financial control plane was initialized with live payments, payouts and automatic refunds disabled.
+- Security-definer RPC exposure was closed and backend-only `service_role` access was granted explicitly.
+- **Dream #000001 — PILOT** became a persistent database object with five milestones.
+- The public `founding-ticket` Edge Function was deployed with origin validation, explicit consent, honeypot protection and rate limiting.
+- The first real browser → Edge Function → PostgreSQL → Audit Log submission succeeded.
+- The first real persistent Founding Ticket is **FT-000002**, role `build`, status `submitted`, private by default. Number `FT-000001` was consumed by a rolled-back infrastructure diagnostic; PostgreSQL sequences intentionally preserve such gaps.
+
 ## Why keep this log?
 
 If the project grows, its origin should remain auditable. The station is intended to be built in public: principles, architecture, mistakes, revisions and milestones should leave a historical record.
