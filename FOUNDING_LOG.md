@@ -91,6 +91,38 @@ Added:
 - A second reconciliation pass produced no duplicate order event or ledger entries, demonstrating idempotent replay behavior.
 - Live payments remained **OFF**, payouts **OFF**, and `max_live_payment` remained **0 RUB** throughout the external sandbox test.
 
+## 2026-09-08 — First external YooKassa sandbox refund
+
+- A full **1,000 RUB** TEST refund was created for **ORD-000002** using the real YooKassa sandbox refund API.
+- YooKassa returned a real external sandbox `refund_id` and the refund reached **succeeded**.
+- The configured `refund.succeeded` webhook was received and independently checked against the YooKassa API.
+- The Station payment retained provider status `succeeded` because the original provider payment really succeeded, while the Station canonical status became **refunded** after the separate successful refund.
+- **ORD-000002** reached `refunded`.
+- A reversing double-entry ledger transaction was posted for the refund.
+- Original payment ledger: **1,000.00 RUB debit = 1,000.00 RUB credit**.
+- Refund ledger: **1,000.00 RUB debit = 1,000.00 RUB credit**.
+- Live payments, payouts and automatic refunds remained disabled throughout the refund acceptance.
+
+## 2026-09-08 — Alpha 0.6 autonomous financial watchdog
+
+- The financial watchdog was moved from browser-dependent polling to a real server-side scheduler.
+- Supabase `pg_cron + pg_net` now invokes YooKassa TEST reconciliation every **5 minutes**, even when the Operator Console and the user's computer are closed.
+- Scheduler authentication uses an internal random token generated server-side and stored in Supabase Vault; the browser does not know this token.
+- Every provider reconciliation is stored in `reconciliation_runs` with trigger source, checked payments/refunds, changed states, errors and summary.
+- A persistent `reconciliation_incidents` emergency queue now records provider failures, ledger integrity problems, missing payment/refund ledger records, order/payment mismatches, stale pending payments and unexpected LIVE-money activation.
+- Finance/risk/admin may acknowledge an incident; healthy watchdog reconciliation resolves the incident when the underlying state is actually healthy.
+- A new **Financial Health** panel was added to the Operator Console with overall state, ledger integrity, open incident count, recent watchdog run and emergency queue.
+- The first server-token watchdog acceptance run completed successfully without an operator JWT.
+- Acceptance health result: **HEALTHY**.
+- Ledger imbalances: **0**.
+- Missing payment ledgers: **0**.
+- Missing refund ledgers: **0**.
+- Order/payment mismatches: **0**.
+- Stale pending payments: **0**.
+- Open incidents: **0**.
+- Cron job `sfh-yookassa-test-watchdog` is active with schedule `*/5 * * * *`.
+- LIVE payments remained **OFF**, payouts **OFF**, automatic refunds **OFF**, and `max_live_payment` remained **0 RUB**.
+
 ## Why keep this log?
 
 If the project grows, its origin should remain auditable. The station is intended to be built in public: principles, architecture, mistakes, revisions and milestones should leave a historical record.
