@@ -23,54 +23,35 @@
     </form>
   </section>
 
-  <section id="accessPanel" class="panel" hidden>
-    <p class="eyebrow">ACCESS CONTROL</p>
-    <h2 id="accessTitle">Проверяем роль…</h2>
-    <p id="accessText" class="muted"></p>
-  </section>
+  <section id="accessPanel" class="panel" hidden><p class="eyebrow">ACCESS CONTROL</p><h2 id="accessTitle">Проверяем роль…</h2><p id="accessText" class="muted"></p></section>
 
   <section id="consolePanel" hidden>
     <div class="hero-grid">
       <article class="panel metric"><small>LIVE PAYMENTS</small><strong class="off">OFF</strong><span>Реальные деньги заблокированы control plane</span></article>
       <article class="panel metric"><small>TEST PAYMENTS</small><strong class="on">ON</strong><span>Mock + YooKassa TEST, без реальных списаний</span></article>
       <article class="panel metric"><small>AUDIT</small><strong class="on">ON</strong><span>Каждое операторское действие журналируется</span></article>
-      <article class="panel metric"><small>MODE</small><strong>ALPHA 0.8</strong><span>LeadBot production runtime</span></article>
+      <article class="panel metric"><small>MODE</small><strong>ALPHA 0.9</strong><span>LeadBot fulfillment & integrations</span></article>
     </div>
 
     <section class="panel" style="margin-top:16px">
       <div class="toolbar"><div><p class="eyebrow">YOOKASSA SANDBOX</p><h2 style="margin:.25rem 0">Внешний тестовый провайдер</h2></div><div class="row"><button id="reconcileYooKassa" class="primary">Сверить с ЮKassa</button><button id="checkYooKassa" class="ghost">Проверить настройку</button></div></div>
-      <p class="muted">Checkout и возвраты создаются на сервере. Secret key никогда не попадает в браузер. Webhook и watchdog повторно запрашивают состояние у API ЮKassa; серверный cron работает каждые 5 минут даже при закрытом пульте.</p>
-      <pre id="yookassaStatus">Не проверено</pre>
+      <p class="muted">Checkout и возвраты создаются на сервере. Secret key никогда не попадает в браузер. Webhook и watchdog повторно запрашивают состояние у API ЮKassa; серверный cron работает каждые 5 минут даже при закрытом пульте.</p><pre id="yookassaStatus">Не проверено</pre>
     </section>
 
     <section id="financeHealthPanel" class="panel finance-health-panel">
       <div class="toolbar"><div><p class="eyebrow">FINANCIAL HEALTH</p><h2 style="margin:.25rem 0">Самоконтроль финансового контура</h2></div><button id="healthRefresh" class="ghost">Обновить здоровье</button></div>
       <p class="muted">Система сама ищет расхождения между ЮKassa, заказами и двойной бухгалтерией. Критические несоответствия попадают в аварийную очередь и автоматически закрываются только после фактического восстановления согласованного состояния.</p>
-      <div class="health-grid">
-        <article class="health-metric"><small>STATE</small><strong id="healthState">WAITING</strong><span id="healthGuards">—</span></article>
-        <article class="health-metric"><small>OPEN INCIDENTS</small><strong id="healthIncidentCount">—</strong><span>open + acknowledged</span></article>
-        <article class="health-metric"><small>LEDGER</small><strong id="healthLedger">—</strong><span>double-entry integrity</span></article>
-        <article class="health-metric"><small>LAST WATCHDOG</small><strong id="healthLastRun">—</strong><span id="healthGenerated">ожидание данных</span></article>
-      </div>
-      <div class="toolbar"><h3>Аварийная очередь</h3></div>
-      <section id="healthIncidents" class="cards"></section>
-      <div class="toolbar"><h3>Последние прогоны watchdog</h3></div>
-      <section id="healthRuns" class="cards health-runs"></section>
+      <div class="health-grid"><article class="health-metric"><small>STATE</small><strong id="healthState">WAITING</strong><span id="healthGuards">—</span></article><article class="health-metric"><small>OPEN INCIDENTS</small><strong id="healthIncidentCount">—</strong><span>open + acknowledged</span></article><article class="health-metric"><small>LEDGER</small><strong id="healthLedger">—</strong><span>double-entry integrity</span></article><article class="health-metric"><small>LAST WATCHDOG</small><strong id="healthLastRun">—</strong><span id="healthGenerated">ожидание данных</span></article></div>
+      <div class="toolbar"><h3>Аварийная очередь</h3></div><section id="healthIncidents" class="cards"></section><div class="toolbar"><h3>Последние прогоны watchdog</h3></div><section id="healthRuns" class="cards health-runs"></section>
     </section>
 
     <section class="panel" style="margin-top:16px">
       <div class="toolbar"><div><p class="eyebrow">DIGITAL FACTORY</p><h2 style="margin:.25rem 0">Коммерческая очередь</h2></div><div class="row"><a class="ghost" style="text-decoration:none;padding:11px 15px;border-radius:11px" href="/factory/" target="_blank">Открыть витрину</a><button id="reloadFactory" class="primary">Обновить</button></div></div>
-      <p class="muted">Публичный Pricing Engine создаёт фиксированную смету, DF-заявку, ORD и Quote. Здесь оператор принимает её в работу или отклоняет. LIVE-оплата остаётся выключенной.</p>
-      <pre id="factoryQueueStatus">WAITING</pre>
-      <section id="factoryRequests" class="cards"></section>
+      <p class="muted">Публичный Pricing Engine создаёт фиксированную смету, DF-заявку, ORD и Quote. Здесь оператор принимает её в работу или отклоняет. LIVE-оплата остаётся выключенной.</p><pre id="factoryQueueStatus">WAITING</pre><section id="factoryRequests" class="cards"></section>
     </section>
 
-    <div class="toolbar"><h2>Founding Tickets</h2><button id="reloadTickets" class="ghost">Обновить</button></div>
-    <section id="tickets" class="cards"></section>
-
-    <div class="toolbar"><h2>Orders & Quotes</h2><div class="row"><button id="createTestOrder" class="primary">Создать TEST Order</button><button id="reloadOrders" class="ghost">Обновить</button></div></div>
-    <section id="orders" class="cards"></section>
-
+    <div class="toolbar"><h2>Founding Tickets</h2><button id="reloadTickets" class="ghost">Обновить</button></div><section id="tickets" class="cards"></section>
+    <div class="toolbar"><h2>Orders & Quotes</h2><div class="row"><button id="createTestOrder" class="primary">Создать TEST Order</button><button id="reloadOrders" class="ghost">Обновить</button></div></div><section id="orders" class="cards"></section>
     <section class="panel log-panel"><div class="toolbar"><h2>Операционный лог</h2><button id="clearLog" class="ghost">Очистить</button></div><pre id="log"></pre></section>
   </section>
 </main>
