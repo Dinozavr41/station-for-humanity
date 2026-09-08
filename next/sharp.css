@@ -1,0 +1,49 @@
+/* Sharpness hotfix for Exact Design Preview.
+   The previous timeline source was only 800x67 and got enlarged inside mobile cards.
+   These overrides use the existing higher-detail scenes without 8x slicing/upscaling. */
+
+.hero-bg{
+  transform:scale(1.03);
+  filter:saturate(1.12) contrast(1.06) brightness(.96);
+}
+.story-bg{
+  transform:scale(1.04);
+  filter:saturate(1.08) contrast(1.04) brightness(.72);
+}
+
+.stage .thumb{
+  background-size:cover;
+  background-repeat:no-repeat;
+  background-position:center;
+  filter:saturate(1.12) contrast(1.04);
+  image-rendering:auto;
+}
+.s1 .thumb{background-image:url('./art/hero.jpg');background-position:12% center}
+.s2 .thumb{background-image:url('./art/hero.jpg');background-position:38% center}
+.s3 .thumb{background-image:url('./art/story.jpg');background-position:28% center}
+.s4 .thumb{background-image:url('./art/story.jpg');background-position:44% center}
+.s5 .thumb{background-image:url('./art/hero.jpg');background-position:65% center}
+.s6 .thumb{background-image:url('./art/story.jpg');background-position:69% center}
+.s7 .thumb{background-image:url('./art/story.jpg');background-position:84% center}
+.s8 .thumb{background-image:url('./art/hero.jpg');background-position:94% center}
+
+@media(max-width:720px){
+  /* Do not stretch a 335px-tall scene to an 860px-tall background. Keep the art
+     at a sensible scale and let the dark cinematic background fill the rest. */
+  .hero-bg{
+    transform:none;
+    background-size:auto 54%;
+    background-position:58% 8%;
+    background-color:#03101d;
+  }
+  .story-bg{
+    transform:none;
+    background-size:100% auto;
+    background-position:center top;
+    background-color:#03111f;
+  }
+  .stage .thumb{
+    background-size:cover !important;
+    min-height:230px;
+  }
+}
