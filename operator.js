@@ -1,0 +1,49 @@
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+const SUPABASE_URL='https://xwapzjsnqyfiqbzeycyh.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY='sb_publishable_mVOY1vbk6e6jiBnT0VAX9w_sFXODDsi';
+const sb=createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+
+const $=s=>document.querySelector(s);const authPanel=$('#authPanel'),accessPanel=$('#accessPanel'),consolePanel=$('#consolePanel'),identity=$('#identity'),logBox=$('#log');
+let me=null;let ordersCache=[];const paymentMap=JSON.parse(localStorage.getItem('sfh-test-payments')||'{}');
+const esc=v=>String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+function log(label,data){const t=new Date().toLocaleTimeString();logBox.textContent=`[${t}] ${label}${data!==undefined?'\n'+JSON.stringify(data,null,2):''}\n\n${logBox.textContent}`.slice(0,18000)}
+async function invoke(action,payload={}){const {data,error}=await sb.functions.invoke('operator-control',{body:{action,...payload}});if(error){let detail=error.message;try{if(error.context){const j=await error.context.json();detail=j.error+(j.detail?`: ${j.detail}`:'')}}catch{}throw new Error(detail)}if(!data?.ok)throw new Error(data?.error||'operation_failed');return data}
+
+async function refreshIdentity(){const {data:{session}}=await sb.auth.getSession();if(!session){me=null;identity.textContent='OFFLINE';authPanel.hidden=false;accessPanel.hidden=true;consolePanel.hidden=true;$('#signOut').hidden=true;return}
+ $('#signOut').hidden=false;authPanel.hidden=true;identity.textContent=session.user.email||'SIGNED IN';
+ try{const d=await invoke('whoami');me=d.user;identity.textContent=`${me.email||'user'} · ${me.role}`;if(!d.authorized){accessPanel.hidden=false;consolePanel.hidden=true;$('#accessTitle').textContent='Аккаунт создан, но операторских прав пока нет';$('#accessText').textContent=`Текущая роль: ${me.role}. Это специально: регистрация не выдаёт admin/operator автоматически.`;return}accessPanel.hidden=true;consolePanel.hidden=false;await Promise.all([loadTickets(),loadOrders()]);}catch(e){accessPanel.hidden=false;consolePanel.hidden=true;$('#accessTitle').textContent='Не удалось проверить доступ';$('#accessText').textContent=e.message;log('WHOAMI ERROR',e.message)}}
+
+$('#authForm').addEventListener('submit',async e=>{e.preventDefault();$('#authMessage').textContent='Входим…';const email=$('#email').value.trim(),password=$('#password').value;const {error}=await sb.auth.signInWithPassword({email,password});if(error){$('#authMessage').textContent=error.message;return}$('#authMessage').textContent='OK';await refreshIdentity()});
+$('#signUp').addEventListener('click',async()=>{const email=$('#email').value.trim(),password=$('#password').value;if(!email||password.length<8){$('#authMessage').textContent='Введите email и пароль минимум 8 символов.';return}$('#authMessage').textContent='Создаём аккаунт…';const {data,error}=await sb.auth.signUp({email,password});if(error){$('#authMessage').textContent=error.message;return}$('#authMessage').textContent=data.session?'Аккаунт создан и вход выполнен.':'Аккаунт создан. Если включено подтверждение email — откройте письмо, подтвердите адрес, затем вернитесь сюда и войдите.';if(data.session)await refreshIdentity()});
+$('#signOut').addEventListener('click',async()=>{await sb.auth.signOut();await refreshIdentity()});
+
+async function loadTickets(){try{const d=await invoke('list_tickets');renderTickets(d.tickets||[]);log('TICKETS LOADED',{count:(d.tickets||[]).length})}catch(e){log('TICKETS ERROR',e.message)}}
+function renderTickets(items){const box=$('#tickets');box.innerHTML=items.length?'':'<article class="card muted">Заявок пока нет.</article>';for(const t of items){const name=t.private_contact?.name||'—';const number=`FT-${String(t.ticket_no).padStart(6,'0')}`;const card=document.createElement('article');card.className='card';card.innerHTML=`<div class="card-head"><div><h3>${number} · ${esc(t.role_kind)}</h3><div class="meta">${esc(t.region||'—')} · ${new Date(t.created_at).toLocaleString()}</div></div><span class="badge">${esc(t.status)}</span></div><p class="statement">${esc(t.public_statement||'')}</p><div class="kv"><b>Имя/позывной</b><span>${esc(name)}</span><b>Публичная</b><span>${t.is_public?'да':'нет'}</span></div><div class="actions"></div>`;const a=card.querySelector('.actions');
+ if(t.status==='submitted')a.append(btn('Взять в review','ghost',()=>ticketAction('review_ticket',t.id)));
+ if(['submitted','review'].includes(t.status))a.append(btn('Принять','primary',()=>ticketAction('accept_ticket',t.id)));
+ if(['submitted','review'].includes(t.status))a.append(btn('Отклонить','danger',async()=>{const reason=prompt('Причина отклонения:');if(reason)await ticketAction('reject_ticket',t.id,{reason})}));box.append(card)}}
+function btn(text,cls,fn){const b=document.createElement('button');b.textContent=text;b.className=cls;b.addEventListener('click',async()=>{b.disabled=true;try{await fn()}finally{b.disabled=false}});return b}
+async function ticketAction(action,id,extra={}){try{const d=await invoke(action,{ticket_id:id,...extra});log(action,d);await loadTickets()}catch(e){alert(e.message);log(`${action} ERROR`,e.message)}}
+
+async function loadOrders(){try{const d=await invoke('list_orders');ordersCache=d.orders||[];renderOrders();log('ORDERS LOADED',{count:ordersCache.length})}catch(e){log('ORDERS ERROR',e.message)}}
+function renderOrders(){const box=$('#orders');box.innerHTML=ordersCache.length?'':'<article class="card muted">Заказов пока нет.</article>';for(const o of ordersCache){const number=`ORD-${String(o.order_no).padStart(6,'0')}`;const card=document.createElement('article');card.className='card';card.innerHTML=`<div class="card-head"><div><h3>${number} · ${esc(o.title)}</h3><div class="meta">${o.test_mode?'TEST MODE':'LIVE'} · ${new Date(o.created_at).toLocaleString()}</div></div><span class="badge">${esc(o.status)}</span></div><div class="kv"><b>Quote</b><span>${o.quoted_amount==null?'—':`${esc(o.quoted_amount)} ${esc(o.currency)}`}</span><b>Версия цены</b><span>${esc(o.payable_version)}</span></div><div class="actions"></div>`;const a=card.querySelector('.actions');
+ if(['draft','quoted'].includes(o.status))a.append(btn('Выпустить Quote','ghost',()=>issueQuote(o.id)));
+ if(o.status==='quoted')a.append(btn('Подготовить TEST payment','primary',()=>preparePayment(o.id)));
+ if(o.status==='awaiting_payment'&&paymentMap[o.id]&&['finance','admin'].includes(me?.role))a.append(btn('Подтвердить mock payment','primary',()=>succeedPayment(o.id,paymentMap[o.id])));
+ if(o.status==='paid')a.append(btn('В производство','primary',()=>advance(o.id,'in_production')));
+ if(o.status==='in_production')a.append(btn('Передать в QA','primary',()=>advance(o.id,'qa')));
+ if(o.status==='qa')a.append(btn('Доставлено','primary',()=>advance(o.id,'delivered')));
+ if(['paid','in_production','qa','delivered'].includes(o.status))a.append(btn('Ledger','ghost',()=>showLedger(o.id)));
+ box.append(card)}}
+async function issueQuote(orderId){const raw=prompt('Сумма TEST Quote в RUB:','1000');if(raw===null)return;const amount=Number(raw.replace(',','.'));if(!Number.isFinite(amount)||amount<=0){alert('Некорректная сумма');return}try{const d=await invoke('issue_quote',{order_id:orderId,amount,currency:'RUB'});log('QUOTE ISSUED',d);await loadOrders()}catch(e){alert(e.message);log('QUOTE ERROR',e.message)}}
+async function preparePayment(orderId){try{const d=await invoke('prepare_mock_payment',{order_id:orderId});paymentMap[orderId]=d.payment.id;localStorage.setItem('sfh-test-payments',JSON.stringify(paymentMap));log('MOCK PAYMENT PREPARED',d);await loadOrders()}catch(e){alert(e.message);log('PAYMENT PREPARE ERROR',e.message)}}
+async function succeedPayment(orderId,paymentId){if(!confirm('Это только MOCK-платёж. Реальных денег не будет. Провести тестовую оплату и двойную проводку?'))return;try{const d=await invoke('succeed_mock_payment',{payment_id:paymentId});log('MOCK PAYMENT SUCCEEDED',d);await loadOrders();await showLedger(orderId)}catch(e){alert(e.message);log('MOCK PAYMENT ERROR',e.message)}}
+async function advance(orderId,status){try{const d=await invoke('advance_order',{order_id:orderId,status});log(`ORDER → ${status}`,d);await loadOrders()}catch(e){alert(e.message);log('ORDER TRANSITION ERROR',e.message)}}
+async function showLedger(orderId){try{const d=await invoke('ledger_for_order',{order_id:orderId});log('LEDGER',d)}catch(e){alert(e.message);log('LEDGER ERROR',e.message)}}
+
+$('#createTestOrder').addEventListener('click',async()=>{const title=prompt('Название тестового заказа:','Alpha 0.3 financial acceptance');if(title===null)return;try{const d=await invoke('create_test_order',{title});log('TEST ORDER CREATED',d);await loadOrders()}catch(e){alert(e.message);log('CREATE ORDER ERROR',e.message)}});
+$('#reloadTickets').addEventListener('click',loadTickets);$('#reloadOrders').addEventListener('click',loadOrders);$('#clearLog').addEventListener('click',()=>logBox.textContent='');
+
+sb.auth.onAuthStateChange(()=>setTimeout(refreshIdentity,0));
+await refreshIdentity();
