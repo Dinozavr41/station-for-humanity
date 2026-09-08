@@ -34,13 +34,28 @@
       <article class="panel metric"><small>LIVE PAYMENTS</small><strong class="off">OFF</strong><span>Реальные деньги заблокированы control plane</span></article>
       <article class="panel metric"><small>TEST PAYMENTS</small><strong class="on">ON</strong><span>Mock + YooKassa TEST, без реальных списаний</span></article>
       <article class="panel metric"><small>AUDIT</small><strong class="on">ON</strong><span>Каждое операторское действие журналируется</span></article>
-      <article class="panel metric"><small>MODE</small><strong>ALPHA 0.5</strong><span>Refunds + provider reconciliation</span></article>
+      <article class="panel metric"><small>MODE</small><strong>ALPHA 0.6</strong><span>Autonomous finance watchdog</span></article>
     </div>
 
     <section class="panel" style="margin-top:16px">
       <div class="toolbar"><div><p class="eyebrow">YOOKASSA SANDBOX</p><h2 style="margin:.25rem 0">Внешний тестовый провайдер</h2></div><div class="row"><button id="reconcileYooKassa" class="primary">Сверить с ЮKassa</button><button id="checkYooKassa" class="ghost">Проверить настройку</button></div></div>
-      <p class="muted">Checkout и возвраты создаются на сервере. Secret key никогда не попадает в браузер. Webhook и watchdog повторно запрашивают состояние у API ЮKassa; пропущенный webhook восстанавливается при сверке.</p>
+      <p class="muted">Checkout и возвраты создаются на сервере. Secret key никогда не попадает в браузер. Webhook и watchdog повторно запрашивают состояние у API ЮKassa; серверный cron работает каждые 5 минут даже при закрытом пульте.</p>
       <pre id="yookassaStatus">Не проверено</pre>
+    </section>
+
+    <section id="financeHealthPanel" class="panel finance-health-panel">
+      <div class="toolbar"><div><p class="eyebrow">FINANCIAL HEALTH</p><h2 style="margin:.25rem 0">Самоконтроль финансового контура</h2></div><button id="healthRefresh" class="ghost">Обновить здоровье</button></div>
+      <p class="muted">Система сама ищет расхождения между ЮKassa, заказами и двойной бухгалтерией. Критические несоответствия попадают в аварийную очередь и автоматически закрываются только после фактического восстановления согласованного состояния.</p>
+      <div class="health-grid">
+        <article class="health-metric"><small>STATE</small><strong id="healthState">WAITING</strong><span id="healthGuards">—</span></article>
+        <article class="health-metric"><small>OPEN INCIDENTS</small><strong id="healthIncidentCount">—</strong><span>open + acknowledged</span></article>
+        <article class="health-metric"><small>LEDGER</small><strong id="healthLedger">—</strong><span>double-entry integrity</span></article>
+        <article class="health-metric"><small>LAST WATCHDOG</small><strong id="healthLastRun">—</strong><span id="healthGenerated">ожидание данных</span></article>
+      </div>
+      <div class="toolbar"><h3>Аварийная очередь</h3></div>
+      <section id="healthIncidents" class="cards"></section>
+      <div class="toolbar"><h3>Последние прогоны watchdog</h3></div>
+      <section id="healthRuns" class="cards health-runs"></section>
     </section>
 
     <div class="toolbar"><h2>Founding Tickets</h2><button id="reloadTickets" class="ghost">Обновить</button></div>
@@ -53,5 +68,6 @@
   </section>
 </main>
 <script type="module" src="operator.js"></script>
+<script type="module" src="finance-health.js"></script>
 </body>
 </html>
