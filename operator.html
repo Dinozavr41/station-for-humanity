@@ -34,7 +34,7 @@
       <article class="panel metric"><small>LIVE PAYMENTS</small><strong class="off">OFF</strong><span>Реальные деньги заблокированы control plane</span></article>
       <article class="panel metric"><small>TEST PAYMENTS</small><strong class="on">ON</strong><span>Mock + YooKassa TEST, без реальных списаний</span></article>
       <article class="panel metric"><small>AUDIT</small><strong class="on">ON</strong><span>Каждое операторское действие журналируется</span></article>
-      <article class="panel metric"><small>MODE</small><strong>ALPHA 0.6</strong><span>Autonomous finance watchdog</span></article>
+      <article class="panel metric"><small>MODE</small><strong>ALPHA 0.7</strong><span>Digital Factory Product 01</span></article>
     </div>
 
     <section class="panel" style="margin-top:16px">
@@ -58,6 +58,13 @@
       <section id="healthRuns" class="cards health-runs"></section>
     </section>
 
+    <section class="panel" style="margin-top:16px">
+      <div class="toolbar"><div><p class="eyebrow">DIGITAL FACTORY</p><h2 style="margin:.25rem 0">Коммерческая очередь</h2></div><div class="row"><a class="ghost" style="text-decoration:none;padding:11px 15px;border-radius:11px" href="/factory/" target="_blank">Открыть витрину</a><button id="reloadFactory" class="primary">Обновить</button></div></div>
+      <p class="muted">Публичный Pricing Engine создаёт фиксированную смету, DF-заявку, ORD и Quote. Здесь оператор принимает её в работу или отклоняет. LIVE-оплата остаётся выключенной.</p>
+      <pre id="factoryQueueStatus">WAITING</pre>
+      <section id="factoryRequests" class="cards"></section>
+    </section>
+
     <div class="toolbar"><h2>Founding Tickets</h2><button id="reloadTickets" class="ghost">Обновить</button></div>
     <section id="tickets" class="cards"></section>
 
@@ -69,5 +76,6 @@
 </main>
 <script type="module" src="operator.js"></script>
 <script type="module" src="finance-health.js"></script>
+<script type="module" src="factory-admin.js"></script>
 </body>
 </html>
