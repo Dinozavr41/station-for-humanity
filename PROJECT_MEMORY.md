@@ -136,6 +136,39 @@ The first internal financial acceptance test created **TEST Order #000001** with
 
 This proves the first controlled financial state loop, not commercial readiness.
 
+## Alpha 0.6 financial watchdog state
+
+The external YooKassa sandbox path has now been exercised end-to-end for **TEST Order #000002**: checkout, test card + 3-D Secure, verified payment webhook, provider API re-check, `paid`, double-entry ledger, full TEST refund, refund webhook, provider re-check, reversing ledger and final `refunded` state.
+
+A real integration bug was discovered during sandbox acceptance: a verified provider payment could be marked `succeeded` locally before the original reconciliation RPC ran, causing the RPC to return too early and skip order/ledger reconciliation. The processing function was changed from “already succeeded means done” to **idempotent full-state reconciliation**. Replaying the same verified event no longer creates duplicate order events or ledger entries.
+
+The financial subsystem now includes an autonomous server-side watchdog:
+
+- Supabase `pg_cron + pg_net` invokes provider reconciliation every **5 minutes** even when no operator browser is open;
+- the scheduler authenticates with an internal token generated server-side and stored in Supabase Vault;
+- every run is persisted in `reconciliation_runs` with trigger, checked entities, changes, errors and result;
+- provider/API failures and local financial inconsistencies are persisted in `reconciliation_incidents`;
+- critical invariants include balanced posted ledger transactions, required payment/refund ledger records, order/payment state agreement and the live-money control guard;
+- incidents may be acknowledged by finance/risk/admin, but healthy reconciliation automatically resolves the underlying incident only when the actual state is healthy again;
+- the Operator Console exposes a Financial Health dashboard, emergency queue and recent watchdog runs;
+- the browser reconciliation remains an additional operator convenience, but it is no longer required for autonomous recovery.
+
+Current accepted Alpha 0.6 health state after server-side reconciliation:
+
+- `HEALTHY`;
+- ledger imbalances: **0**;
+- missing payment ledgers: **0**;
+- missing refund ledgers: **0**;
+- order/payment mismatches: **0**;
+- stale pending payments: **0**;
+- open incidents: **0**;
+- LIVE payments: **OFF**;
+- payouts: **OFF**;
+- automatic refunds: **OFF**;
+- `max_live_payment = 0 RUB`.
+
+This proves resilient sandbox financial processing and monitoring. It still does **not** authorize live-money launch.
+
 ## Social model already agreed
 
 The social layer is central, not decorative.
@@ -210,7 +243,7 @@ Only real recorded events should move these counters:
 
 Until a backend records real events, public counters should remain zero rather than displaying invented traction.
 
-## Technical state at Alpha 0.3
+## Technical state at Alpha 0.6
 
 - Public domain active: `stationforhumanity.com`
 - Static production hosting: Vercel
@@ -220,23 +253,26 @@ Until a backend records real events, public counters should remain zero rather t
 - Persistent backend: Supabase project `station-for-humanity-prod` in West EU
 - Public Founding Ticket intake is live through an Edge Function with validation, consent, honeypot and rate limiting
 - Secured Operator Console is deployed at `/operator.html`
-- Role-gated operator Edge Function is active
-- Value/financial schema includes orders, quotes, payments, refunds, double-entry ledger, allocations, payouts, approvals, audit and system controls
-- Live payments, payouts and automatic refunds remain OFF
+- Role-gated operator and financial-health Edge Functions are active
+- Value/financial schema includes orders, quotes, payments, refunds, double-entry ledger, allocations, payouts, approvals, audit, system controls, reconciliation runs and reconciliation incidents
+- YooKassa TEST payment and full-refund adapters are active with server-side provider verification
+- Autonomous YooKassa TEST watchdog is scheduled every 5 minutes through `pg_cron + pg_net` using a Vault-held internal token
+- Financial Health dashboard shows health state, ledger integrity, incident queue and watchdog history
+- Live payments, payouts and automatic refunds remain OFF; `max_live_payment` remains 0 RUB
 - Article 0 and the founding log are public repository artifacts.
 
 ## Immediate build order
 
-1. Complete operator identity bootstrap and role assignment.
-2. Run TEST Order #000001 through production → QA → delivered using the operator console.
-3. Add real payment-provider **test/sandbox** adapter and webhook verification while live-money controls remain OFF.
-4. Select the first narrow Digital Factory commercial product capable of receiving a real customer order.
-5. Implement pricing and payment path appropriate to the legal operating entity.
-6. Execute first real customer order with QA and delivery.
+1. Keep the Alpha 0.6 sandbox finance path healthy under autonomous watchdog monitoring.
+2. Select the first narrow Digital Factory commercial product capable of receiving a real customer order.
+3. Define the production pricing engine: costs, provider/contractor quotes, taxes/fees, logistics, risk reserve, margin and competitive market guardrails.
+4. Complete legal/payment readiness for the operating entity and strengthen production authentication/MFA before any live-money switch.
+5. Implement the live payment adapter behind the existing fail-closed control plane and approval rules; do not enable it by default.
+6. Execute the first real customer order with QA, delivery, accounting and provider reconciliation.
 7. Create the first **real**, non-test Value Ledger event.
 8. Add the first external contributor and legitimate reward allocation.
 9. Move Dream #000001 above 0% using value produced by the system.
-10. Expand module marketplace and federation only after the first economic loop is proven.
+10. Expand module marketplace and federation only after the first real economic loop is proven.
 
 ## Anti-forgetting rule
 
