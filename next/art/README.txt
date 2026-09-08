@@ -1,0 +1,1 @@
+Frontend V2 art assets are kept isolated under /next/art. These assets are presentation-only and do not change backend, payments, factory, operator, or governance behavior.
