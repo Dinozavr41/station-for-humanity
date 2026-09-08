@@ -1,14 +1,15 @@
 # Station for Humanity — Canonical Project Memory
 
-This file exists so the project does not lose its founding decisions as the codebase and contributor base grow.
+This file is the anti-forgetting source of truth for major project decisions and current state. Detailed historical milestones belong in `FOUNDING_LOG.md`; this file keeps the durable principles, architecture and latest accepted state.
 
 ## Identity
 
 - Public name: **Station for Humanity**
 - Primary domain: **stationforhumanity.com**
 - Founding year: **2026**
-- Public development model: **build in public**
+- Development model: **build in public**
 - Core phrase: **A place in the future for everyone.**
+- Public repository: `Dinozavr41/station-for-humanity`
 
 ## Immutable foundation
 
@@ -22,34 +23,41 @@ This file exists so the project does not lose its founding decisions as the code
 > Разум создаёт возможности.  
 > Возможности должны служить жизни.
 
-Article 0 is the only principle currently declared immutable.
+**Article 0 is immutable.** If a business model, algorithm, investor decision, governance rule or technology conflicts with Article 0, the decision changes — not Article 0.
 
-## What the project is trying to become
+## What Station for Humanity is trying to become
 
-Station for Humanity is not intended to remain a normal single corporation or a donation site. The long-term direction is a **global digital society / value network** in which people, AI systems, machines, businesses, knowledge and physical resources can cooperate to create measurable value.
+Station for Humanity is not intended to remain a normal single corporation, software agency, donation site or speculative token project.
 
-The desired outcome is that increasing automation improves human security and possibility instead of making people economically disposable.
+The long-term direction is a **global digital society / value network** in which people, AI systems, machines, businesses, knowledge and physical resources can cooperate to create measurable useful value.
 
-## Core system loop
+The desired relationship is:
+
+`human + AI + machines + knowledge + resources → more possibility for life`
+
+Automation should increase human security and opportunity rather than make people economically disposable.
+
+## Core value loop
 
 1. A real person or organization brings a need.
 2. Humans, AI, software modules and machines help produce a useful result.
-3. The created value is measured and recorded.
-4. Income is distributed to the legitimate creators and infrastructure.
-5. Part of network productivity can support builders, social resilience and verified dreams.
-6. The network grows by adding useful modules and contributors.
+3. The result and evidence of delivery are recorded.
+4. Value creation, costs and contribution are attributed.
+5. Legitimate creators, owners and infrastructure receive reward.
+6. Sustainable network productivity may support builders, opportunity, resilience and verified dreams.
+7. Useful modules become reusable building blocks for later work.
 
 ## Major modules
 
 ### Digital Factory
-Commercial engine for real orders:
+First commercial engine:
 
 `intake → specification → pricing → payment → production → QA → delivery → accounting`
 
-This is the first revenue engine and must prove that the station can create real economic value.
+The Digital Factory is a proof mechanism, not the final identity of the Station.
 
 ### Join / Identity
-Five initial ways to enter the station:
+Five initial entry roles:
 
 1. I need something.
 2. I can build.
@@ -58,257 +66,310 @@ Five initial ways to enter the station:
 5. I have a dream.
 
 ### Value Ledger
-Records attribution such as:
+Records attributable value, including:
 
-- who created useful work;
-- which modules were used;
-- which infrastructure contributed;
-- what value was created;
-- how revenue and social allocations were distributed.
-
-The ledger must distinguish contribution from mere recruitment.
+- useful outcome;
+- sale value and direct costs;
+- human contribution;
+- module contribution;
+- AI/model contribution and cost;
+- infrastructure contribution;
+- royalties / ownership / approved allocations;
+- delivery evidence.
 
 ### Dream Commons
-Matches human goals with people, knowledge, equipment, skills, discounts, logistics, manufacturing and money.
-
-The objective is not merely to raise cash, but to **reduce the real cost of achieving a goal by matching existing value with real needs**.
+Matches verified human goals with money, skills, equipment, discounts, logistics, knowledge and existing resources. The objective is not simply fundraising; it is reducing the real cost of achieving goals through matching.
 
 ### Module Market
-Reusable software, AI, design and production modules. A useful module may earn royalties when the station continues to use it.
+Reusable software, AI, design and production modules. Useful modules may receive attributable royalties when reused.
 
-### Social Dividend
-A future mechanism through which part of productivity created by shared automation can return to participants and social systems.
+### Social Layer
+Target mechanisms:
+
+- Dream Fund;
+- Builder & Pension Pool;
+- Opportunity Fund;
+- Emergency Fund;
+- future automation-dividend mechanisms after sustainable economics and legal review.
 
 ### Governance & Audit
-Human appeal, transparent rules, auditable funds, distributed representation and independent oversight.
+Rights, human appeal, transparent rules, independent review, constitutional change history and future distributed representation.
 
 ### Dream Station
-Long-term federated architecture: many independent modules, communities, companies, machines and AI systems docked into one value network.
+Long-term federated network of independent regional/professional nodes, companies, communities, AI systems and machines operating above a common constitutional floor.
+
+## Constitutional state
+
+### Constitution Draft 0.3
+
+`CONSTITUTION.md` and `CONSTITUTION_RU.md` are the current public working constitutional drafts.
+
+Only Article 0 is currently immutable. Draft 0.3 adds a serious constitutional framework covering:
+
+- universal participation direction and dignity;
+- No One Becomes Obsolete;
+- privacy and data agency;
+- due process and human appeal;
+- contribution attribution;
+- protection against retroactive economic rewriting;
+- truthful metrics;
+- builder/founder protection without absolute rule;
+- financial auditability;
+- planet and future generations;
+- AI/machine participant rules and provenance;
+- no self-granted AI authority;
+- provider independence;
+- separation of governance functions;
+- transitional founding stewardship;
+- conflicts of interest;
+- expiring emergency power;
+- federation, multilingual rights and anti-capture forkability;
+- constitutional layers, amendment and ratification process.
+
+Draft 0.3 is **not yet legally or democratically ratified governance**.
+
+### Governance Working Draft 0.4
+
+`GOVERNANCE.md` is the first concrete institutional design.
+
+Proposed mature bodies:
+
+- **Builders & Contributors Council (BCC)**;
+- **Participants & Dreams Assembly (PDA)**;
+- **Partners & Nodes Council (PNC)**;
+- **Independent Rights & Audit Board (IRAB)**;
+- **AI & Systems Advisory Forum (ASAF)** — advisory, no independent binding vote in the current draft.
+
+Decision classes are separated into operational, economic, rights/disciplinary, constitutional and emergency decisions rather than forcing every issue into one universal vote.
+
+Founding authority is explicitly **strong but transitional**. Founders may retain legitimate long-term economic builder rights without retaining unlimited political power forever.
+
+Candidate transition thresholds are proposals only and must be tested before ratification.
 
 ## Economic principles already agreed
 
 - Nobody pays for the right to earn.
-- Endless recruitment chains and MLM-style downlines are not the economic foundation.
-- Reward follows real value creation, legitimate ownership or clearly defined contractual contribution.
-- A limited referral reward may exist, but should not create infinite multilevel income.
-- Useful modules may generate long-lived royalties.
-- Founders and early builders should receive real economic protection for genuine foundational contribution.
-- Old technology becoming obsolete must not erase verified founding contribution.
-- Builder protection must not create absolute political power.
-- Future structures may include ownership, builder pools, royalties and pension-style support, but exact percentages are **not yet constitutional policy**.
-- Tokenization is a possible later implementation layer, not the starting point. First comes the Value Ledger and real value creation.
+- MLM-style endless downlines are not the economic foundation.
+- Reward follows real value, legitimate ownership, lawful capital or clearly defined contribution.
+- Limited disclosed referral rewards may exist but not recursive infinite chains.
+- Useful reusable modules may earn royalties.
+- Founders and early builders deserve real long-term economic protection for genuine foundational contribution.
+- Replacing technology must not automatically erase verified founding contribution.
+- Builder economic protection does not create unlimited governance authority.
+- Exact social/dividend percentages are **not constitutional policy yet**.
+- Tokenization is a possible later implementation layer, not the beginning. First: real customers, lawful structure, Value Ledger, accounting, fraud controls and a real reason for tokenization.
 
 ## Financial control principles
 
-The financial subsystem must fail closed rather than fail open.
+The financial subsystem must fail closed.
 
-- **Live payments, live payouts and automatic refunds default to OFF.** They are enabled only through an explicit control-plane change after testing and legal/payment readiness.
-- **Test money and live money are separate modes.** Mock/test events must be visibly tagged and cannot be mistaken for real revenue.
-- **The browser is never the source of truth for payment success.** Only a verified server-side provider event or server-side provider lookup may move an order to paid in live mode.
-- **Idempotency is mandatory** for payment creation and webhook processing so retries cannot silently create duplicate charges or ledger events.
-- **Double-entry accounting is the canonical financial record.** A posted financial transaction must balance debit and credit per currency.
-- **Payment state and ledger state should be committed atomically where practical.** The system should not accept normal states such as “payment succeeded but accounting disappeared.”
-- **Posted ledger entries are immutable.** Corrections are represented by new reversing/correcting entries rather than rewriting history.
-- **Every consequential financial/operator action is auditable** with actor, entity, reason and timestamp.
-- **Role separation is explicit:** contributor, operator, finance, risk, admin and auditor are different capabilities. Registration never grants privileged roles automatically.
-- **Client-facing database access is deny-by-default.** Financial, audit, control, payment and payout tables do not get ordinary client policies merely for convenience.
-- **Large or live financial actions will require additional approval rules** before real-money launch; Alpha mock/sandbox modes are not the final separation-of-duties model.
+- LIVE payments, payouts and automatic refunds default **OFF**.
+- Test and live money are separate and visibly tagged.
+- Browser state is never proof of provider payment success.
+- Payment creation and webhook processing require idempotency.
+- Double-entry accounting is the canonical financial record.
+- Payment state and ledger state should reconcile atomically / idempotently.
+- Posted ledger history is immutable; corrections use reversing/correcting entries.
+- Consequential financial/operator actions are auditable.
+- Roles are separated: contributor, operator, finance, risk, admin, auditor.
+- Client database access is deny-by-default for financial/audit/control data.
+- Live-money launch requires stronger approvals, authentication/MFA, legal/payment readiness and accounting compliance.
 
-## Operator control direction
+## Financial acceptance state
 
-A secured operator console is part of the operational infrastructure.
+The YooKassa **TEST** path has been exercised end-to-end:
 
-Current intended workflow:
+`checkout → test card → 3DS → verified webhook → provider API re-check → order paid → balanced ledger → full TEST refund → verified refund → reversing ledger → refunded`
 
-`Founding Ticket → review → accepted/rejected → Order → Quote → Payment → production → QA → delivered → ledger/audit`
+A real reconciliation bug discovered during testing was fixed by changing payment processing from early-return idempotency to **full-state idempotent reconciliation**.
 
-Operator control must preserve these rules:
+Autonomous financial watchdog:
 
-- users cannot self-promote into operator/admin/finance roles;
-- users cannot directly set their own ticket/order/payment states;
-- pricing changes are versioned rather than silently overwritten;
-- privileged transitions are executed server-side and recorded in audit history;
-- financial controls remain independent from UI state so a broken or modified browser cannot switch on real money.
+- Supabase `pg_cron + pg_net` every 5 minutes;
+- internal scheduler token held in Vault;
+- `reconciliation_runs` history;
+- `reconciliation_incidents` queue;
+- Financial Health dashboard;
+- balanced-ledger and payment/order/refund invariants;
+- live-money control guard.
 
-## Alpha 0.3 finance acceptance result
+Last accepted state:
 
-The first internal financial acceptance test created **TEST Order #000001** with a 1,000 RUB quote and a mock payment. The payment reached `succeeded`, the order reached `paid`, the ledger transaction reached `posted`, and debit/credit each equaled **1,000.00 RUB**. No real money moved.
-
-This proves the first controlled financial state loop, not commercial readiness.
-
-## Alpha 0.6 financial watchdog state
-
-The external YooKassa sandbox path has now been exercised end-to-end for **TEST Order #000002**: checkout, test card + 3-D Secure, verified payment webhook, provider API re-check, `paid`, double-entry ledger, full TEST refund, refund webhook, provider re-check, reversing ledger and final `refunded` state.
-
-A real integration bug was discovered during sandbox acceptance: a verified provider payment could be marked `succeeded` locally before the original reconciliation RPC ran, causing the RPC to return too early and skip order/ledger reconciliation. The processing function was changed from “already succeeded means done” to **idempotent full-state reconciliation**. Replaying the same verified event no longer creates duplicate order events or ledger entries.
-
-The financial subsystem now includes an autonomous server-side watchdog:
-
-- Supabase `pg_cron + pg_net` invokes provider reconciliation every **5 minutes** even when no operator browser is open;
-- the scheduler authenticates with an internal token generated server-side and stored in Supabase Vault;
-- every run is persisted in `reconciliation_runs` with trigger, checked entities, changes, errors and result;
-- provider/API failures and local financial inconsistencies are persisted in `reconciliation_incidents`;
-- critical invariants include balanced posted ledger transactions, required payment/refund ledger records, order/payment state agreement and the live-money control guard;
-- incidents may be acknowledged by finance/risk/admin, but healthy reconciliation automatically resolves the underlying incident only when the actual state is healthy again;
-- the Operator Console exposes a Financial Health dashboard, emergency queue and recent watchdog runs;
-- the browser reconciliation remains an additional operator convenience, but it is no longer required for autonomous recovery.
-
-Current accepted Alpha 0.6 health state after server-side reconciliation:
-
-- `HEALTHY`;
-- ledger imbalances: **0**;
-- missing payment ledgers: **0**;
-- missing refund ledgers: **0**;
-- order/payment mismatches: **0**;
-- stale pending payments: **0**;
+- Financial Health: **HEALTHY**;
 - open incidents: **0**;
 - LIVE payments: **OFF**;
 - payouts: **OFF**;
 - automatic refunds: **OFF**;
 - `max_live_payment = 0 RUB`.
 
-This proves resilient sandbox financial processing and monitoring. It still does **not** authorize live-money launch.
+This proves sandbox resilience, **not authorization for real money**.
 
-## Alpha 0.7–0.8 Digital Factory / LeadBot state
+## Digital Factory / Product 01 state
 
-The first narrow Digital Factory product is **SFH LeadBot 1.0** (`TGBOT_LEADS_V1`). Its founding base price is **14,900 RUB** and server-priced options cover additional flows, Google Sheets, calculator, external API, basic CRM, AI FAQ and priority delivery.
+### SFH LeadBot 1.0 (`TGBOT_LEADS_V1`)
 
-The public factory page now creates a fixed server-side quote, persistent Factory Request, commercial Order and Quote in one audited flow. The first accepted factory request is **DF-000001 → ORD-000003 → Q-000003**, configured for lighting installation with every available option selected, total **70,900 RUB**.
+Founding base price: **14,900 RUB** plus server-priced modules.
 
-This first request is a production acceptance case, **not real revenue**. `ORD-000003` remains `quoted` because the live-money control plane is still OFF.
+First accepted production case:
 
-A reusable **LeadBot multi-instance runtime** has been built for production fulfillment:
+**DF-000001 → ORD-000003 → Q-000003 = 70,900 RUB**
 
-- Telegram conversations are configuration-driven rather than hard-coded per customer;
-- persistent sessions allow multi-step questionnaires;
-- Telegram `update_id` receipts provide webhook idempotency;
-- completed leads, runtime events and integration outbox are stored in RLS-protected tables;
-- the first instance `ord-000003-lighting` contains installation estimate, engineer consultation, site visit, commercial-object and FAQ flows;
-- manager notifications are supported;
-- calculator logic exists but customer-specific rates must be explicitly configured before it emits prices;
-- Google Sheets, generic CRM and external webhook adapters are implemented;
-- AI FAQ can use the local FAQ knowledge base and an optional OpenAI-compatible provider configured at runtime;
-- Telegram tokens, webhook secrets, manager chat IDs, external URLs and API keys are stored in Supabase Vault, not GitHub or browser storage;
-- Telegram webhook requests are authenticated with the provider-supported secret-token header;
-- `anon` and ordinary `authenticated` database roles have no direct access to LeadBot instance/lead tables;
-- `leadbot-admin` gives admin-only credential setup and activation, while operator roles can read production status;
-- Operator Console exposes per-feature readiness, activation, manager binding, calculator configuration, lead list and failed integration outbox state;
-- production runtime source, database migrations and Google Sheets adapter are tracked publicly in GitHub.
+This is an internal production acceptance case, not genuine external revenue. `ORD-000003` is not allowed to create a real Value Created event.
 
-Two readiness levels are intentionally separate:
+### Verified production capabilities for `ord-000003-lighting`
 
-- `core_ready` — secure Telegram runtime can be activated;
-- `delivery_ready` — every purchased integration plus manager channel and calculator rates are configured.
+- reusable multi-instance Telegram runtime — **READY**;
+- real Telegram bot + webhook — **READY**;
+- Vault-backed bot token and webhook secret — **READY**;
+- manager chat binding — **READY**;
+- persistent questionnaire sessions — **READY**;
+- Telegram update-id idempotency — **READY**;
+- first real runtime lead **LB-000001** — **ACCEPTED**;
+- manager notification — **READY**;
+- calculator — **READY**, explicitly non-binding market baseline;
+- SFH MiniCRM — **READY**;
+- protected client API — **READY**;
+- Google Sheets — **READY** via `Supabase outbox → worker → Make → Google Sheets`;
+- LB-000001 was deliberately removed from Sheets and regenerated through the real production outbox to prove the automation path;
+- safe local FAQ knowledge-base fallback — **READY**;
+- generative AI FAQ — **NOT READY**.
 
-**ORD-000003 is not delivered yet.** Runtime code and the first instance are built and audited; full acceptance still requires the external BotFather token, manager chat claim, customer-approved calculator rates, Google Sheets endpoint, CRM/API details and AI provider credentials for the options selected in DF-000001.
+### AI FAQ blocker
 
-## Social model already agreed
+Make keyless AI was tested with both Gemini and OpenAI Simple Text Prompt paths.
+
+The Make modules could execute, but the API-created module configuration did not correctly pass the intended prompt to the model (OpenAI showed effectively empty prompt usage; Gemini produced malformed content). The scenario was disabled rather than allowing misleading customer responses or wasting credits.
+
+Do **not** mark generative AI FAQ as delivered merely to make the readiness dashboard green.
+
+This blocker should become the first consumer/use case for a **shared Station AI Gateway**.
+
+## Shared Station AI Gateway — next platform layer
+
+The AI Gateway must prevent every product from becoming its own pile of provider credentials and one-off prompting logic.
+
+Required direction:
+
+- multiple provider adapters;
+- task classes (FAQ, extraction, translation, planning, code, classification, etc.);
+- provider/model/version provenance;
+- cost and latency accounting;
+- permission and data-sensitivity policy;
+- knowledge grounding / retrieval;
+- deterministic fallback;
+- output validation;
+- human escalation for consequential tasks;
+- circuit breakers and budget limits;
+- audit events for future Value Ledger attribution;
+- no single model provider as irreversible dependency.
+
+## Social model
 
 The social layer is central, not decorative.
-
-Target mechanisms include:
-
-- **Dream Fund** — verified human goals;
-- **Builder & Pension Pool** — long-term protection of people who spent years building the system;
-- **Opportunity Fund** — education, retraining and tools;
-- **Emergency Fund** — transparent crisis support for verified participants.
 
 Key promise:
 
 > **No One Becomes Obsolete.**
 
-A profession may become obsolete. The person must have a path toward another role, skill and source of dignity and income.
+A profession may become obsolete. A person should have a path toward another role, skill and source of dignity and income.
 
-## Governance direction
-
-The network should not become a permanent dictatorship of founders, investors, one corporation or one AI provider.
-
-Possible future representation layers discussed:
-
-- Builders Council
-- Contributors Council
-- Dream / beneficiary representation
-- Partners Council
-- Independent ethics and audit oversight
-
-Any consequential automated decision affecting a participant should have a meaningful path to human appeal.
+Social mechanisms must be financially sustainable, legally reviewed and auditable rather than promises funded by imaginary future money.
 
 ## Planet principle
 
-The planet is a stakeholder. Energy, materials, water, waste, emissions, logistics and resource depletion belong in the real accounting of value.
+The planet is a stakeholder. Energy, materials, water, waste, emissions, logistics, biodiversity effects and resource depletion belong in the real accounting of value when material.
 
-A profitable process that destroys the conditions for life cannot be treated as fully positive value.
+A profitable process that materially destroys the conditions for life cannot be treated as fully positive value under Article 0.
 
-## AGI / automation direction
+## AI / advanced automation direction
 
-The project is explicitly designed around the idea that advanced AI should become a source of **shared capability**, not a reason for people to fear being discarded.
+AI is a powerful participant class and shared capability, not an automatic ruler or independent political class.
 
-The intended relationship is:
+Current constitutional direction:
 
-`human + AI + machines + knowledge + resources → more possibility for life`
-
-AI is not declared a ruler, owner or independent political class. More capable intelligence implies more responsibility, auditability and safety requirements.
+- AI output/actions should have provenance;
+- permissions must be explicit;
+- AI cannot self-grant authority;
+- high-impact AI requires stronger audit/review;
+- humans retain meaningful appeal against consequential automated decisions;
+- future evidence of genuinely autonomous non-human intelligence may justify a new constitutional rights process, but such rights are not assumed from fluent language generation alone.
 
 ## Founding Dream
 
 ### Dream #000001 — PILOT
 
-The first public proof case is a real path toward becoming a pilot and eventually reaching an amphibious-aircraft ownership goal.
-
-Planned milestones:
+Milestones:
 
 1. introductory flight;
 2. medical clearance;
 3. PPL(A);
 4. seaplane qualification;
-5. long-term aircraft ownership path.
+5. long-term aircraft ownership/access path.
 
-This is **not** intended to be presented as a simple donation request. It is meant to become proof that useful economic activity generated by the station can move a real human goal from zero to completion.
+Public progress remains **0%** until actual verified events occur. Dream #000001 is intended to prove that real Station-created value can move a human goal, not to become a disguised donation counter.
 
-## Public metrics to use later
+## Public metrics rule
 
-Only real recorded events should move these counters:
+Only real recorded events move public counters:
 
-- Value Created
-- People Earning
-- Dreams Completed
-- Social Support Delivered
+- Value Created;
+- People Earning;
+- Dreams Completed;
+- Social Support Delivered.
 
-Until a backend records real events, public counters should remain zero rather than displaying invented traction.
+No invented traction.
 
-## Technical state at Alpha 0.8
+## Current technical stack / state
 
-- Public domain active: `stationforhumanity.com`
-- Static production hosting: Vercel
-- Source control: GitHub repository `Dinozavr41/station-for-humanity`
-- Production pipeline: GitHub `main` → Vercel → primary domain
-- Languages currently implemented: Russian and English
-- Persistent backend: Supabase project `station-for-humanity-prod` in West EU
-- Public Founding Ticket intake is live through an Edge Function with validation, consent, honeypot and rate limiting
-- Public Digital Factory and server Pricing Engine are live at `/factory/`
-- Secured Operator Console is deployed at `/operator.html`
-- Role-gated operator, factory-admin, leadbot-admin and financial-health Edge Functions are active
-- Value/financial schema includes orders, quotes, payments, refunds, double-entry ledger, allocations, payouts, approvals, audit, system controls, reconciliation runs and reconciliation incidents
-- YooKassa TEST payment and full-refund adapters are active with server-side provider verification
-- Autonomous YooKassa TEST watchdog is scheduled every 5 minutes through `pg_cron + pg_net` using a Vault-held internal token
-- Reusable Telegram LeadBot runtime and first ORD-000003 instance exist in production
-- LeadBot secrets are Vault-backed; lead/session/outbox tables are deny-by-default to client roles
-- Live payments, payouts and automatic refunds remain OFF; `max_live_payment` remains 0 RUB
-- Article 0, production migrations, LeadBot source and founding log are public repository artifacts.
+- primary site: `stationforhumanity.com`;
+- Vercel production hosting;
+- GitHub `main → Vercel` deployment;
+- Supabase production backend in West EU;
+- public Founding Ticket Edge Function;
+- Digital Factory Pricing Engine and `/factory/`;
+- secured `/operator.html`;
+- YooKassa TEST payment/refund/reconciliation functions;
+- PostgreSQL double-entry ledger and audit;
+- pg_cron/pg_net autonomous watchdog;
+- reusable Telegram LeadBot runtime;
+- Make automation connected for Google Sheets push;
+- secrets stored in Supabase Vault where appropriate;
+- current public language support: Russian + English;
+- Constitution Draft 0.3 published in English and Russian;
+- Governance Working Draft 0.4 published.
 
 ## Immediate build order
 
-1. Complete **ORD-000003** external configuration: BotFather token → Telegram webhook → manager claim → real lead acceptance.
-2. Configure customer-approved lighting calculator rates rather than inventing commercial prices.
-3. Connect the purchased Google Sheets, CRM, external API and AI FAQ providers and verify outbox delivery.
-4. Run LeadBot QA: all four flows, FAQ, duplicate update replay, manager notification, persistence, restart continuity and integration failure/recovery.
-5. Do **not** count ORD-000003 as real revenue or Value Created while it remains unpaid/internal acceptance work.
-6. Complete legal/payment readiness for the operating entity and strengthen production authentication/MFA before any live-money switch.
-7. Implement the live payment adapter behind the existing fail-closed control plane and approval rules; do not enable it by default.
-8. Acquire and execute the first genuine external customer order with payment, QA, delivery, accounting and provider reconciliation.
-9. Create the first **real**, non-test Value Ledger event and legitimate contributor attribution.
-10. Move Dream #000001 above 0% only using real station-created value.
+Work now proceeds on **three parallel rails**, not one endless feature chain.
+
+### Rail A — Constitution / society
+
+1. classify Constitution 0.3 articles into entrenched Level 1 vs adaptable Level 2;
+2. refine Governance 0.4 institutions and founder-transition state machine;
+3. expose Constitution 0.3 and governance status clearly on the public site;
+4. design machine-readable proposals, amendment history and conflict-of-interest records;
+5. design appeals data model before automated decision volume grows;
+6. run governance capture simulations before binding governance exists.
+
+### Rail B — shared technical platform
+
+1. build provider-independent Station AI Gateway;
+2. use LeadBot FAQ as first Gateway consumer;
+3. create canonical module interface / registry direction;
+4. connect AI/model cost and provenance to future Value Ledger.
+
+### Rail C — real economy
+
+1. finish LeadBot QA without falsely claiming the generative-AI module is ready;
+2. complete legal/live payment and authentication readiness;
+3. acquire first genuine external paying customer;
+4. execute, QA and deliver;
+5. create first real Value Ledger event;
+6. legitimately reward first external contributor;
+7. move Dream #000001 only with real Station-created value.
 
 ## Anti-forgetting rule
 
-When a new design, feature or economic rule materially changes one of the decisions above, update this file in the same change set and explain why.
+When a material feature, constitutional rule, economic principle or accepted system state changes, update this file in the same workstream.
+
+Never make the project look more complete than it is. The Station should be ambitious in design and conservative in claims.
