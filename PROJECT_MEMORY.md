@@ -98,6 +98,44 @@ Long-term federated architecture: many independent modules, communities, compani
 - Future structures may include ownership, builder pools, royalties and pension-style support, but exact percentages are **not yet constitutional policy**.
 - Tokenization is a possible later implementation layer, not the starting point. First comes the Value Ledger and real value creation.
 
+## Financial control principles
+
+The financial subsystem must fail closed rather than fail open.
+
+- **Live payments, live payouts and automatic refunds default to OFF.** They are enabled only through an explicit control-plane change after testing and legal/payment readiness.
+- **Test money and live money are separate modes.** Mock/test events must be visibly tagged and cannot be mistaken for real revenue.
+- **The browser is never the source of truth for payment success.** Only a verified server-side provider event or server-side provider lookup may move an order to paid in live mode.
+- **Idempotency is mandatory** for payment creation and webhook processing so retries cannot silently create duplicate charges or ledger events.
+- **Double-entry accounting is the canonical financial record.** A posted financial transaction must balance debit and credit per currency.
+- **Payment state and ledger state should be committed atomically where practical.** The system should not accept normal states such as “payment succeeded but accounting disappeared.”
+- **Posted ledger entries are immutable.** Corrections are represented by new reversing/correcting entries rather than rewriting history.
+- **Every consequential financial/operator action is auditable** with actor, entity, reason and timestamp.
+- **Role separation is explicit:** contributor, operator, finance, risk, admin and auditor are different capabilities. Registration never grants privileged roles automatically.
+- **Client-facing database access is deny-by-default.** Financial, audit, control, payment and payout tables do not get ordinary client policies merely for convenience.
+- **Large or live financial actions will require additional approval rules** before real-money launch; Alpha 0.3 mock mode is not the final separation-of-duties model.
+
+## Operator control direction
+
+A secured operator console is part of the operational infrastructure.
+
+Current intended workflow:
+
+`Founding Ticket → review → accepted/rejected → Order → Quote → Payment → production → QA → delivered → ledger/audit`
+
+Operator control must preserve these rules:
+
+- users cannot self-promote into operator/admin/finance roles;
+- users cannot directly set their own ticket/order/payment states;
+- pricing changes are versioned rather than silently overwritten;
+- privileged transitions are executed server-side and recorded in audit history;
+- financial controls remain independent from UI state so a broken or modified browser cannot switch on real money.
+
+## Alpha 0.3 finance acceptance result
+
+The first internal financial acceptance test created **TEST Order #000001** with a 1,000 RUB quote and a mock payment. The payment reached `succeeded`, the order reached `paid`, the ledger transaction reached `posted`, and debit/credit each equaled **1,000.00 RUB**. No real money moved.
+
+This proves the first controlled financial state loop, not commercial readiness.
+
 ## Social model already agreed
 
 The social layer is central, not decorative.
@@ -172,25 +210,31 @@ Only real recorded events should move these counters:
 
 Until a backend records real events, public counters should remain zero rather than displaying invented traction.
 
-## Technical state at Alpha 0.2
+## Technical state at Alpha 0.3
 
 - Public domain active: `stationforhumanity.com`
 - Static production hosting: Vercel
 - Source control: GitHub repository `Dinozavr41/station-for-humanity`
 - Production pipeline: GitHub `main` → Vercel → primary domain
 - Languages currently implemented: Russian and English
+- Persistent backend: Supabase project `station-for-humanity-prod` in West EU
+- Public Founding Ticket intake is live through an Edge Function with validation, consent, honeypot and rate limiting
+- Secured Operator Console is deployed at `/operator.html`
+- Role-gated operator Edge Function is active
+- Value/financial schema includes orders, quotes, payments, refunds, double-entry ledger, allocations, payouts, approvals, audit and system controls
+- Live payments, payouts and automatic refunds remain OFF
 - Article 0 and the founding log are public repository artifacts.
 
 ## Immediate build order
 
-1. Alpha 0.2 — Join/Identity prototype + Dream #000001 + public social/economic architecture.
-2. Backend intake and identity model.
-3. First Digital Factory product capable of receiving a real order.
-4. Pricing and payment path appropriate to the legal operating entity.
-5. Order execution + QA + delivery.
-6. First real Value Ledger event.
-7. First real contributor outside the founding team.
-8. First real revenue allocation.
+1. Complete operator identity bootstrap and role assignment.
+2. Run TEST Order #000001 through production → QA → delivered using the operator console.
+3. Add real payment-provider **test/sandbox** adapter and webhook verification while live-money controls remain OFF.
+4. Select the first narrow Digital Factory commercial product capable of receiving a real customer order.
+5. Implement pricing and payment path appropriate to the legal operating entity.
+6. Execute first real customer order with QA and delivery.
+7. Create the first **real**, non-test Value Ledger event.
+8. Add the first external contributor and legitimate reward allocation.
 9. Move Dream #000001 above 0% using value produced by the system.
 10. Expand module marketplace and federation only after the first economic loop is proven.
 
