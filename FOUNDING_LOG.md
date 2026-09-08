@@ -66,6 +66,18 @@ Added:
 - The first financial acceptance therefore reconciled to zero difference without moving real money.
 - Security Advisor reported no warning/error-level findings after the change; remaining notices are informational deny-by-default RLS and currently-unused-index notices expected on an almost-empty database.
 
+## 2026-09-08 — First complete order lifecycle
+
+- **FT-000002** was reviewed and accepted through the authenticated Operator Console.
+- **TEST Order #000001** completed the entire operational state machine:
+  `draft → quoted → awaiting_payment → paid → in_production → qa → delivered`.
+- Order events were persisted for every state transition.
+- Audit events were persisted for production, QA and delivery actions.
+- The mock payment remained `succeeded`, `test_mode=true`.
+- The posted ledger transaction remained balanced at **1,000.00 RUB debit = 1,000.00 RUB credit**, delta **0.00 RUB**.
+- Live payments, payouts and automatic refunds remained disabled; `max_live_payment` remained **0 RUB**.
+- This is the first fully completed end-to-end Station for Humanity order lifecycle, executed entirely in test mode with no real money moved.
+
 ## Why keep this log?
 
 If the project grows, its origin should remain auditable. The station is intended to be built in public: principles, architecture, mistakes, revisions and milestones should leave a historical record.
