@@ -2,3 +2,4 @@ mobile-image-v3-2026-09-08
 layout=top-scene
 assets=stage1,stage2,stage3
 commit=0d900bd751257b5afe2ac855d64c37c18b93e8cd
+READY
