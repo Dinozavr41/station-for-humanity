@@ -33,4 +33,29 @@ function renderAllocation(){const input=document.getElementById('orderValue');co
 document.getElementById('orderValue')?.addEventListener('input',renderAllocation);
 
 const saved=localStorage.getItem('sfh-last-ticket');if(saved){try{const parsed=JSON.parse(saved);if(parsed.server_ticket)output.textContent=(navigator.language?.toLowerCase().startsWith('ru')?`Последняя заявка: ${parsed.server_ticket.number}`:`Last ticket: ${parsed.server_ticket.number}`)}catch{}}
+
+// Alpha 0.7: Digital Factory must be discoverable from the front door, not hidden behind a remembered URL.
+function installFactoryEntry(){
+  if(document.getElementById('factoryEntry'))return;
+  const style=document.createElement('style');
+  style.textContent=`
+    .factory-nav-link{color:#64e9ff!important;font-weight:900!important}
+    .factory-entry{margin-top:-14px!important;padding-top:44px!important;padding-bottom:44px!important}
+    .factory-entry-card{position:relative;overflow:hidden;display:grid;grid-template-columns:1.45fr .8fr;gap:34px;align-items:center;padding:38px;border:1px solid rgba(86,229,255,.24);border-radius:26px;background:linear-gradient(135deg,rgba(15,45,70,.94),rgba(10,22,39,.94));box-shadow:0 24px 80px rgba(0,0,0,.28)}
+    .factory-entry-card:before{content:'';position:absolute;width:360px;height:360px;border-radius:50%;right:-120px;top:-170px;background:radial-gradient(circle,rgba(69,232,255,.22),transparent 68%);pointer-events:none}
+    .factory-entry-card h2{font-size:clamp(30px,4.5vw,58px);line-height:1.02;margin:8px 0 16px}.factory-entry-card h2 span{color:#65eaff}
+    .factory-entry-card p{color:#abc1d2;line-height:1.65;max-width:760px}.factory-entry-price{position:relative;padding:24px;border-radius:20px;background:rgba(2,13,24,.64);border:1px solid rgba(255,255,255,.08);display:grid;gap:10px}
+    .factory-entry-price small{letter-spacing:.16em;color:#81a6bb;font-size:10px}.factory-entry-price strong{font-size:42px;color:#fff}.factory-entry-price span{color:#88f0bb;font-size:12px}.factory-entry-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+    .factory-hero-btn{box-shadow:0 0 0 1px rgba(98,233,255,.22),0 10px 38px rgba(61,217,255,.12)}
+    @media(max-width:760px){.factory-entry-card{grid-template-columns:1fr;padding:24px}.factory-entry-price strong{font-size:34px}}
+  `;
+  document.head.append(style);
+  const nav=document.querySelector('.nav nav');
+  if(nav){const a=document.createElement('a');a.href='/factory/';a.className='factory-nav-link';a.dataset.en='Digital Factory';a.dataset.ru='Фабрика';a.textContent='Digital Factory';nav.prepend(a)}
+  const heroActions=document.querySelector('.hero .actions');
+  if(heroActions){const a=document.createElement('a');a.href='/factory/';a.className='btn primary factory-hero-btn';a.dataset.en='Order from Digital Factory';a.dataset.ru='Заказать у Digital Factory';a.textContent='Order from Digital Factory';heroActions.prepend(a)}
+  const hero=document.querySelector('.hero');
+  if(hero){const section=document.createElement('section');section.id='factoryEntry';section.className='section factory-entry';section.innerHTML=`<div class="factory-entry-card"><div><span class="kicker">DIGITAL FACTORY · PRODUCT 01</span><h2 data-en="A real product. A server price. A real order." data-ru="Реальный продукт. Серверная цена. Настоящий заказ.">A real product. A server price. A real order.</h2><p data-en="SFH LeadBot 1.0 is a custom Telegram bot for business lead capture: questions, manager notification, database storage, deployment, source code and handover." data-ru="SFH LeadBot 1.0 — Telegram-бот для бизнеса: задаёт вопросы клиенту, отправляет заявку менеджеру, хранит её в базе. Развёртывание, исходный код и инструкция входят.">SFH LeadBot 1.0 is a custom Telegram bot for business lead capture.</p><div class="factory-entry-actions"><a class="btn primary" href="/factory/" data-en="Configure and get exact price" data-ru="Собрать вариант и узнать точную цену">Configure and get exact price</a><a class="btn" href="/factory/#configure" data-en="See options" data-ru="Посмотреть допы">See options</a></div></div><div class="factory-entry-price"><small data-en="FOUNDING PRICE" data-ru="СТАРТОВАЯ ЦЕНА">FOUNDING PRICE</small><strong>14 900 ₽</strong><span data-en="target: 3 business days · live charging still OFF" data-ru="цель: 3 рабочих дня · LIVE-списания пока OFF">target: 3 business days · live charging still OFF</span></div></div>`;hero.insertAdjacentElement('afterend',section)}
+}
+installFactoryEntry();
 applyLanguage();
