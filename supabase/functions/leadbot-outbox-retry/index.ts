@@ -6,5 +6,35 @@ const service=createClient(SUPABASE_URL,SERVICE_ROLE_KEY,{auth:{persistSession:f
 function json(status:number,body:any){return new Response(JSON.stringify(body),{status,headers:{"Content-Type":"application/json; charset=utf-8"}})}
 function safe(v:any,n=1000){return String(v??'').slice(0,n)}
 async function sinkConfig(instanceId:string,sink:string){const {data:s,error}=await service.rpc('leadbot_get_secrets',{p_instance_id:instanceId});if(error)throw new Error(`secret_read:${error.message}`);if(sink==='google_sheets')return{url:s?.google_sheets_url||'',token:''};if(sink==='crm')return{url:s?.crm_url||'',token:s?.crm_token||''};if(sink==='webhook')return{url:s?.webhook_url||'',token:s?.webhook_token||''};throw new Error('unsupported_sink')}
-async function deliver(row:any){const cfg=await sinkConfig(row.instance_id,row.sink);if(!cfg.url){await service.from('leadbot_outbox').update({status:'failed',last_error:'credentials_missing',next_attempt_at:new Date(Date.now()+15*60_000).toISOString()}).eq('id',row.id);return{state:'waiting_credentials'}}const headers:any={'Content-Type':'application/json','Idempotency-Key':`${row.lead_id}:${row.sink}`};if(cfg.token)headers.Authorization=`Bearer ${cfg.token}`;const r=await fetch(cfg.url,{method:'POST',headers,body:JSON.stringify(row.payload)});const text=await r.text();if(!r.ok){const attempts=Number(row.attempts||0)+1,delay=Math.min(60,5*Math.pow(2,Math.min(attempts,4)));await service.from('leadbot_outbox').update({status:'failed',attempts,last_error:`http_${r.status}:${safe(text,500)}`,next_attempt_at:new Date(Date.now()+delay*60_000).toISOString()}).eq('id',row.id);return{state:'failed',status:r.status}}await service.from('leadbot_outbox').update({status:'succeeded',attempts:Number(row.attempts||0)+1,response:{status:r.status,body:safe(text,1000)},last_error:null,updated_at:new Date().toISOString()}).eq('id',row.id);return{state:'succeeded',status:r.status}}
-Deno.serve(async req=>{if(req.method!=='POST')return json(405,{ok:false,error:'method_not_allowed'});const token=req.headers.get('x-sfh-watchdog')||'';if(!token)return json(401,{ok:false,error:'missing_scheduler_token'});const {data:ok,error:ve}=await service.rpc('verify_watchdog_token',{p_token:token});if(ve||ok!==true)return json(401,{ok:false,error:'invalid_scheduler_token'});const {data:rows,error}=await service.from('leadbot_outbox').select('id,instance_id,lead_id,sink,status,attempts,next_attempt_at,payload').in('status',['pending','failed']).lte('next_attempt_at',new Date().toISOString()).order('next_attempt_at',{ascending:true}).limit(50);if(error)return json(500,{ok:false,error:'outbox_read_failed',detail:error.message});const result:any={checked:0,succeeded:0,failed:0,waiting_credentials:0,errors:[]};for(const row of rows||[]){result.checked++;try{const r=await deliver(row);if(r.state==='succeeded')result.succeeded++;else if(r.state==='waiting_credentials')result.waiting_credentials++;else result.failed++;}catch(e){result.failed++;result.errors.push({id:row.id,error:safe((e as any)?.message||e,500)})}}return json(200,{ok:true,...result})});
+async function currentSheetPayload(row:any){
+  const {data:l,error}=await service.from('leadbot_leads').select('lead_no,flow_code,contact,answers,estimate,status,created_at').eq('id',row.lead_id).single();
+  if(error||!l)throw new Error(`lead_read:${error?.message||'not_found'}`);
+  const a:any=l.answers||{};const e:any=l.estimate||{};
+  return {
+    lead_id:`LB-${String(l.lead_no).padStart(6,'0')}`,
+    created_at:l.created_at,
+    scenario:l.flow_code||'',
+    city:a.city||'',
+    object_type:a.object_type||'',
+    area_m2:Number(a.area_m2||0),
+    light_points:Number(a.light_points||0),
+    materials:a.materials||'',
+    urgency:a.timing||'',
+    contact:l.contact||a.contact||'',
+    estimate_amount:e.available?Number(e.amount||0):'',
+    status:l.status||'new'
+  };
+}
+async function deliver(row:any){
+  const cfg=await sinkConfig(row.instance_id,row.sink);
+  if(!cfg.url){await service.from('leadbot_outbox').update({status:'failed',last_error:'credentials_missing',next_attempt_at:new Date(Date.now()+15*60_000).toISOString()}).eq('id',row.id);return{state:'waiting_credentials'}}
+  const headers:any={'Content-Type':'application/json','Idempotency-Key':`${row.lead_id}:${row.sink}`};
+  if(cfg.token)headers.Authorization=`Bearer ${cfg.token}`;
+  const payload=row.sink==='google_sheets'?await currentSheetPayload(row):row.payload;
+  const r=await fetch(cfg.url,{method:'POST',headers,body:JSON.stringify(payload)});
+  const text=await r.text();
+  if(!r.ok){const attempts=Number(row.attempts||0)+1;const delay=Math.min(60,5*Math.pow(2,Math.min(attempts,4)));await service.from('leadbot_outbox').update({status:'failed',attempts,last_error:`http_${r.status}:${safe(text,500)}`,next_attempt_at:new Date(Date.now()+delay*60_000).toISOString()}).eq('id',row.id);return{state:'failed',status:r.status}}
+  await service.from('leadbot_outbox').update({status:'succeeded',attempts:Number(row.attempts||0)+1,response:{status:r.status,body:safe(text,1000),mode:row.sink==='google_sheets'?'make_push_v1':'http_push_v1'},last_error:null,updated_at:new Date().toISOString()}).eq('id',row.id);
+  return{state:'succeeded',status:r.status}
+}
+Deno.serve(async req=>{if(req.method!=='POST')return json(405,{ok:false,error:'method_not_allowed'});const token=req.headers.get('x-sfh-watchdog')||'';if(!token)return json(401,{ok:false,error:'missing_scheduler_token'});const {data:ok,error:ve}=await service.rpc('verify_watchdog_token',{p_token:token});if(ve||ok!==true)return json(401,{ok:false,error:'invalid_scheduler_token'});const {data:rows,error}=await service.from('leadbot_outbox').select('id,instance_id,lead_id,sink,status,attempts,next_attempt_at,payload').in('status',['pending','failed']).lte('next_attempt_at',new Date().toISOString()).order('next_attempt_at',{ascending:true}).limit(50);if(error)return json(500,{ok:false,error:'outbox_read_failed',detail:error.message});const result:any={checked:0,succeeded:0,failed:0,waiting_credentials:0,errors:[]};for(const row of rows||[]){result.checked++;try{const r=await deliver(row);if(r.state==='succeeded')result.succeeded++;else if(r.state==='waiting_credentials')result.waiting_credentials++;else result.failed++;}catch(e){result.failed++;result.errors.push({id:row.id,error:safe((e as any)?.message||e,500)});}}return json(200,{ok:true,...result});});
