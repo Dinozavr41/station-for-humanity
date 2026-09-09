@@ -5,89 +5,101 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
   <meta name="referrer" content="no-referrer">
-  <title>Station — Кабинет РПК</title>
+  <title>Station — RPK OS</title>
   <link rel="stylesheet" href="./rpk.css">
 </head>
 <body>
 <header class="topbar">
-  <a class="brand" href="/">STATION <span>RPK WORKSPACE</span></a>
+  <a class="brand" href="/">STATION <span>RPK OS</span></a>
   <div class="top-actions"><span id="identity">OFFLINE</span><button id="signOut" class="ghost" hidden>Выйти</button></div>
 </header>
 <main>
   <section id="authPanel" class="panel auth">
-    <div><p class="eyebrow">ЗАЩИЩЁННЫЙ КАБИНЕТ</p><h1>Вход в РПК</h1><p class="muted">Архив макетов и производственные параметры доступны только сотрудникам вашей компании.</p></div>
+    <div><p class="eyebrow">ЗАЩИЩЁННЫЙ КАБИНЕТ</p><h1>Рабочий кабинет РПК</h1><p class="muted">Клиенты, сделки, деньги, старые макеты и производство — в одном месте. Каждый сотрудник видит только разрешённые ему функции.</p></div>
     <form id="authForm"><label>Email<input id="email" type="email" required autocomplete="email"></label><label>Пароль<input id="password" type="password" required minlength="8" autocomplete="current-password"></label><button class="primary" type="submit">Войти</button><pre id="authMsg"></pre></form>
   </section>
 
   <section id="workspace" hidden>
     <div class="hero panel">
-      <div><p class="eyebrow">RPK WORKSPACE</p><h1 id="workspaceName">РПК</h1><p id="workspaceMeta" class="muted"></p></div>
+      <div><p class="eyebrow">RPK OS · РАБОЧЕЕ ПРОСТРАНСТВО</p><h1 id="workspaceName">РПК</h1><p id="workspaceMeta" class="muted"></p></div>
       <div class="hero-status"><span id="profileBadge" class="badge warn">ПРОФИЛЬ ПЕЧАТИ НЕ ПОДТВЕРЖДЁН</span><button id="reload" class="ghost">Обновить</button></div>
     </div>
 
-    <section class="actions-grid">
-      <button class="action-card" data-jump="archive"><b>♻️ Переделать старый</b><span>Выбрать клиента и прошлый макет, изменить только нужное</span></button>
-      <button class="action-card" data-jump="archive"><b>🗃 Архив макетов</b><span>Загрузить старую базу РПК и разложить её по клиентам</span></button>
-      <button class="action-card" data-jump="new-design"><b>➕ Новый баннер 3×6</b><span>Новый простой макет по структурированному ТЗ</span></button>
-      <button class="action-card" data-jump="printer"><b>🖨 Профиль печати</b><span>Один раз согласовать реальные параметры печатника</span></button>
-      <button class="action-card" data-jump="queue"><b>🏭 Очередь</b><span>Что в работе, на правках, утверждено и готово к печати</span></button>
+    <nav id="moduleNav" class="module-nav" aria-label="Разделы кабинета">
+      <button data-jump="today" class="active">Сегодня</button><button data-jump="crm">CRM</button><button data-jump="archive">Макеты</button><button data-jump="queue">Производство</button><button data-jump="documents">Документы</button><button data-jump="money">Деньги</button><button data-jump="procurement">Закупки</button><button data-jump="modules">Ещё</button>
+    </nav>
+
+    <section id="today" class="section dashboard-section">
+      <div class="quick-actions">
+        <button id="quickDeal" class="quick primary"><b>+ Сделка</b><span>Зафиксировать новый заказ</span></button>
+        <button id="quickCash" class="quick"><b>₽ Приход / расход</b><span>Записать реальные деньги</span></button>
+        <button id="quickClient" class="quick"><b>+ Клиент</b><span>Добавить в базу</span></button>
+        <button class="quick" data-jump="archive"><b>♻ Переделать макет</b><span>Из старого архива</span></button>
+      </div>
+
+      <div class="owner-metrics">
+        <article class="metric-card"><small>АКТИВНЫЕ СДЕЛКИ</small><strong id="osDeals">0</strong><span id="osPipeline">0 ₽ в работе</span></article>
+        <article class="metric-card"><small>ДЕНЬГИ ЭТОГО МЕСЯЦА</small><strong id="osNet">0 ₽</strong><span id="osCashFlow">0 ₽ приход · 0 ₽ расход</span></article>
+        <article class="metric-card"><small>ТРЕБУЮТ ДЕЙСТВИЯ</small><strong id="osOverdue">0</strong><span>просроченные следующие шаги</span></article>
+        <article class="metric-card"><small>МАКЕТЫ В РАБОТЕ</small><strong id="osDesignJobs">0</strong><span id="osArchiveInfo">архив: 0</span></article>
+      </div>
+
+      <div class="dashboard-grid">
+        <section class="panel dashboard-block"><div class="section-head compact"><div><p class="eyebrow">СЕГОДНЯ</p><h2>Что требует внимания</h2></div></div><div id="todayList" class="attention-list"></div></section>
+        <section class="panel dashboard-block"><div class="section-head compact"><div><p class="eyebrow">STATION</p><h2>Что можно улучшить</h2></div></div><div id="recommendationList" class="recommendation-list"></div></section>
+      </div>
     </section>
 
-    <section class="stats-grid">
-      <article class="panel stat"><small>КЛИЕНТЫ</small><strong id="statClients">0</strong></article>
-      <article class="panel stat"><small>АРХИВ</small><strong id="statArchive">0</strong></article>
-      <article class="panel stat"><small>МАКЕТЫ В РАБОТЕ</small><strong id="statJobs">0</strong></article>
-      <article class="panel stat"><small>ПРОФИЛЬ 3×6</small><strong id="statProfile">WAITING</strong></article>
-    </section>
-
-    <section id="clients" class="panel section">
-      <div class="section-head"><div><p class="eyebrow">КЛИЕНТСКАЯ БАЗА</p><h2>Старые клиенты РПК</h2></div><button id="addClient" class="primary">+ Добавить клиента</button></div>
-      <p class="muted">К каждому клиенту привязываются старые баннеры, логотипы, телефоны, адреса и история переделок.</p>
-      <div id="clientList" class="list"></div>
+    <section id="crm" class="panel section">
+      <div class="section-head"><div><p class="eyebrow">MINI CRM</p><h2>Клиенты и сделки</h2></div><div class="row"><button id="addDeal" class="primary">+ Сделка</button><button id="addClient" class="ghost">+ Клиент</button></div></div>
+      <p class="muted">Никакой тяжёлой CRM: клиент, заказ, сумма, себестоимость и одно понятное «что сделать дальше».</p>
+      <div id="dealList" class="deal-list"></div>
+      <details class="subsection"><summary>Клиентская база <span id="clientSummaryCount"></span></summary><div id="clientList" class="list"></div></details>
     </section>
 
     <section id="archive" class="panel section">
       <div class="section-head"><div><p class="eyebrow">LEGACY ARCHIVE</p><h2>Старые макеты</h2></div><button id="loadArtworks" class="ghost">Обновить архив</button></div>
+      <p class="muted">Главный режим: найти старого клиента → выбрать его прошлый макет → изменить только нужные данные.</p>
       <div class="upload-grid"><label>К какому клиенту относится<select id="uploadClient"></select></label><label class="drop">Выберите старые файлы<input id="archiveFiles" type="file" multiple accept=".pdf,.jpg,.jpeg,.png,.tif,.tiff,.svg,.eps,.ps,.cdr,.ai,.zip,application/octet-stream"></label></div>
       <button id="uploadArchive" class="primary">Загрузить в приватный архив</button><pre id="uploadStatus"></pre>
       <div id="artworkList" class="list"></div>
     </section>
 
-    <section id="new-design" class="panel section">
-      <p class="eyebrow">NEW 3×6</p><h2>Новый простой баннер</h2>
-      <p class="muted">Это запасной сценарий. Основной режим РПК — переделка старого макета. Для нового макета используем структурированное ТЗ, которое уже работает в LeadBot.</p>
-      <a class="primary link-button" href="/factory/" target="_blank">Открыть Digital Factory</a>
+    <section id="queue" class="panel section"><div class="section-head"><div><p class="eyebrow">PRODUCTION</p><h2>Очередь макетов</h2></div></div><div id="jobList" class="list"></div></section>
+
+    <section id="documents" class="panel section">
+      <div class="section-head"><div><p class="eyebrow">ДОКУМЕНТЫ</p><h2>КП, счета и задания</h2></div></div>
+      <p class="muted">Черновики создаются из сделки без повторного набора клиента и суммы. Выпуск PDF/DOCX и юридически значимая отправка будут отдельным контролируемым шагом.</p>
+      <div id="documentList" class="list"></div>
+    </section>
+
+    <section id="money" class="panel section">
+      <div class="section-head"><div><p class="eyebrow">УПРАВЛЕНЧЕСКИЕ ДЕНЬГИ</p><h2>Что реально пришло и ушло</h2></div><button id="addCash" class="primary">+ Приход / расход</button></div>
+      <div class="money-strip"><div><small>Приход за месяц</small><strong id="moneyIn">0 ₽</strong></div><div><small>Расход за месяц</small><strong id="moneyOut">0 ₽</strong></div><div><small>Чистый поток</small><strong id="moneyNet">0 ₽</strong></div></div>
+      <p class="muted">Это управленческий учёт, а не налоговая бухгалтерия. Позже сюда подключим 1С/Контур/бухгалтера.</p><div id="cashList" class="list"></div>
+    </section>
+
+    <section id="procurement" class="panel section">
+      <div class="section-head"><div><p class="eyebrow">ЗАКУПКИ</p><h2>Поставщики и себестоимость</h2></div><button id="addSupplier" class="primary">+ Поставщик</button></div>
+      <p class="muted">Сюда постепенно загрузим закупочные прайсы, материалы и сравнение цен. Сейчас можно начать с основных поставщиков.</p><div id="procurementSummary" class="empty-box"></div>
     </section>
 
     <section id="printer" class="panel section">
-      <div class="section-head"><div><p class="eyebrow">ПРОФЕССИОНАЛЬНАЯ НАСТРОЙКА</p><h2>Опрос печатника · 3×6</h2></div><button id="ensureQuestionnaire" class="ghost">Открыть / создать анкету</button></div>
-      <p class="muted">Никаких универсальных «правильных DPI». Вносим то, как реально работает ваше производство. Профиль становится VERIFIED только после подтверждения печатника и менеджера РПК.</p>
+      <div class="section-head"><div><p class="eyebrow">ПРОФЕССИОНАЛЬНАЯ НАСТРОЙКА</p><h2>Профиль печати · 3×6</h2></div><button id="ensureQuestionnaire" class="ghost">Открыть / создать анкету</button></div>
+      <p class="muted">Вносим реальные параметры производства. Профиль становится VERIFIED только после подтверждения печатника и менеджера РПК.</p>
       <form id="printerForm" hidden>
-        <input id="questionnaireId" type="hidden">
-        <div class="form-grid">
-          <label>Модель принтера<input id="printerModel" placeholder="Например, точная модель широкоформатника"></label>
-          <label>RIP / программа печати<input id="ripSoftware" placeholder="Название RIP"></label>
-          <label>Версия RIP<input id="ripVersion"></label>
-          <label>Материал<input id="materialName" placeholder="Баннерная ткань / сетка / другое"></label>
-          <label>Масштаб макета<input id="artworkScale" type="number" step="0.0001" placeholder="1 или 0.1"></label>
-          <label>DPI в сдаваемом файле<input id="targetDpi" type="number" step="0.1"></label>
-          <label>Цветовой режим<input id="colorMode" placeholder="CMYK / RGB / другое"></label>
-          <label>ICC / цветовой профиль<input id="colorProfile" placeholder="Если используется"></label>
-          <label>Вылет, мм<input id="bleedMm" type="number" step="0.1"></label>
-          <label>Безопасная зона, мм<input id="safeZoneMm" type="number" step="0.1"></label>
-          <label>Макс. размер файла, МБ<input id="maxFileMb" type="number"></label>
-          <label>Допустимые форматы<input id="allowedFormats" placeholder="PDF, TIFF, JPG, CDR"></label>
+        <input id="questionnaireId" type="hidden"><div class="form-grid">
+          <label>Модель принтера<input id="printerModel"></label><label>RIP / программа печати<input id="ripSoftware"></label><label>Версия RIP<input id="ripVersion"></label><label>Материал<input id="materialName"></label><label>Масштаб макета<input id="artworkScale" type="number" step="0.0001"></label><label>DPI<input id="targetDpi" type="number" step="0.1"></label><label>Цветовой режим<input id="colorMode"></label><label>ICC / профиль<input id="colorProfile"></label><label>Вылет, мм<input id="bleedMm" type="number" step="0.1"></label><label>Безопасная зона, мм<input id="safeZoneMm" type="number" step="0.1"></label><label>Макс. файл, МБ<input id="maxFileMb" type="number"></label><label>Форматы<input id="allowedFormats" placeholder="PDF, TIFF, JPG, CDR"></label>
         </div>
-        <label>Правило имени файла<input id="fileNamingRule" placeholder="Например CLIENT_3x6_DATE"></label>
-        <div class="checks"><label><input id="fontsCurves" type="checkbox"> Переводить шрифты в кривые</label><label><input id="rasterize" type="checkbox"> Растеризовать прозрачности</label></div>
-        <label>Дополнительные требования<textarea id="otherRequirements" rows="4"></textarea></label>
-        <div class="row"><button id="saveQuestionnaire" type="button" class="primary">Сохранить</button><button id="submitQuestionnaire" type="button" class="ghost">Отправить на согласование</button><button id="confirmPrinter" type="button" class="ghost">Подтверждает печатник</button><button id="confirmManager" type="button" class="ghost">Подтверждает менеджер</button></div>
-        <pre id="printerStatus"></pre>
-      </form>
-      <div id="verifiedProfile"></div>
+        <label>Правило имени файла<input id="fileNamingRule"></label><div class="checks"><label><input id="fontsCurves" type="checkbox"> Шрифты в кривые</label><label><input id="rasterize" type="checkbox"> Растеризовать прозрачности</label></div><label>Дополнительные требования<textarea id="otherRequirements" rows="4"></textarea></label>
+        <div class="row"><button id="saveQuestionnaire" type="button" class="primary">Сохранить</button><button id="submitQuestionnaire" type="button" class="ghost">На согласование</button><button id="confirmPrinter" type="button" class="ghost">Подтверждает печатник</button><button id="confirmManager" type="button" class="ghost">Подтверждает менеджер</button></div><pre id="printerStatus"></pre>
+      </form><div id="verifiedProfile"></div>
     </section>
 
-    <section id="queue" class="panel section"><div class="section-head"><div><p class="eyebrow">PRODUCTION</p><h2>Очередь макетов</h2></div></div><div id="jobList" class="list"></div></section>
+    <section id="modules" class="panel section">
+      <div class="section-head"><div><p class="eyebrow">АДАПТИВНЫЙ КАБИНЕТ</p><h2>Модули RPK OS</h2></div></div>
+      <p class="muted">Начинаем с нужного минимума. Склад, боты и будущие функции можно включать по мере роста — без смены системы.</p><div id="moduleList" class="module-list"></div>
+    </section>
   </section>
 </main>
 <script type="module" src="./rpk.js"></script>
