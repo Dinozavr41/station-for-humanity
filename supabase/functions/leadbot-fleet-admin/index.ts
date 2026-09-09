@@ -8,6 +8,11 @@ const READ_ROLES=new Set(["operator","finance","risk","admin"]);
 const safe=(v:any,n=500)=>String(v??"").trim().slice(0,n);
 function cors(o:string|null){const x=o&&ORIGINS.has(o)?o:"https://stationforhumanity.com";return{"Access-Control-Allow-Origin":x,"Access-Control-Allow-Headers":"authorization, x-client-info, apikey, content-type","Access-Control-Allow-Methods":"POST, OPTIONS","Vary":"Origin"}}
 function out(s:number,b:any,o:string|null){return new Response(JSON.stringify(b),{status:s,headers:{...cors(o),"content-type":"application/json; charset=utf-8"}})}
+async function resolveInstance(b:any){
+  if(b.instance_id){const {data}=await db.from("leadbot_instances").select("*").eq("id",safe(b.instance_id,100)).maybeSingle();return data}
+  if(b.order_no){const {data:o}=await db.from("orders").select("id").eq("order_no",Number(b.order_no)).maybeSingle();if(!o)return null;const {data}=await db.from("leadbot_instances").select("*").eq("order_id",o.id).maybeSingle();return data}
+  return null;
+}
 
 Deno.serve(async req=>{
   const origin=req.headers.get("origin");
@@ -30,6 +35,20 @@ Deno.serve(async req=>{
       .order("created_at",{ascending:false}).limit(100);
     if(error)return out(500,{ok:false,error:"fleet_read_failed",detail:error.message},origin);
     return out(200,{ok:true,role:p.role,instances:data||[]},origin);
+  }
+
+  if(action==="snapshot"){
+    const i=await resolveInstance(b);
+    if(!i)return out(404,{ok:false,error:"leadbot_instance_not_found"},origin);
+    const {data:r}=await db.rpc("leadbot_refresh_readiness",{p_instance_id:i.id});
+    const {data:o}=await db.from("orders").select("order_no,status,quoted_amount,currency,test_mode").eq("id",i.order_id).maybeSingle();
+    const {data:f}=await db.from("factory_requests").select("request_no,status,amount,currency,selected_options").eq("id",i.factory_request_id).maybeSingle();
+    const {data:leads,error:le}=await db.from("leadbot_leads")
+      .select("id,lead_no,source_channel,source_user_id,source_username,flow_code,contact,answers,estimate,status,sync_state,created_at,updated_at")
+      .eq("instance_id",i.id).order("created_at",{ascending:false}).limit(100);
+    if(le)return out(500,{ok:false,error:"lead_read_failed",detail:le.message},origin);
+    const {data:outbox}=await db.from("leadbot_outbox").select("id,lead_id,sink,status,attempts,last_error,next_attempt_at,created_at,updated_at").eq("instance_id",i.id).order("created_at",{ascending:false}).limit(100);
+    return out(200,{ok:true,role:p.role,instance:{...i,readiness:r||i.readiness},order:o,factory:f,leads:leads||[],outbox:outbox||[]},origin);
   }
 
   if(action==="refresh"){
