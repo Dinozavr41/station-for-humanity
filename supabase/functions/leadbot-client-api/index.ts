@@ -18,7 +18,7 @@ Deno.serve(async req=>{
   const supplied=(req.headers.get('authorization')||'').replace(/^Bearer\s+/i,'')||req.headers.get('x-api-key')||'';
   if(!supplied||!eq(String(s.webhook_token),supplied))return json(401,{ok:false,error:'invalid_api_key'});
   const limit=Math.max(1,Math.min(100,Number(u.searchParams.get('limit')||50))),status=(u.searchParams.get('status')||'').trim();
-  let q=service.from('leadbot_leads').select('lead_no,flow_code,contact,answers,estimate,status,created_at,updated_at').eq('instance_id',inst.id).order('created_at',{ascending:false}).limit(limit);
+  let q=service.from('leadbot_leads').select('lead_no,source_channel,source_user_id,source_username,flow_code,contact,answers,estimate,status,created_at,updated_at').eq('instance_id',inst.id).order('created_at',{ascending:false}).limit(limit);
   if(status)q=q.eq('status',status);
   const {data,error}=await q;if(error)return json(500,{ok:false,error:'lead_read_failed'});
   return json(200,{ok:true,schema:'sfh/leadbot-client-api/v1',instance:{slug:inst.public_slug,business_name:inst.business_name},count:(data||[]).length,leads:data||[]});
