@@ -9,8 +9,6 @@ const ROLES=new Set(["operator","finance","risk","admin"]);
 
 function cors(origin:string|null){const o=origin&&ORIGINS.has(origin)?origin:"https://stationforhumanity.com";return{"Access-Control-Allow-Origin":o,"Access-Control-Allow-Headers":"authorization, x-client-info, apikey, content-type","Access-Control-Allow-Methods":"POST, OPTIONS","Vary":"Origin"}}
 function json(status:number,body:any,origin:string|null){return new Response(JSON.stringify(body),{status,headers:{...cors(origin),"Content-Type":"application/json; charset=utf-8"}})}
-function randomToken(bytes=32){const a=new Uint8Array(bytes);crypto.getRandomValues(a);return btoa(String.fromCharCode(...a)).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/g,"")}
-async function sha256(v:string){const d=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(v));return Array.from(new Uint8Array(d)).map(x=>x.toString(16).padStart(2,"0")).join("")}
 
 Deno.serve(async req=>{
   const origin=req.headers.get("origin");
@@ -47,6 +45,19 @@ Deno.serve(async req=>{
     const allowed:any={quoted:["review","accepted","rejected","canceled"],submitted:["review","accepted","rejected","canceled"],review:["accepted","rejected","canceled"]};
     if(!(allowed[old.status]||[]).includes(next))return json(409,{ok:false,error:"invalid_transition",from:old.status,to:next},origin);
 
+    if(next==="accepted"&&old.product_code==="TGBOT_LEADS_V1"){
+      const {data:a,error:ae}=await service.rpc("accept_factory_leadbot_request",{p_request_id:id,p_actor_user_id:u.user.id});
+      if(ae)return json(500,{ok:false,error:"atomic_accept_failed",detail:ae.message},origin);
+      const onboarding={
+        url:`https://stationforhumanity.com/factory/onboard/?token=${encodeURIComponent(a.raw_token)}`,
+        expires_at:a.expires_at,
+        link_id:a.link_id,
+        template_code:a.template_code,
+        public_slug:a.public_slug
+      };
+      return json(200,{ok:true,request:{id,number:`DF-${String(a.request_no).padStart(6,"0")}`,status:"accepted"},onboarding,auto_provisioned:true});
+    }
+
     const {error}=await service.from("factory_requests").update({status:next,updated_at:new Date().toISOString()}).eq("id",id);
     if(error)return json(500,{ok:false,error:"request_update_failed",detail:error.message},origin);
 
@@ -57,20 +68,8 @@ Deno.serve(async req=>{
       }
     }
 
-    let onboarding:any=null;
-    if(next==="accepted"&&old.product_code==="TGBOT_LEADS_V1"){
-      const {data:i}=await service.from("leadbot_instances").select("id,order_id,public_slug,business_name").eq("factory_request_id",id).maybeSingle();
-      if(!i)return json(500,{ok:false,error:"leadbot_auto_provision_missing"},origin);
-      const raw=randomToken(32),hash=await sha256(raw),expires=new Date(Date.now()+72*3600_000).toISOString();
-      await service.from("leadbot_onboarding_links").update({status:"revoked"}).eq("instance_id",i.id).eq("status","active");
-      const {data:l,error:le}=await service.from("leadbot_onboarding_links").insert({instance_id:i.id,token_hash:hash,status:"active",expires_at:expires,created_by:u.user.id,metadata:{created_from:"factory_accept",request_no:old.request_no,public_slug:i.public_slug}}).select("id").single();
-      if(le)return json(500,{ok:false,error:"onboarding_link_create_failed",detail:le.message},origin);
-      onboarding={url:`https://stationforhumanity.com/factory/onboard/?token=${encodeURIComponent(raw)}`,expires_at:expires,link_id:l.id};
-      await service.from("audit_log").insert({actor_user_id:u.user.id,action:"leadbot.onboarding_link_created",entity_type:"leadbot_instance",entity_id:i.id,reason:"Factory acceptance automatically generated customer onboarding handoff.",metadata:{request_no:old.request_no,order_id:i.order_id,link_id:l.id,expires_at:expires}});
-    }
-
-    await service.from("audit_log").insert({actor_user_id:u.user.id,action:`factory.request_${next}`,entity_type:"factory_request",entity_id:id,reason:reason||"Operator transition",metadata:{request_no:old.request_no,from:old.status,to:next,order_id:old.order_id,onboarding_created:!!onboarding}});
-    return json(200,{ok:true,request:{id,number:`DF-${String(old.request_no).padStart(6,"0")}`,status:next},onboarding},origin);
+    await service.from("audit_log").insert({actor_user_id:u.user.id,action:`factory.request_${next}`,entity_type:"factory_request",entity_id:id,reason:reason||"Operator transition",metadata:{request_no:old.request_no,from:old.status,to:next,order_id:old.order_id}});
+    return json(200,{ok:true,request:{id,number:`DF-${String(old.request_no).padStart(6,"0")}`,status:next},onboarding:null},origin);
   }
 
   return json(400,{ok:false,error:"unknown_action"},origin);
