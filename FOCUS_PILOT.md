@@ -24,18 +24,18 @@ The pilot is deliberately free: it is an acceptance/customer-discovery case, not
 Target channels:
 
 - Telegram — existing `leadbot-telegram` runtime, separate BotFather token required;
-- MAX — new `leadbot-max` runtime;
-- WhatsApp — future adapter, not part of this pilot acceptance.
+- MAX — `leadbot-max` runtime;
+- WhatsApp — official Meta WhatsApp Cloud API through `leadbot-whatsapp`.
 
-Both Telegram and MAX use the same `leadbot_instances.config`, `leadbot_leads`, `leadbot_events` and canonical MiniCRM data model.
+All three channels use the same `leadbot_instances.config`, `leadbot_leads`, `leadbot_events` and canonical MiniCRM data model.
 
-Alpha 1.0 multichannel schema adds:
+Alpha 1.0/1.1 multichannel schema includes:
 
 - generic lead source fields (`source_channel`, `source_event_key`, `source_chat_id`, `source_user_id`, `source_username`);
 - `leadbot_channel_sessions`;
 - `leadbot_channel_receipts`;
-- MAX credentials in Vault;
-- readiness flags `telegram_ready` and `max_ready`.
+- MAX and WhatsApp credentials in Vault;
+- readiness flags `telegram_ready`, `max_ready` and `whatsapp_ready`.
 
 Legacy Telegram tables/functions remain intact for backward compatibility.
 
@@ -66,10 +66,36 @@ Webhook subscription uses only:
 
 The first version uses MAX `message` inline buttons so option selection arrives as ordinary text and does not depend on callback handling.
 
+## WhatsApp implementation
+
+Production Edge Functions:
+
+- `leadbot-whatsapp` — official WhatsApp Cloud API webhook runtime;
+- `leadbot-whatsapp-admin` — authenticated Station admin control for credential validation, WABA subscription and manager setup.
+
+Stored only in Vault:
+
+- access token;
+- Meta App Secret;
+- webhook verify token;
+- Phone Number ID;
+- WABA ID;
+- Graph API version;
+- optional manager WhatsApp number.
+
+Incoming webhook POST requests are verified with `X-Hub-Signature-256` using the Meta App Secret. Webhook GET verification checks the private verify token. Incoming text, reply buttons and list selections are normalized into the common LeadBot session engine and saved with `source_channel=whatsapp`.
+
+The Graph API version is configuration, not hard-coded product state, so Station can move to a supported Meta API version without changing the LeadBot data model.
+
+Free-form proactive WhatsApp messages are subject to WhatsApp customer-service messaging rules. A manager notification failure never loses the lead; the canonical MiniCRM row remains the source of truth. Approved templates should be configured for dependable proactive production notifications outside the customer-service window.
+
 ## Live safeguards
 
 - Focus instance stays inactive until real channel credentials are supplied.
-- A production probe before credentials returned expected `503 instance_inactive`.
+- MAX production probe before credentials returned expected `503 instance_inactive`.
+- WhatsApp webhook GET without a valid verify token returned expected `403 verification_failed`.
+- WhatsApp webhook POST while the Focus instance is inactive returned expected `503 instance_inactive`.
+- WhatsApp admin endpoint without Station authorization returned expected `401`.
 - Existing Telegram production instance remained active after the multichannel migration with `telegram_ready=true`.
 - New channel/session tables use RLS with no direct anon/authenticated policies; service-role Edge Functions are the access boundary.
 
@@ -90,6 +116,17 @@ The first version uses MAX `message` inline buttons so option selection arrives 
 3. Activate Telegram webhook.
 4. Bind manager chat and run the same acceptance.
 
+### WhatsApp
+
+1. Create/use a Meta Business Portfolio and WhatsApp Business Account for ООО «Фокус».
+2. Add and verify the business phone number in WhatsApp Business Platform.
+3. Obtain the access token, Meta App Secret, Phone Number ID, WABA ID and the currently supported Graph API version from Meta.
+4. Enter these values only in the protected Station Operator Console WhatsApp panel; Station validates the phone and stores secrets in Vault.
+5. Set the manager phone if WhatsApp manager notifications are desired.
+6. Activate the WABA subscription from Station.
+7. Complete a real WhatsApp questionnaire and confirm a `source_channel=whatsapp` lead appears in the same MiniCRM.
+8. Configure an approved WhatsApp message template before relying on proactive manager notifications outside the customer-service window.
+
 ## Acceptance target
 
-The pilot is accepted only after at least one real customer-like lead is completed in MAX and one in Telegram, both appear in the same Station lead store with the correct `source_channel`, and the manager receives the expected notification without duplicate leads.
+The pilot is accepted only after at least one real customer-like lead is completed in Telegram, MAX and WhatsApp. All three leads must appear in the same Station lead store with the correct `source_channel`, without duplicates, while the existing Telegram production instance remains unaffected.
