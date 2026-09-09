@@ -9,7 +9,7 @@ const MANAGE_ROLES=new Set(["platform_admin","owner","manager"]);
 const STAGES=new Set(["lead","qualified","quote","approved","production","ready","won","lost"]);
 const DOC_TYPES=new Set(["quote","invoice","contract","act","work_order","other"]);
 const safe=(v:any,n=1000)=>String(v??"").trim().slice(0,n);
-const num=(v:any)=>{const n=Number(v);return Number.isFinite(n)?n:null};
+const num=(v:any)=>{if(v===null||v===undefined||v==='')return null;const n=Number(v);return Number.isFinite(n)?n:null};
 function cors(o:string|null){const x=o&&ORIGINS.has(o)?o:"https://stationforhumanity.com";return{"Access-Control-Allow-Origin":x,"Access-Control-Allow-Headers":"authorization, x-client-info, apikey, content-type","Access-Control-Allow-Methods":"POST, OPTIONS","Vary":"Origin"}}
 function out(s:number,b:any,o:string|null){return new Response(JSON.stringify(b),{status:s,headers:{...cors(o),"content-type":"application/json; charset=utf-8","cache-control":"no-store"}})}
 async function access(userId:string,slug:string){
@@ -22,9 +22,7 @@ async function access(userId:string,slug:string){
   if(!m||m.status!=="active")return null;
   return {workspace:w,role:m.role,platform:false};
 }
-async function audit(userId:string,action:string,entityType:string,entityId:string,metadata:any={}){
-  await db.from("audit_log").insert({actor_user_id:userId,action,entity_type:entityType,entity_id:entityId,reason:"RPK OS user action",metadata}).catch(()=>null);
-}
+async function audit(userId:string,action:string,entityType:string,entityId:string,metadata:any={}){try{await db.from("audit_log").insert({actor_user_id:userId,action,entity_type:entityType,entity_id:entityId,reason:"RPK OS user action",metadata})}catch{}}
 async function clientInWorkspace(workspaceId:string,clientId:string){if(!clientId)return null;const {data}=await db.from("rpk_clients").select("id,name").eq("id",clientId).eq("workspace_id",workspaceId).maybeSingle();return data||null}
 async function dealInWorkspace(workspaceId:string,dealId:string){if(!dealId)return null;const {data}=await db.from("rpk_deals").select("*").eq("id",dealId).eq("workspace_id",workspaceId).maybeSingle();return data||null}
 
@@ -51,7 +49,7 @@ Deno.serve(async req=>{
     if(!MANAGE_ROLES.has(role))return out(403,{ok:false,error:"manager_role_required"},origin);
     const title=safe(b.title,220);if(title.length<2)return out(400,{ok:false,error:"deal_title_required"},origin);
     const clientId=safe(b.client_id,80)||null;if(clientId&&!(await clientInWorkspace(w.id,clientId)))return out(400,{ok:false,error:"client_not_in_workspace"},origin);
-    const amount=num(b.amount),cost=num(b.cost_estimate);if(amount!=null&&amount<0||cost!=null&&cost<0)return out(400,{ok:false,error:"negative_money_not_allowed"},origin);
+    const amount=num(b.amount),cost=num(b.cost_estimate);if((amount!=null&&amount<0)||(cost!=null&&cost<0))return out(400,{ok:false,error:"negative_money_not_allowed"},origin);
     const stage=STAGES.has(safe(b.stage,30))?safe(b.stage,30):"lead";
     const row:any={workspace_id:w.id,client_id:clientId,source:"manual",title,stage,owner_user_id:u.user.id,amount,cost_estimate:cost,margin_estimate:amount!=null&&cost!=null?amount-cost:null,next_action:safe(b.next_action,500)||null,notes:safe(b.notes,2000)||null};
     if(b.next_action_at)row.next_action_at=new Date(b.next_action_at).toISOString();
@@ -67,8 +65,8 @@ Deno.serve(async req=>{
     const patch:any={updated_at:new Date().toISOString()};
     if(b.stage!=null){const s=safe(b.stage,30);if(!STAGES.has(s))return out(400,{ok:false,error:"invalid_deal_stage"},origin);patch.stage=s;}
     if(b.title!=null){const t=safe(b.title,220);if(t.length<2)return out(400,{ok:false,error:"deal_title_required"},origin);patch.title=t;}
-    let amount=b.amount===undefined?(old.amount==null?null:Number(old.amount)):num(b.amount),cost=b.cost_estimate===undefined?(old.cost_estimate==null?null:Number(old.cost_estimate)):num(b.cost_estimate);
-    if(amount!=null&&amount<0||cost!=null&&cost<0)return out(400,{ok:false,error:"negative_money_not_allowed"},origin);
+    const amount=b.amount===undefined?(old.amount==null?null:Number(old.amount)):num(b.amount),cost=b.cost_estimate===undefined?(old.cost_estimate==null?null:Number(old.cost_estimate)):num(b.cost_estimate);
+    if((amount!=null&&amount<0)||(cost!=null&&cost<0))return out(400,{ok:false,error:"negative_money_not_allowed"},origin);
     if(b.amount!==undefined)patch.amount=amount;if(b.cost_estimate!==undefined)patch.cost_estimate=cost;if(b.amount!==undefined||b.cost_estimate!==undefined)patch.margin_estimate=amount!=null&&cost!=null?amount-cost:null;
     if(b.next_action!==undefined)patch.next_action=safe(b.next_action,500)||null;
     if(b.next_action_at!==undefined)patch.next_action_at=b.next_action_at?new Date(b.next_action_at).toISOString():null;
@@ -119,7 +117,7 @@ Deno.serve(async req=>{
     const state=new Map((states||[]).map((x:any)=>[x.module_code,x.enabled]));
     if(enabled){const missing=(mod.dependencies||[]).filter((d:string)=>state.get(d)!==true);if(missing.length)return out(409,{ok:false,error:"module_dependencies_disabled",dependencies:missing},origin);}
     else{const dependents=(mods||[]).filter((m:any)=>(m.dependencies||[]).includes(code)&&state.get(m.code)===true).map((m:any)=>m.code);if(dependents.length)return out(409,{ok:false,error:"enabled_modules_depend_on_this",dependents},origin);}
-    const {error}=await db.from("rpk_workspace_modules").upsert({workspace_id:w.id,module_code:code,enabled,enabled_at:enabled?new Date().toISOString():new Date().toISOString(),disabled_at:enabled?null:new Date().toISOString()},{onConflict:"workspace_id,module_code"});
+    const {error}=await db.from("rpk_workspace_modules").upsert({workspace_id:w.id,module_code:code,enabled,enabled_at:new Date().toISOString(),disabled_at:enabled?null:new Date().toISOString()},{onConflict:"workspace_id,module_code"});
     if(error)return out(500,{ok:false,error:"module_toggle_failed",detail:error.message},origin);
     await audit(u.user.id,"rpk.module_toggled","rpk_workspace",w.id,{module_code:code,enabled});
     return out(200,{ok:true,module_code:code,enabled},origin);
