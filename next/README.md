@@ -27,13 +27,15 @@ No forms, payment calls, mock statistics, artificial completion badges or new ba
 
 `npm run dev` serves the repository read-only for supervised browser QA. `qa/viewports.html` hosts the actual pages in 390×844 and 1440×1000 iframes, with page/device selectors. This harness is development-only. `qa/assets.json` records native/output dimensions and compressed file sizes.
 
-## Acceptance status: NOT PASSED
+## Acceptance status: APPROVED BY USER — 2026-09-09
 
-The supervised server started, but the session browser refused the internal preview with `net::ERR_BLOCKED_BY_CLIENT` twice. No desktop/mobile screenshots could be captured. Do not claim pixel equivalence or visual acceptance. No user-facing preview is handed off before the mandatory visual gate.
+The user explicitly approved the home page and “История большой мечты” on desktop and mobile, and instructed us to preserve this result in `frontend-v2-exact`. The accepted implementation is commit `3d6cb1df3b66c38239e1193e99395d35f2e22721`. See [ACCEPTANCE.md](ACCEPTANCE.md) for the exact approval and scope freeze.
 
-Required next gate: capture both pages at 390×844 and 1440×1000, inspect the complete pages as well as first viewports, test mobile navigation and chapter links, compare to mapped references, fix any visible regression, then provide screenshots and verified branch preview URL. Do not merge main.
+The earlier agent browser attempt was blocked by `net::ERR_BLOCKED_BY_CLIENT`; agent-captured screenshots at 390×844 and 1440×1000 were not obtained. The user subsequently inspected the preview and approved both pages. This is user acceptance, not a claim that automated visual QA or pixel-equivalence verification passed. `qa/static-checks.json` preserves the earlier check results as historical evidence.
 
-## Known differences requiring visual review
+Stage 1 is closed. Do not change the approved frontend, expand to further pages, merge into `main`, or deploy to production without a separate explicit user instruction.
+
+## Recorded differences in the approved version
 
 - Scene artworks were reconstructed separately; fine details are not pixel-identical.
 - Home/story hero originals are 1774×887; supporting originals are 1536×1024. No derivative is upscaled. Larger originals are still needed for truly high-density desktop hero display.
