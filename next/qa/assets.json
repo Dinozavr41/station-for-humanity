@@ -1,0 +1,394 @@
+[
+  {
+    "file": "art/ai-lab-640.webp",
+    "width": 640,
+    "height": 427,
+    "bytes": 111170,
+    "source_width": 1536
+  },
+  {
+    "file": "art/ai-lab-640.avif",
+    "width": 640,
+    "height": 427,
+    "bytes": 100871,
+    "source_width": 1536
+  },
+  {
+    "file": "art/ai-lab-1280.webp",
+    "width": 1280,
+    "height": 853,
+    "bytes": 327788,
+    "source_width": 1536
+  },
+  {
+    "file": "art/ai-lab-1280.avif",
+    "width": 1280,
+    "height": 853,
+    "bytes": 286071,
+    "source_width": 1536
+  },
+  {
+    "file": "art/result-640.webp",
+    "width": 640,
+    "height": 427,
+    "bytes": 99726,
+    "source_width": 1536
+  },
+  {
+    "file": "art/result-640.avif",
+    "width": 640,
+    "height": 427,
+    "bytes": 90564,
+    "source_width": 1536
+  },
+  {
+    "file": "art/result-1280.webp",
+    "width": 1280,
+    "height": 853,
+    "bytes": 343874,
+    "source_width": 1536
+  },
+  {
+    "file": "art/result-1280.avif",
+    "width": 1280,
+    "height": 853,
+    "bytes": 300990,
+    "source_width": 1536
+  },
+  {
+    "file": "art/earth-640.webp",
+    "width": 640,
+    "height": 427,
+    "bytes": 96144,
+    "source_width": 1536
+  },
+  {
+    "file": "art/earth-640.avif",
+    "width": 640,
+    "height": 427,
+    "bytes": 91761,
+    "source_width": 1536
+  },
+  {
+    "file": "art/earth-1280.webp",
+    "width": 1280,
+    "height": 853,
+    "bytes": 333224,
+    "source_width": 1536
+  },
+  {
+    "file": "art/earth-1280.avif",
+    "width": 1280,
+    "height": 853,
+    "bytes": 309409,
+    "source_width": 1536
+  },
+  {
+    "file": "art/people-640.webp",
+    "width": 640,
+    "height": 427,
+    "bytes": 88236,
+    "source_width": 1536
+  },
+  {
+    "file": "art/people-640.avif",
+    "width": 640,
+    "height": 427,
+    "bytes": 80255,
+    "source_width": 1536
+  },
+  {
+    "file": "art/people-1280.webp",
+    "width": 1280,
+    "height": 853,
+    "bytes": 241022,
+    "source_width": 1536
+  },
+  {
+    "file": "art/people-1280.avif",
+    "width": 1280,
+    "height": 853,
+    "bytes": 219241,
+    "source_width": 1536
+  },
+  {
+    "file": "art/dream-640.webp",
+    "width": 640,
+    "height": 427,
+    "bytes": 115022,
+    "source_width": 1536
+  },
+  {
+    "file": "art/dream-640.avif",
+    "width": 640,
+    "height": 427,
+    "bytes": 107259,
+    "source_width": 1536
+  },
+  {
+    "file": "art/dream-1280.webp",
+    "width": 1280,
+    "height": 853,
+    "bytes": 385038,
+    "source_width": 1536
+  },
+  {
+    "file": "art/dream-1280.avif",
+    "width": 1280,
+    "height": 853,
+    "bytes": 348441,
+    "source_width": 1536
+  },
+  {
+    "file": "art/story-hero-640.webp",
+    "width": 640,
+    "height": 320,
+    "bytes": 69818,
+    "source_width": 1774
+  },
+  {
+    "file": "art/story-hero-640.avif",
+    "width": 640,
+    "height": 320,
+    "bytes": 67298,
+    "source_width": 1774
+  },
+  {
+    "file": "art/story-hero-1280.webp",
+    "width": 1280,
+    "height": 640,
+    "bytes": 253760,
+    "source_width": 1774
+  },
+  {
+    "file": "art/story-hero-1280.avif",
+    "width": 1280,
+    "height": 640,
+    "bytes": 237021,
+    "source_width": 1774
+  },
+  {
+    "file": "art/story-hero-1774.webp",
+    "width": 1774,
+    "height": 887,
+    "bytes": 434106,
+    "source_width": 1774
+  },
+  {
+    "file": "art/story-hero-1774.avif",
+    "width": 1774,
+    "height": 887,
+    "bytes": 397063,
+    "source_width": 1774
+  },
+  {
+    "file": "art/fund-640.webp",
+    "width": 640,
+    "height": 427,
+    "bytes": 95042,
+    "source_width": 1536
+  },
+  {
+    "file": "art/fund-640.avif",
+    "width": 640,
+    "height": 427,
+    "bytes": 88000,
+    "source_width": 1536
+  },
+  {
+    "file": "art/fund-1280.webp",
+    "width": 1280,
+    "height": 853,
+    "bytes": 305876,
+    "source_width": 1536
+  },
+  {
+    "file": "art/fund-1280.avif",
+    "width": 1280,
+    "height": 853,
+    "bytes": 275817,
+    "source_width": 1536
+  },
+  {
+    "file": "art/home-hero-640.webp",
+    "width": 640,
+    "height": 320,
+    "bytes": 67860,
+    "source_width": 1774
+  },
+  {
+    "file": "art/home-hero-640.avif",
+    "width": 640,
+    "height": 320,
+    "bytes": 63888,
+    "source_width": 1774
+  },
+  {
+    "file": "art/home-hero-1280.webp",
+    "width": 1280,
+    "height": 640,
+    "bytes": 233068,
+    "source_width": 1774
+  },
+  {
+    "file": "art/home-hero-1280.avif",
+    "width": 1280,
+    "height": 640,
+    "bytes": 215742,
+    "source_width": 1774
+  },
+  {
+    "file": "art/home-hero-1774.webp",
+    "width": 1774,
+    "height": 887,
+    "bytes": 394764,
+    "source_width": 1774
+  },
+  {
+    "file": "art/home-hero-1774.avif",
+    "width": 1774,
+    "height": 887,
+    "bytes": 354907,
+    "source_width": 1774
+  },
+  {
+    "file": "art/workshop-640.webp",
+    "width": 640,
+    "height": 427,
+    "bytes": 88080,
+    "source_width": 1536
+  },
+  {
+    "file": "art/workshop-640.avif",
+    "width": 640,
+    "height": 427,
+    "bytes": 77665,
+    "source_width": 1536
+  },
+  {
+    "file": "art/workshop-1280.webp",
+    "width": 1280,
+    "height": 853,
+    "bytes": 230490,
+    "source_width": 1536
+  },
+  {
+    "file": "art/workshop-1280.avif",
+    "width": 1280,
+    "height": 853,
+    "bytes": 201583,
+    "source_width": 1536
+  },
+  {
+    "file": "art/station-640.webp",
+    "width": 640,
+    "height": 427,
+    "bytes": 96566,
+    "source_width": 1536
+  },
+  {
+    "file": "art/station-640.avif",
+    "width": 640,
+    "height": 427,
+    "bytes": 91276,
+    "source_width": 1536
+  },
+  {
+    "file": "art/station-1280.webp",
+    "width": 1280,
+    "height": 853,
+    "bytes": 336298,
+    "source_width": 1536
+  },
+  {
+    "file": "art/station-1280.avif",
+    "width": 1280,
+    "height": 853,
+    "bytes": 304831,
+    "source_width": 1536
+  },
+  {
+    "file": "art/council-640.webp",
+    "width": 640,
+    "height": 427,
+    "bytes": 92772,
+    "source_width": 1536
+  },
+  {
+    "file": "art/council-640.avif",
+    "width": 640,
+    "height": 427,
+    "bytes": 84974,
+    "source_width": 1536
+  },
+  {
+    "file": "art/council-1280.webp",
+    "width": 1280,
+    "height": 853,
+    "bytes": 288610,
+    "source_width": 1536
+  },
+  {
+    "file": "art/council-1280.avif",
+    "width": 1280,
+    "height": 853,
+    "bytes": 256929,
+    "source_width": 1536
+  },
+  {
+    "file": "art/factory-640.webp",
+    "width": 640,
+    "height": 427,
+    "bytes": 108700,
+    "source_width": 1536
+  },
+  {
+    "file": "art/factory-640.avif",
+    "width": 640,
+    "height": 427,
+    "bytes": 98389,
+    "source_width": 1536
+  },
+  {
+    "file": "art/factory-1280.webp",
+    "width": 1280,
+    "height": 853,
+    "bytes": 334434,
+    "source_width": 1536
+  },
+  {
+    "file": "art/factory-1280.avif",
+    "width": 1280,
+    "height": 853,
+    "bytes": 295502,
+    "source_width": 1536
+  },
+  {
+    "file": "art/flight-640.webp",
+    "width": 640,
+    "height": 427,
+    "bytes": 93824,
+    "source_width": 1536
+  },
+  {
+    "file": "art/flight-640.avif",
+    "width": 640,
+    "height": 427,
+    "bytes": 88123,
+    "source_width": 1536
+  },
+  {
+    "file": "art/flight-1280.webp",
+    "width": 1280,
+    "height": 853,
+    "bytes": 309044,
+    "source_width": 1536
+  },
+  {
+    "file": "art/flight-1280.avif",
+    "width": 1280,
+    "height": 853,
+    "bytes": 282841,
+    "source_width": 1536
+  }
+]

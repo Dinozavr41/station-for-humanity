@@ -1,0 +1,30 @@
+{
+  "index.html": {
+    "images": 17,
+    "local_references": 92,
+    "external_destinations": [
+      "https://stationforhumanity.com/#join",
+      "https://stationforhumanity.com/#modules",
+      "https://stationforhumanity.com/#value",
+      "https://stationforhumanity.com/constitution.html",
+      "https://stationforhumanity.com/factory/",
+      "https://stationforhumanity.com/operator.html"
+    ]
+  },
+  "story.html": {
+    "images": 23,
+    "local_references": 122,
+    "external_destinations": [
+      "https://stationforhumanity.com/#dream001",
+      "https://stationforhumanity.com/#join",
+      "https://stationforhumanity.com/#modules",
+      "https://stationforhumanity.com/#social",
+      "https://stationforhumanity.com/#value",
+      "https://stationforhumanity.com/constitution.html",
+      "https://stationforhumanity.com/factory/",
+      "https://stationforhumanity.com/operator.html"
+    ]
+  },
+  "errors": [],
+  "visual_gate": "BLOCKED: browser ERR_BLOCKED_BY_CLIENT"
+}

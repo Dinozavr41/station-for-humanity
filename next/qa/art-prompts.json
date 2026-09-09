@@ -1,0 +1,90 @@
+[
+  {
+    "name": "home-hero",
+    "prompt": "Use case: illustration-story. Create one standalone high-resolution cinematic scene artwork as an asset, reconstructing the specified artwork from the provided Station for Humanity reference mockup. Faithfully retain reference visual style and scene composition: detailed cinematic matte-painting, sharp photoreal surfaces, rich deep navy and cyan blue with restrained warm golden sunrise highlights. Full bleed scene, NO webpage, no UI, no cards, no panel borders, no buttons, no text, no logos, no calligraphy, no numbers, no watermarks. Reconstruct ONLY the upper hero background scene, stripped of all overlaid UI and writing, filling a 3072x1536 landscape canvas. Deep navy starry upper sky, enormous luminous curved Earth with subtle interconnected lights behind alpine snowcapped mountains and a pristine lake, golden modern distant city on right, sleek metallic VERTICAL orbital station with horizontal rings and solar panels suspended at top right. Seven diverse people seen from behind in navy expedition jackets and backpacks in foreground center-right, one white hardhat. Keep left upper half dark navy and empty, mountains and lake low beneath it for live title overlay. No branding on clothing.",
+    "ref": "/workspace/scratch/3ade992adffa/upload/image-gen-1(4).png",
+    "source": "/workspace/scratch/3ade992adffa/generated_images/exec-3fbf6aae-c59f-43ef-91f4-45b777272e63.png",
+    "destination": "/workspace/scratch/3ade992adffa/generated-scenes/home-hero.png"
+  },
+  {
+    "name": "story-hero",
+    "prompt": "Use case: illustration-story. Create one standalone high-resolution cinematic scene artwork as an asset, reconstructing the specified artwork from the provided Station for Humanity reference mockup. Faithfully retain reference visual style and scene composition: detailed cinematic matte-painting, sharp photoreal surfaces, rich deep navy and cyan blue with restrained warm golden sunrise highlights. Full bleed scene, NO webpage, no UI, no cards, no panel borders, no buttons, no text, no logos, no calligraphy, no numbers, no watermarks. Reconstruct ONLY the upper hero background scene, stripped of all overlaid UI and writing, filling a 3072x1536 landscape canvas. Deep navy starlit sky, enormous luminous curved Earth with subtle interconnected gold lights behind alpine snowcapped mountains, forest lake and golden distant futuristic city on right. Sleek metallic VERTICAL orbital station with horizontal rings and solar panels suspended top right. Sole male hiker seated seen from behind with dark backpack and navy expedition jacket at center-right foreground, contemplating the lake. Keep left upper half dark and empty for live title overlay. No branding.",
+    "ref": "/workspace/scratch/3ade992adffa/upload/image-gen-2(4).png",
+    "source": "/workspace/scratch/3ade992adffa/generated_images/exec-4c841287-5d1a-4efd-b48f-6477ee6badef.png",
+    "destination": "/workspace/scratch/3ade992adffa/generated-scenes/story-hero.png"
+  },
+  {
+    "name": "dream",
+    "prompt": "Use case: illustration-story. Create one standalone high-resolution cinematic scene artwork as an asset, reconstructing the specified artwork from the provided Station for Humanity reference mockup. Faithfully retain reference visual style and scene composition: detailed cinematic matte-painting, sharp photoreal surfaces, rich deep navy and cyan blue with restrained warm golden sunrise highlights. Full bleed scene, NO webpage, no UI, no cards, no panel borders, no buttons, no text, no logos, no calligraphy, no numbers, no watermarks. Reconstruct ONLY artwork in story card 1: back view of sole young male hiker with dark backpack and navy expedition jacket on rocky alpine viewpoint, majestic snowcapped mountains and forest lake in golden morning light. Match the card scene closely. No space station or city. Landscape 1536x1024.",
+    "ref": "/workspace/scratch/3ade992adffa/upload/image-gen-1(3).png",
+    "source": "/workspace/scratch/3ade992adffa/generated_images/exec-9a717b8c-dfe9-4fdc-bf6c-20105c9d99f1.png",
+    "destination": "/workspace/scratch/3ade992adffa/generated-scenes/dream.png"
+  },
+  {
+    "name": "flight",
+    "prompt": "Use case: illustration-story. Create one standalone high-resolution cinematic scene artwork as an asset, reconstructing the specified artwork from the provided Station for Humanity reference mockup. Faithfully retain reference visual style and scene composition: detailed cinematic matte-painting, sharp photoreal surfaces, rich deep navy and cyan blue with restrained warm golden sunrise highlights. Full bleed scene, NO webpage, no UI, no cards, no panel borders, no buttons, no text, no logos, no calligraphy, no numbers, no watermarks. Reconstruct ONLY artwork in story card 2: small sleek white amphibious airplane in flight above a pristine blue alpine lake with pine forests and snowcapped mountains beneath a pale blue and softly golden sky. Plane pointing to the right, angled upward slightly. Match card scene closely. Landscape 1536x1024.",
+    "ref": "/workspace/scratch/3ade992adffa/upload/image-gen-1(3).png",
+    "source": "/workspace/scratch/3ade992adffa/generated_images/exec-c13925bf-9801-40c2-a7dd-9e10855b2802.png",
+    "destination": "/workspace/scratch/3ade992adffa/generated-scenes/flight.png"
+  },
+  {
+    "name": "factory",
+    "prompt": "Use case: illustration-story. Create one standalone high-resolution cinematic scene artwork as an asset, reconstructing the specified artwork from the provided Station for Humanity reference mockup. Faithfully retain reference visual style and scene composition: detailed cinematic matte-painting, sharp photoreal surfaces, rich deep navy and cyan blue with restrained warm golden sunrise highlights. Full bleed scene, NO webpage, no UI, no cards, no panel borders, no buttons, no text, no logos, no calligraphy, no numbers, no watermarks. Reconstruct ONLY artwork in story card 3: modern angular glass blue Digital Factory building in an alpine setting, warm amber interior windows, dark blue glass exterior, golden early evening light, pine trees and mountain surroundings. Match card scene closely. No text including no signage, no people necessary. Landscape 1536x1024.",
+    "ref": "/workspace/scratch/3ade992adffa/upload/image-gen-1(3).png",
+    "source": "/workspace/scratch/3ade992adffa/generated_images/exec-30333e63-0728-44db-b507-7b34996e1baf.png",
+    "destination": "/workspace/scratch/3ade992adffa/generated-scenes/factory.png"
+  },
+  {
+    "name": "fund",
+    "prompt": "Use case: illustration-story. Create one standalone high-resolution cinematic scene artwork as an asset, reconstructing the specified artwork from the provided Station for Humanity reference mockup. Faithfully retain reference visual style and scene composition: detailed cinematic matte-painting, sharp photoreal surfaces, rich deep navy and cyan blue with restrained warm golden sunrise highlights. Full bleed scene, NO webpage, no UI, no cards, no panel borders, no buttons, no text, no logos, no calligraphy, no numbers, no watermarks. Reconstruct ONLY artwork in story card 4: futuristic transparent glass cylindrical fund chamber on circular metallic plinth, luminous cyan rim lighting, illuminated warm golden symbolic coins inside, elegant dark blue technological city background. Match card scene closely, cylinder centered. NO labels, no percentages, no balances, no numerals. Landscape 1536x1024.",
+    "ref": "/workspace/scratch/3ade992adffa/upload/image-gen-1(3).png",
+    "source": "/workspace/scratch/3ade992adffa/generated_images/exec-dbc30337-41ad-4247-aeef-cd112ff9a1f8.png",
+    "destination": "/workspace/scratch/3ade992adffa/generated-scenes/fund.png"
+  },
+  {
+    "name": "result",
+    "prompt": "Use case: illustration-story. Create one standalone high-resolution cinematic scene artwork as an asset, reconstructing the specified artwork from the provided Station for Humanity reference mockup. Faithfully retain reference visual style and scene composition: detailed cinematic matte-painting, sharp photoreal surfaces, rich deep navy and cyan blue with restrained warm golden sunrise highlights. Full bleed scene, NO webpage, no UI, no cards, no panel borders, no buttons, no text, no logos, no calligraphy, no numbers, no watermarks. Reconstruct ONLY artwork in story card 5: aspirational cinematic illustration of male adventurer seen from behind wearing navy expedition jacket, joyfully lifting arms beside small white amphibious airplane at alpine lake airstrip, snowcapped mountains, pine forest, golden soft sunlight. Match reference scene closely. Landscape 1536x1024.",
+    "ref": "/workspace/scratch/3ade992adffa/upload/image-gen-1(3).png",
+    "source": "/workspace/scratch/3ade992adffa/generated_images/exec-b3606903-111b-45af-b531-7823622ee464.png",
+    "destination": "/workspace/scratch/3ade992adffa/generated-scenes/result.png"
+  },
+  {
+    "name": "people",
+    "prompt": "Use case: illustration-story. Create one standalone high-resolution cinematic scene artwork as an asset, reconstructing the specified artwork from the provided Station for Humanity reference mockup. Faithfully retain reference visual style and scene composition: detailed cinematic matte-painting, sharp photoreal surfaces, rich deep navy and cyan blue with restrained warm golden sunrise highlights. Full bleed scene, NO webpage, no UI, no cards, no panel borders, no buttons, no text, no logos, no calligraphy, no numbers, no watermarks. Reconstruct ONLY artwork in story card 6: six diverse adult makers and engineers, men and women with warm natural smiles standing together, navy expedition jackets, two women at front with light blue work shirts, varied skin tones, one man in baseball cap, alpine mountains and softly golden city backdrop. Friendly candid group medium portrait matching reference. No logos. Landscape 1536x1024.",
+    "ref": "/workspace/scratch/3ade992adffa/upload/image-gen-1(3).png",
+    "source": "/workspace/scratch/3ade992adffa/generated_images/exec-4775e8bb-e5ee-4cfe-b6f1-d3985f8bedd7.png",
+    "destination": "/workspace/scratch/3ade992adffa/generated-scenes/people.png"
+  },
+  {
+    "name": "earth",
+    "prompt": "Use case: illustration-story. Create one standalone high-resolution cinematic scene artwork as an asset, reconstructing the specified artwork from the provided Station for Humanity reference mockup. Faithfully retain reference visual style and scene composition: detailed cinematic matte-painting, sharp photoreal surfaces, rich deep navy and cyan blue with restrained warm golden sunrise highlights. Full bleed scene, NO webpage, no UI, no cards, no panel borders, no buttons, no text, no logos, no calligraphy, no numbers, no watermarks. Reconstruct ONLY artwork in story card 7: blue network-connected Earth viewed from orbit, curved globe filling most lower canvas with Asia and Europe, thin elegant cyan connection arcs and restrained radiant golden nodes, luminous cyan atmospheric rim, deep navy starry cosmos. Match reference card closely. No lettering or symbols. Landscape 1536x1024.",
+    "ref": "/workspace/scratch/3ade992adffa/upload/image-gen-1(3).png",
+    "source": "/workspace/scratch/3ade992adffa/generated_images/exec-1b75872b-a815-44b4-8fba-d9fd58df4710.png",
+    "destination": "/workspace/scratch/3ade992adffa/generated-scenes/earth.png"
+  },
+  {
+    "name": "station",
+    "prompt": "Use case: illustration-story. Create one standalone high-resolution cinematic scene artwork as an asset, reconstructing the specified artwork from the provided Station for Humanity reference mockup. Faithfully retain reference visual style and scene composition: detailed cinematic matte-painting, sharp photoreal surfaces, rich deep navy and cyan blue with restrained warm golden sunrise highlights. Full bleed scene, NO webpage, no UI, no cards, no panel borders, no buttons, no text, no logos, no calligraphy, no numbers, no watermarks. Reconstruct ONLY artwork in story card 8: magnificent metallic orbital station with vertical central spindle and stacked horizontal circular rotating rings, delicate gold and cyan lighting, upright solar panel arrays, above immense curved luminous blue Earth with clouds, deep navy cosmic space. Match station design and card scene closely. Landscape 1536x1024.",
+    "ref": "/workspace/scratch/3ade992adffa/upload/image-gen-1(3).png",
+    "source": "/workspace/scratch/3ade992adffa/generated_images/exec-f1c78c96-a473-49ce-85ac-93d2c5eb4aac.png",
+    "destination": "/workspace/scratch/3ade992adffa/generated-scenes/station.png"
+  },
+  {
+    "name": "ai-lab",
+    "prompt": "Reconstruct standalone artwork from the AI DOCK module card of the reference: human engineer seen from behind at advanced workstation facing a large luminous blue holographic human brain, futuristic laboratory filled with crisp blue screens, dark metallic walls and subtle warm ceiling light. High-detail cinematic illustration matching reference.",
+    "source": "/workspace/scratch/3ade992adffa/generated_images/exec-3688a6f1-3b9d-45a7-a58d-0ae8de4cbbe1.png",
+    "destination": "/workspace/scratch/3ade992adffa/generated-scenes/ai-lab.png"
+  },
+  {
+    "name": "workshop",
+    "prompt": "Reconstruct standalone artwork from MAKER DOCK module card of the reference: human engineers in navy work clothes operating white industrial robotic arms in an advanced manufacturing workshop, one bright golden spark at center, dark futuristic blue surroundings with warm ceiling lights. High-detail cinematic illustration matching reference.",
+    "source": "/workspace/scratch/3ade992adffa/generated_images/exec-b229f8c9-f431-4945-9507-2e8233ca68b8.png",
+    "destination": "/workspace/scratch/3ade992adffa/generated-scenes/workshop.png"
+  },
+  {
+    "name": "council",
+    "prompt": "Reconstruct standalone artwork from the Constitution/Knowledge card of reference: diverse adult team seen mostly from behind seated around a meeting table in dark futuristic orbital station room, monumental blue Earth visible through huge curved window, high-tech cyan lit interior, restrained warm lights. High-detail cinematic illustration matching reference.",
+    "source": "/workspace/scratch/3ade992adffa/generated_images/exec-525f5676-5498-4de7-98ee-ce3b0207be23.png",
+    "destination": "/workspace/scratch/3ade992adffa/generated-scenes/council.png"
+  }
+]
