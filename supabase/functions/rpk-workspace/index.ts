@@ -120,7 +120,7 @@ Deno.serve(async req=>{
     const clientId=safe(b.client_id,80)||null;if(clientId){const {data:c}=await db.from("rpk_clients").select("id").eq("id",clientId).eq("workspace_id",w.id).maybeSingle();if(!c)return out(400,{ok:false,error:"client_not_in_workspace"},origin);}
     const {data:a,error}=await db.from("rpk_legacy_artworks").insert({workspace_id:w.id,batch_id:batchId||null,client_id:clientId,storage_path:path,original_name:original,file_ext:fileExt(original),mime_type:safe(b.mime_type,160)||null,byte_size:Number(b.byte_size||0)||null,sha256:safe(b.sha256,128)||null,product_type:safe(b.product_type,80)||null,width_mm:b.width_mm==null?null:Number(b.width_mm),height_mm:b.height_mm==null?null:Number(b.height_mm),client_match_state:clientId?"confirmed":"unmatched",status:"received",metadata:{source:"cabinet_upload"}}).select("*").single();
     if(error)return out(500,{ok:false,error:"archive_register_failed",detail:error.message},origin);
-    if(batchId)await db.from("rpk_archive_batches").update({status:"uploaded",file_count:db.rpc?undefined:undefined,updated_at:new Date().toISOString()}).eq("id",batchId).eq("workspace_id",w.id);
+    if(batchId){const {count}=await db.from("rpk_legacy_artworks").select("id",{count:"exact",head:true}).eq("batch_id",batchId);await db.from("rpk_archive_batches").update({status:"uploaded",file_count:Number(count||0),updated_at:new Date().toISOString()}).eq("id",batchId).eq("workspace_id",w.id);}
     return out(200,{ok:true,artwork:a},origin);
   }
 
