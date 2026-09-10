@@ -8,6 +8,9 @@ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const money=v=>(Number(v)||0).toLocaleString('ru-RU',{maximumFractionDigits:0})+' ₽';
 const PENDING_KEY='station:rpk-pending-signup:v1';
 let publicData=null;
+let privateWorkspaces=[];
+
+const routeFor=w=>w?.route_path||`/factory/rpk/?w=${encodeURIComponent(w?.slug||'')}`;
 
 async function publicSnapshot(){
   const r=await fetch(`${SUPABASE_URL}/functions/v1/business-public`,{headers:{apikey:SUPABASE_PUBLISHABLE_KEY}});
@@ -24,9 +27,14 @@ async function subscriptionApi(action,payload={}){
   if(!data?.ok)throw new Error(data?.error||'business_subscription_error');return data;
 }
 function renderPublic(d){
-  publicData=d;const rpkCount=Number(d.company_counts_by_vertical?.rpk||0);$('#rpkCompanyCount').textContent=rpkCount.toLocaleString('ru-RU');
+  publicData=d;
+  const accessByRegistry=new Map(privateWorkspaces.map(w=>[w.id,w]));
+  const rpkCount=Number(d.company_counts_by_vertical?.rpk||0);$('#rpkCompanyCount').textContent=rpkCount.toLocaleString('ru-RU');
   const companies=(d.directory||[]).filter(x=>x.vertical_code==='rpk');
-  $('#publicCompanyGrid').innerHTML=companies.length?companies.map(c=>`<article class="public-company"><span class="company-place">${esc(c.city||'РОССИЯ')}</span><h3>${esc(c.company_name||'РПК')}</h3><p>${esc(c.headline||c.about||'Участник RPK OS')}</p>${c.offers?.length?`<div class="tag-row">${c.offers.slice(0,5).map(x=>`<span>${esc(x)}</span>`).join('')}</div>`:''}</article>`).join(''):'<div class="empty">Первые компании уже подключаются. Публичные карточки появляются только с согласия владельца.</div>';
+  $('#publicCompanyGrid').innerHTML=companies.length?companies.map(c=>{
+    const own=accessByRegistry.get(c.workspace_id);const route=own?routeFor(own):null;
+    return `<article class="public-company ${own?'my-company':''}"><span class="company-place">${esc(c.city||'РОССИЯ')}</span><h3>${esc(c.company_name||'РПК')}</h3><p>${esc(c.headline||c.about||'Участник RPK OS')}</p>${c.offers?.length?`<div class="tag-row">${c.offers.slice(0,5).map(x=>`<span>${esc(x)}</span>`).join('')}</div>`:''}${route?`<div style="margin-top:16px"><a class="button primary" href="${esc(route)}">Открыть рабочий кабинет →</a></div>`:`<div class="identity" style="margin-top:14px">Публичная визитка · внутренняя CRM закрыта</div>`}</article>`;
+  }).join(''):'<div class="empty">Первые компании уже подключаются. Публичные карточки появляются только с согласия владельца.</div>';
   const plans=(d.plans||[]).filter(x=>x.vertical_code==='rpk');
   $('#signupPlan').innerHTML=plans.map(p=>`<option value="${esc(p.code)}">${esc(p.name_ru)} — ${money(p.total_price)}</option>`).join('');
   $('#planGrid').innerHTML=plans.map(p=>{const best=Number(p.billing_months)===12,disc=Number(p.discount_pct||0);return `<article class="plan-card ${best?'best':''}">${best?'<span class="plan-badge">ВЫГОДНЕЕ</span>':disc?`<span class="plan-badge">−${disc}%</span>`:''}<p class="eyebrow">${p.billing_months===1?'ПОМЕСЯЧНО':p.billing_months===6?'ПОЛГОДА':'ГОД'}</p><h3>${esc(p.name_ru.replace('RPK OS · ',''))}</h3><div class="plan-price">${money(p.monthly_price)} <small>/ мес</small></div><div class="plan-total">К оплате за период: <b>${money(p.total_price)}</b></div><ul><li>CRM, клиенты и сделки</li><li>Документы и старые макеты</li><li>Деньги, закупки и производство</li><li>Команда и цифровой след</li><li>Business Network</li></ul><button class="button ${best?'primary':''} plan-select" data-plan="${esc(p.code)}">Выбрать →</button></article>`}).join('');
@@ -34,28 +42,36 @@ function renderPublic(d){
   $('#paymentNotice').hidden=d.payment_live===true;
 }
 function setPlan(code){if([...$('#signupPlan').options].some(o=>o.value===code))$('#signupPlan').value=code}
+function updateHeroAccess(list){
+  const link=document.querySelector('.rpk-hero-actions a[href="#login"],.rpk-hero-actions a[data-private-entry]');if(!link)return;
+  link.dataset.privateEntry='1';
+  if(list.length===1){link.href=routeFor(list[0]);link.textContent=`Открыть ${list[0].name} →`}
+  else if(list.length>1){link.href='#workspacePanel';link.textContent='Мои рабочие кабинеты →'}
+  else{link.href='#login';link.textContent='У меня уже есть кабинет'}
+}
 function renderCompanies(data){
-  const list=(data.workspaces||[]).filter(x=>x.vertical_code==='rpk');
+  const list=(data.workspaces||[]).filter(x=>x.vertical_code==='rpk');privateWorkspaces=list;
   $('#identity').textContent=[data.user?.display_name||data.user?.email,data.user?.platform_role?`Station: ${data.user.platform_role}`:null].filter(Boolean).join(' · ');
-  $('#companyGrid').innerHTML=list.length?list.map(w=>`<article class="company-card"><span class="status">${esc(String(w.status||'active').toUpperCase())}</span><h3>${esc(w.name)}</h3><p>${esc(w.legal_name||'')} ${w.city?`· ${esc(w.city)}`:''}</p><div class="company-meta"><span>RPK OS</span>${w.access_role?`<span>${esc(w.access_role)}</span>`:''}</div><a class="button primary" href="${esc(w.route_path)}">Открыть рабочий кабинет →</a></article>`).join(''):'<div class="empty">У этого аккаунта пока нет РПК. Если это ваша компания — создайте кабинет ниже. Если вы сотрудник — владелец должен пригласить вас из своей CRM.</div>';
+  $('#companyGrid').innerHTML=list.length?list.map(w=>`<article class="company-card"><span class="status">${esc(String(w.status||'active').toUpperCase())}</span><h3>${esc(w.name)}</h3><p>${esc(w.legal_name||'')} ${w.city?`· ${esc(w.city)}`:''}</p><div class="company-meta"><span>RPK OS</span>${w.access_role?`<span>${esc(w.access_role)}</span>`:''}</div><a class="button primary" href="${esc(routeFor(w))}">Открыть рабочий кабинет →</a></article>`).join(''):'<div class="empty">У этого аккаунта пока нет РПК. Если это ваша компания — создайте кабинет ниже. Если вы сотрудник — владелец должен пригласить вас из своей CRM.</div>';
+  updateHeroAccess(list);if(publicData)renderPublic(publicData);
 }
 async function createWorkspace(payload){
   $('#signupMsg').className='signup-msg';$('#signupMsg').textContent='Создаём отдельный кабинет и назначаем вас владельцем…';
-  const d=await subscriptionApi('create_rpk_workspace',payload);localStorage.removeItem(PENDING_KEY);$('#signupMsg').className='signup-msg ok';$('#signupMsg').textContent=`Готово. ${payload.name} создана в Station. Тариф зафиксирован; сейчас деньги не списывались.`;await loadPrivate();setTimeout(()=>{location.href=d.workspace.route_path},900);
+  const d=await subscriptionApi('create_rpk_workspace',payload);localStorage.removeItem(PENDING_KEY);$('#signupMsg').className='signup-msg ok';$('#signupMsg').textContent=`Готово. ${payload.name} создана в Station. Тариф зафиксирован; сейчас деньги не списывались.`;await loadPrivate();setTimeout(()=>{location.href=routeFor(d.workspace)},900);
 }
 async function continuePending(){
   const raw=localStorage.getItem(PENDING_KEY);if(!raw)return;let p;try{p=JSON.parse(raw)}catch{localStorage.removeItem(PENDING_KEY);return}try{await createWorkspace(p)}catch(e){$('#signupMsg').className='signup-msg error';$('#signupMsg').textContent='Не удалось завершить создание кабинета: '+e.message}
 }
 async function loadPrivate(){
   const {data:{session}}=await sb.auth.getSession();const newFields=$('#newUserFields');
-  if(!session){$('#authPanel').hidden=false;$('#workspacePanel').hidden=true;newFields.hidden=false;$('.signup-submit').textContent='Создать мой кабинет →';return}
+  if(!session){privateWorkspaces=[];updateHeroAccess([]);if(publicData)renderPublic(publicData);$('#authPanel').hidden=false;$('#workspacePanel').hidden=true;newFields.hidden=false;$('.signup-submit').textContent='Создать мой кабинет →';return}
   $('#authPanel').hidden=true;newFields.hidden=true;$('.signup-submit').textContent='Создать ещё один кабинет →';
-  try{const data=await businessSnapshot();renderCompanies(data);$('#workspacePanel').hidden=false;await continuePending()}catch(e){$('#workspacePanel').hidden=true;$('#authPanel').hidden=false;$('#authMsg').textContent='Не удалось открыть список компаний: '+e.message}
+  try{await sb.auth.refreshSession();const data=await businessSnapshot();renderCompanies(data);$('#workspacePanel').hidden=false;await continuePending()}catch(e){$('#workspacePanel').hidden=true;$('#authPanel').hidden=false;$('#authMsg').textContent='Не удалось открыть список компаний: '+e.message}
 }
 async function load(){try{renderPublic(await publicSnapshot())}catch(e){console.error(e);$('#publicCompanyGrid').innerHTML='<div class="empty">Счётчик временно не загрузился.</div>'}await loadPrivate()}
 
-$('#authForm').addEventListener('submit',async e=>{e.preventDefault();$('#authMsg').textContent='Входим…';const {error}=await sb.auth.signInWithPassword({email:$('#email').value.trim(),password:$('#password').value});if(error){$('#authMsg').textContent=error.message;return}$('#authMsg').textContent='';await loadPrivate()});
-$('#signOut').addEventListener('click',async()=>{await sb.auth.signOut();await loadPrivate()});
+$('#authForm').addEventListener('submit',async e=>{e.preventDefault();$('#authMsg').textContent='Входим…';const {error}=await sb.auth.signInWithPassword({email:$('#email').value.trim(),password:$('#password').value});if(error){$('#authMsg').textContent=error.message;return}$('#authMsg').textContent='';await loadPrivate();document.getElementById('workspacePanel')?.scrollIntoView({behavior:'smooth',block:'start'})});
+$('#signOut').addEventListener('click',async()=>{await sb.auth.signOut();privateWorkspaces=[];await loadPrivate()});
 $('#signupForm').addEventListener('submit',async e=>{
   e.preventDefault();const payload={name:$('#signupCompany').value.trim(),legal_name:$('#signupLegal').value.trim(),city:$('#signupCity').value.trim(),plan_code:$('#signupPlan').value};if(!payload.name||!payload.plan_code)return;
   const {data:{session}}=await sb.auth.getSession();
