@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="referrer" content="no-referrer">
+  <title>Station — RPK OS TEST</title>
+  <style>body{margin:0;background:#071017;color:#eaf3f7;font-family:Arial,sans-serif}.boot{min-height:100vh;display:grid;place-items:center}.boot>div{padding:28px;border:1px solid #243d49;border-radius:18px;background:#0a1720;max-width:620px}.err{color:#ffaaaa;white-space:pre-wrap}</style>
+</head>
+<body>
+  <div class="boot"><div><b>STATION · RPK OS 3.2 TEST</b><p>Загружаю рабочий кабинет…</p><pre id="previewError" class="err"></pre></div></div>
+  <script>
+  (async()=>{
+    const ORIGINAL_FETCH=globalThis.fetch.bind(globalThis);
+    const project='https://xwapzjsnqyfiqbzeycyh.supabase.co';
+    const gateway=project+'/functions/v1/rpk-os-preview';
+    const allowed=new Set(['rpk-os','rpk-workspace','rpk-documents']);
+
+    globalThis.fetch=(input,init)=>{
+      try{
+        const raw=typeof input==='string'?input:(input instanceof URL?input.href:input.url);
+        const u=new URL(raw,location.href);
+        if(u.origin===project&&u.pathname.startsWith('/functions/v1/')){
+          const fn=u.pathname.split('/').filter(Boolean).pop();
+          if(allowed.has(fn)){
+            const target=gateway+'?api='+encodeURIComponent(fn);
+            if(input instanceof Request)return ORIGINAL_FETCH(new Request(target,input),init);
+            return ORIGINAL_FETCH(target,init);
+          }
+        }
+      }catch{}
+      return ORIGINAL_FETCH(input,init);
+    };
+
+    try{
+      const r=await ORIGINAL_FETCH('./index.html',{cache:'no-store'});
+      if(!r.ok)throw new Error('index.html HTTP '+r.status);
+      const source=await r.text();
+      const parsed=new DOMParser().parseFromString(source,'text/html');
+      document.title='Station — RPK OS 3.2 TEST';
+      for(const n of [...parsed.head.children]){
+        if(n.tagName==='SCRIPT'||n.tagName==='TITLE'||n.tagName==='META')continue;
+        document.head.appendChild(document.importNode(n,true));
+      }
+      for(const s of parsed.body.querySelectorAll('script'))s.remove();
+      document.body.innerHTML=parsed.body.innerHTML+'<div style="position:fixed;right:12px;bottom:12px;z-index:9999;background:#ffd36a;color:#071017;padding:8px 11px;border-radius:999px;font:800 12px Arial">TEST PREVIEW · RPK OS 3.2</div>';
+      for(const src of ['./rpk.js','./rpk-documents.js']){
+        const s=document.createElement('script');s.type='module';s.src=src+'?v='+Date.now();document.body.appendChild(s);
+      }
+    }catch(e){
+      const x=document.getElementById('previewError');if(x)x.textContent='Preview error: '+(e?.message||String(e));
+    }
+  })();
+  </script>
+</body>
+</html>
