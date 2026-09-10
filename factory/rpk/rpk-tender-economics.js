@@ -5,7 +5,7 @@ const KEY='sb_publishable_mVOY1vbk6e6jiBnT0VAX9w_sFXODDsi';
 const sb=createClient(URL,KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 const WORKSPACE=new URLSearchParams(location.search).get('w')||'focus-biysk';
 const $=s=>document.querySelector(s);
-const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[c]));
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const money=v=>v==null?'—':new Intl.NumberFormat('ru-RU',{style:'currency',currency:'RUB',maximumFractionDigits:0}).format(Number(v)||0);
 const pct=v=>v==null?'—':`${Number(v).toLocaleString('ru-RU',{maximumFractionDigits:1})}%`;
 const numPrompt=(title,value)=>{const x=prompt(title,value==null?'':String(value));if(x===null)return undefined;if(x.trim()==='')return null;const n=Number(x.replace(',','.'));return Number.isFinite(n)?n:undefined};
