@@ -1,0 +1,9 @@
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+const sb=createClient('https://xwapzjsnqyfiqbzeycyh.supabase.co','sb_publishable_mVOY1vbk6e6jiBnT0VAX9w_sFXODDsi',{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+const $=s=>document.querySelector(s);
+const params=new URLSearchParams(location.search);
+const rawNext=params.get('next')||'/business/rpk/';
+const next=rawNext.startsWith('/')&&!rawNext.startsWith('//')?rawNext:'/business/rpk/';
+async function init(){await new Promise(r=>setTimeout(r,250));const {data:{session}}=await sb.auth.getSession();if(!session){$('#setupForm').hidden=true;$('#msg').textContent='Ссылка приглашения не активна или уже истекла. Попросите владельца компании отправить новое приглашение.';return}$('#fullName').value=session.user.user_metadata?.full_name||session.user.user_metadata?.name||''}
+$('#setupForm').onsubmit=async e=>{e.preventDefault();const name=$('#fullName').value.trim(),p=$('#password').value,p2=$('#password2').value;if(name.length<2){$('#msg').textContent='Укажите ваше имя.';return}if(p!==p2){$('#msg').textContent='Пароли не совпадают.';return}if(p.length<10){$('#msg').textContent='Пароль должен быть не короче 10 символов.';return}const btn=e.submitter;btn.disabled=true;$('#msg').textContent='Сохраняем…';const {error}=await sb.auth.updateUser({password:p,data:{full_name:name,name}});if(error){$('#msg').textContent=error.message;btn.disabled=false;return}$('#password').value='';$('#password2').value='';$('#msg').textContent='Готово. Открываем ваши рабочие кабинеты…';setTimeout(()=>location.replace(next),500)};
+init();
