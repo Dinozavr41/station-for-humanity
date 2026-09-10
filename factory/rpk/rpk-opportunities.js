@@ -39,6 +39,7 @@ function render(d){
   if($('#oppTotal'))$('#oppTotal').textContent=s.total||0;
   if($('#oppNew'))$('#oppNew').textContent=s.new||0;
   if($('#oppHigh'))$('#oppHigh').textContent=s.high||0;
+  if($('#oppHighPanel'))$('#oppHighPanel').textContent=s.high||0;
   if($('#oppPotential'))$('#oppPotential').textContent=`${money(s.potential_revenue||0)} потенциально`;
   if($('#oppPotentialBig'))$('#oppPotentialBig').textContent=money(s.potential_revenue||0);
   const list=$('#opportunityList');if(!list)return;
