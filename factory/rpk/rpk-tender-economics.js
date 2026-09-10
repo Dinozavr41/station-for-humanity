@@ -10,6 +10,7 @@ const money=v=>v==null?'—':new Intl.NumberFormat('ru-RU',{style:'currency',cur
 const pct=v=>v==null?'—':`${Number(v).toLocaleString('ru-RU',{maximumFractionDigits:1})}%`;
 const numPrompt=(title,value)=>{const x=prompt(title,value==null?'':String(value));if(x===null)return undefined;if(x.trim()==='')return null;const n=Number(x.replace(',','.'));return Number.isFinite(n)?n:undefined};
 let snapshot=null;
+const importInFlight=new Set();
 
 async function rpc(name,args){const {data,error}=await sb.rpc(name,args);if(error)throw new Error(error.message);return data}
 function statusLabel(s){return({draft:'НУЖНЫ ДАННЫЕ',review_ready:'ГОТОВО К РЕШЕНИЮ',approved:'ОДОБРЕНО',rejected:'ОТКЛОНЕНО'})[s]||s}
@@ -37,8 +38,9 @@ function lineHtml(c,l){
 }
 function card(x){
   const c=x.calculation,o=x.opportunity||{},lines=x.lines||[],missing=c.missing_data||[];const canApprove=['owner','platform_admin'].includes(snapshot?.access_role);const ready=c.status==='review_ready';
+  const sourceCount=Array.isArray(c.assumptions?.attachments)?c.assumptions.attachments.length:0;
   return `<article class="tender-econ-card">
-    <div class="tender-econ-head"><div><span class="badge ${statusClass(c.status)}">${esc(statusLabel(c.status))}</span><h3>${esc(o.source_item_id||'Тендер')} · ${esc(o.title||'')}</h3><div class="muted">${esc(o.buyer_name||'Заказчик не указан')} · ${esc(o.region||o.city||'')}</div></div><div>${o.source_url?`<a class="mini" href="${esc(o.source_url)}" target="_blank" rel="noopener noreferrer">Тендер ↗</a>`:''}</div></div>
+    <div class="tender-econ-head"><div><span class="badge ${statusClass(c.status)}">${esc(statusLabel(c.status))}</span><h3>${esc(o.source_item_id||'Тендер')} · ${esc(o.title||'')}</h3><div class="muted">${esc(o.buyer_name||'Заказчик не указан')} · ${esc(o.region||o.city||'')}${sourceCount?` · источников: ${sourceCount}`:''}</div></div><div>${o.source_url?`<a class="mini" href="${esc(o.source_url)}" target="_blank" rel="noopener noreferrer">Тендер ↗</a>`:''}</div></div>
     <div class="tender-econ-metrics"><div><small>НМЦ / бюджет</small><strong>${money(c.tender_price)}</strong></div><div><small>Наша ставка</small><strong>${money(c.candidate_bid)}</strong></div><div><small>Себестоимость</small><strong>${money(c.total_cost)}</strong></div><div><small>Прибыль</small><strong>${c.projected_profit==null?'ЗАБЛОКИРОВАНА':money(c.projected_profit)}</strong></div><div><small>STOP PRICE</small><strong>${money(c.stop_price)}</strong></div></div>
     <div class="muted">Покрытие себестоимости: <b>${pct(c.cost_coverage_pct)}</b> · доверие: <b>${pct(Number(c.confidence||0)*100)}</b>${missing.length?` · не закрыто: <b>${missing.length}</b>`:''}</div>
     <div class="tender-lines">${lines.map(l=>lineHtml(c,l)).join('')}</div>
@@ -67,6 +69,25 @@ async function policy(id){
 }
 async function recalc(id){try{await rpc('rpk_tender_recalculate',{p_workspace_slug:WORKSPACE,p_calculation_id:id});await load()}catch(e){alert(e.message)}}
 async function decide(id,decision){const text=decision==='approve'?'Подтвердить участие с текущей экономикой?':'Отклонить этот тендер?';if(!confirm(text))return;const comment=prompt('Комментарий к решению (можно пусто)','');if(comment===null)return;try{await rpc('rpk_tender_decide',{p_workspace_slug:WORKSPACE,p_calculation_id:id,p_decision:decision,p_comment:comment});await load()}catch(e){alert(e.message)}}
-async function load(){const {data:{session}}=await sb.auth.getSession();if(!session)return;try{render(await rpc('rpk_tender_snapshot',{p_workspace_slug:WORKSPACE}));$('#tenderStatus').textContent=''}catch(e){$('#tenderStatus').innerHTML=`<div class="empty-box">Tender Economics: ${esc(e.message)}</div>`}}
+
+async function autoImportTenderDocs(d){
+  for(const item of d?.items||[]){
+    const needId=Number(item?.calculation?.assumptions?.need_id||0);if(!Number.isInteger(needId)||needId<=0||importInFlight.has(needId))continue;
+    const key=`station:rpk:tender-import:${WORKSPACE}:${needId}`;let state={};try{state=JSON.parse(localStorage.getItem(key)||'{}')}catch{}
+    const now=Date.now(),done=state?.status==='done',recent=state?.at&&now-Number(state.at)<30*60*1000;if(done||recent)continue;
+    importInFlight.add(needId);localStorage.setItem(key,JSON.stringify({status:'trying',at:now}));
+    try{
+      const {data,error}=await sb.functions.invoke('rpk-tender-public-import',{body:{workspace_slug:WORKSPACE,need_id:needId}});
+      if(error||!data?.ok)throw new Error(error?.message||data?.error||'tender_document_import_failed');
+      localStorage.setItem(key,JSON.stringify({status:'done',at:Date.now(),success:data.success,total:data.total}));
+      if($('#tenderStatus'))$('#tenderStatus').textContent=`Исходники закупки ${needId}: ${data.success}/${data.total} сохранены в защищённый архив.`;
+    }catch(e){
+      localStorage.setItem(key,JSON.stringify({status:'retry',at:Date.now(),error:String(e?.message||e)}));
+      console.warn('Tender document auto-import will retry later',needId,e);
+    }finally{importInFlight.delete(needId)}
+  }
+}
+
+async function load(){const {data:{session}}=await sb.auth.getSession();if(!session)return;try{const d=await rpc('rpk_tender_snapshot',{p_workspace_slug:WORKSPACE});render(d);$('#tenderStatus').textContent='';void autoImportTenderDocs(d)}catch(e){$('#tenderStatus').innerHTML=`<div class="empty-box">Tender Economics: ${esc(e.message)}</div>`}}
 
 inject();sb.auth.onAuthStateChange(()=>setTimeout(load,500));setTimeout(load,1200);
