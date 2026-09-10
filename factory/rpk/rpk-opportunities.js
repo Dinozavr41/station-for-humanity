@@ -67,3 +67,4 @@ $('#oppRescore')?.addEventListener('click',rescore);
 document.querySelectorAll('[data-jump="opportunities"]').forEach(b=>b.addEventListener('click',()=>document.getElementById('opportunities')?.scrollIntoView({behavior:'smooth',block:'start'})));
 sb.auth.onAuthStateChange(()=>setTimeout(load,500));
 setTimeout(load,900);
+import('./rpk-need-radar.js?v=20260910-need1').catch(err=>console.error('Need Radar UI load failed',err));
