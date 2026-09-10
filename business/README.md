@@ -1,0 +1,1 @@
+Station Business OS routes: /business/ for industry selection, /business/rpk/ for RPK workspace selection, /factory/rpk/?w=<slug> for the concrete RPK OS cabinet. Industry metadata and workspace registry are served from Supabase business-hub.
