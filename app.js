@@ -59,3 +59,4 @@ function installFactoryEntry(){
 }
 installFactoryEntry();
 applyLanguage();
+import('/business-entry.js').catch(()=>{});
