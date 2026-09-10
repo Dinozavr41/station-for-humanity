@@ -26,12 +26,13 @@
     </div>
 
     <nav id="moduleNav" class="module-nav" aria-label="Разделы кабинета">
-      <button data-jump="today" class="active">Сегодня</button><button data-jump="crm">CRM</button><button data-jump="archive">Макеты</button><button data-jump="queue">Производство</button><button data-jump="documents">Документы</button><button data-jump="money">Деньги</button><button data-jump="procurement">Закупки</button><button data-jump="modules">Ещё</button>
+      <button data-jump="today" class="active">Сегодня</button><button data-jump="opportunities">Заказы рядом</button><button data-jump="crm">CRM</button><button data-jump="archive">Макеты</button><button data-jump="queue">Производство</button><button data-jump="documents">Документы</button><button data-jump="money">Деньги</button><button data-jump="procurement">Закупки</button><button data-jump="modules">Ещё</button>
     </nav>
 
     <section id="today" class="section dashboard-section">
       <div class="quick-actions">
         <button id="quickDeal" class="quick primary"><b>+ Сделка</b><span>Зафиксировать новый заказ</span></button>
+        <button class="quick" data-jump="opportunities"><b>🎯 Заказы рядом</b><span>Найденные возможности</span></button>
         <button id="quickCash" class="quick"><b>₽ Приход / расход</b><span>Записать реальные деньги</span></button>
         <button id="quickClient" class="quick"><b>+ Клиент</b><span>Добавить в базу</span></button>
         <button class="quick" data-jump="archive"><b>♻ Переделать макет</b><span>Из старого архива</span></button>
@@ -42,12 +43,21 @@
         <article class="metric-card"><small>ДЕНЬГИ ЭТОГО МЕСЯЦА</small><strong id="osNet">0 ₽</strong><span id="osCashFlow">0 ₽ приход · 0 ₽ расход</span></article>
         <article class="metric-card"><small>ТРЕБУЮТ ДЕЙСТВИЯ</small><strong id="osOverdue">0</strong><span>просроченные следующие шаги</span></article>
         <article class="metric-card"><small>МАКЕТЫ В РАБОТЕ</small><strong id="osDesignJobs">0</strong><span id="osArchiveInfo">архив: 0</span></article>
+        <article class="metric-card"><small>ДЕНЬГИ РЯДОМ</small><strong id="oppHigh">0</strong><span id="oppPotential">0 ₽ потенциально</span></article>
       </div>
 
       <div class="dashboard-grid">
         <section class="panel dashboard-block"><div class="section-head compact"><div><p class="eyebrow">СЕГОДНЯ</p><h2>Что требует внимания</h2></div></div><div id="todayList" class="attention-list"></div></section>
         <section class="panel dashboard-block"><div class="section-head compact"><div><p class="eyebrow">STATION</p><h2>Что можно улучшить</h2></div></div><div id="recommendationList" class="recommendation-list"></div></section>
       </div>
+    </section>
+
+    <section id="opportunities" class="panel section">
+      <div class="section-head"><div><p class="eyebrow">STATION OPPORTUNITY ENGINE · RPK HUNTER 1.0</p><h2>Заказы рядом</h2></div><button id="oppRescore" class="primary">Пересчитать совпадения</button></div>
+      <p class="muted">Station собирает найденный спрос в один поток, убирает дубли и оценивает его относительно именно вашей РПК: услуга, география, бюджет и срочность. Ничего клиенту автоматически не отправляется — сначала менеджер подтверждает возможность.</p>
+      <div class="money-strip"><div><small>Всего совпадений</small><strong id="oppTotal">0</strong></div><div><small>Новых</small><strong id="oppNew">0</strong></div><div><small>Высокий приоритет</small><strong id="oppHighPanel">—</strong><span style="display:none" id="oppHighMirror"></span></div><div><small>Потенциальная выручка</small><strong id="oppPotentialBig">0 ₽</strong></div></div>
+      <pre id="oppStatus"></pre>
+      <div id="opportunityList" class="deal-list"><div class="empty-box">Загружаем возможности…</div></div>
     </section>
 
     <section id="crm" class="panel section">
@@ -120,5 +130,6 @@
 <script type="module" src="./rpk-documents.js"></script>
 <script type="module" src="./rpk-team.js"></script>
 <script type="module" src="./rpk-addons.js"></script>
+<script type="module" src="./rpk-opportunities.js?v=20260910-opp1"></script>
 </body>
 </html>
