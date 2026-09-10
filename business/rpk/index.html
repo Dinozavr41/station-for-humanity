@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#07111f">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Station — RPK OS</title>
+  <link rel="stylesheet" href="../business.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="/"><span class="mark">SFH</span><span><strong>STATION</strong><small>RPK OS</small></span></a>
+  <a class="home-link" href="/business/">← CRM для бизнеса</a>
+</header>
+<main>
+  <section class="industry-hero">
+    <div class="crumbs"><a href="/business/">CRM для бизнеса</a><span>→</span><span>РПК</span></div>
+    <p class="eyebrow">ОТРАСЛЕВАЯ СИСТЕМА · RPK OS</p>
+    <h1>Рекламно-производственные<br>компании.</h1>
+    <p class="lead">Клиенты, сделки, старые макеты, переделки, производство, КП и счета, бухгалтерия, закупки, деньги и команда — в одном рабочем пространстве.</p>
+  </section>
+
+  <section id="authPanel" class="auth-panel">
+    <div><p class="eyebrow">ВХОД В РАБОЧИЕ ПРОСТРАНСТВА</p><h2>У каждой компании свои данные.</h2><p>Войдите под своим аккаунтом Station. Владелец и менеджеры работают в одной базе своей компании, а чужие компании им не показываются.</p></div>
+    <form id="authForm" class="auth-form">
+      <label>Email<input id="email" type="email" autocomplete="email" required></label>
+      <label>Пароль<input id="password" type="password" autocomplete="current-password" required minlength="8"></label>
+      <button class="button primary" type="submit">Войти</button>
+      <div id="authMsg" class="identity"></div>
+    </form>
+  </section>
+
+  <section id="workspacePanel" class="section" hidden>
+    <div class="workspace-header"><div><p class="eyebrow">ВАШИ КОМПАНИИ</p><h2>Выберите рабочий кабинет</h2></div><div><span id="identity" class="identity"></span> <button id="signOut" class="button">Выйти</button></div></div>
+    <div id="companyGrid" class="company-grid"></div>
+  </section>
+
+  <section class="section principle">
+    <p class="eyebrow">RPK OS</p><h2>Одна отрасль.<br><span>Отдельный бизнес у каждого.</span></h2>
+    <div class="principle-grid"><div><b>01</b><strong>Общая логика отрасли</strong><p>Все РПК получают улучшения RPK OS: архив макетов, Design Factory, документы, закупки и автоматизации.</p></div><div><b>02</b><strong>Раздельные данные</strong><p>Клиенты, суммы, документы, макеты и сотрудники одной РПК не смешиваются с другой.</p></div><div><b>03</b><strong>Совместная работа</strong><p>Владелец и менеджер видят общие цифры компании, а история фиксирует, кто именно что изменил.</p></div></div>
+  </section>
+</main>
+<footer>STATION FOR HUMANITY · RPK OS <span>Отраслевой модуль Business OS</span></footer>
+<script type="module" src="./rpk-hub.js"></script>
+</body>
+</html>
