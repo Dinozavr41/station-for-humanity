@@ -7,39 +7,63 @@
   <meta name="robots" content="noindex,nofollow">
   <title>Station — RPK OS</title>
   <link rel="stylesheet" href="../business.css">
+  <link rel="stylesheet" href="./rpk-market.css">
 </head>
 <body>
 <header class="topbar">
   <a class="brand" href="/"><span class="mark">SFH</span><span><strong>STATION</strong><small>RPK OS</small></span></a>
-  <a class="home-link" href="/business/">← CRM для бизнеса</a>
+  <div class="rpk-top-links"><a href="/business/community/">Бизнес-сообщество</a><a class="home-link" href="/business/">← CRM для бизнеса</a></div>
 </header>
 <main>
-  <section class="industry-hero">
+  <section class="industry-hero rpk-market-hero">
     <div class="crumbs"><a href="/business/">CRM для бизнеса</a><span>→</span><span>РПК</span></div>
-    <p class="eyebrow">ОТРАСЛЕВАЯ СИСТЕМА · RPK OS</p>
-    <h1>Рекламно-производственные<br>компании.</h1>
-    <p class="lead">Клиенты, сделки, старые макеты, переделки, производство, КП и счета, бухгалтерия, закупки, деньги и команда — в одном рабочем пространстве.</p>
+    <div class="rpk-hero-grid">
+      <div><p class="eyebrow">ОТРАСЛЕВАЯ СИСТЕМА · RPK OS</p><h1>Рекламно-производственные<br>компании.</h1><p class="lead">Клиенты, сделки, старые макеты, переделки, производство, КП и счета, бухгалтерия, закупки, деньги и команда — в одном рабочем пространстве.</p><div class="rpk-hero-actions"><a class="button primary big" href="#signup">+ Добавить свою РПК</a><a class="button big" href="#login">У меня уже есть кабинет</a></div></div>
+      <aside class="adoption-card"><small>РПК УЖЕ В STATION</small><strong id="rpkCompanyCount">—</strong><span>У каждой компании полностью отдельные CRM-данные.</span><a href="#users">Посмотреть участников →</a></aside>
+    </div>
   </section>
 
-  <section id="authPanel" class="auth-panel">
-    <div><p class="eyebrow">ВХОД В РАБОЧИЕ ПРОСТРАНСТВА</p><h2>У каждой компании свои данные.</h2><p>Войдите под своим аккаунтом Station. Владелец и менеджеры работают в одной базе своей компании, а чужие компании им не показываются.</p></div>
-    <form id="authForm" class="auth-form">
-      <label>Email<input id="email" type="email" autocomplete="email" required></label>
-      <label>Пароль<input id="password" type="password" autocomplete="current-password" required minlength="8"></label>
-      <button class="button primary" type="submit">Войти</button>
-      <div id="authMsg" class="identity"></div>
+  <section id="users" class="section public-users">
+    <div class="section-head"><div><p class="eyebrow">СООБЩЕСТВО РПК</p><h2>Кто уже<br>пользуется Station</h2></div><p>Здесь видна только добровольная деловая визитка компании. Клиенты, деньги, документы, сделки и внутренние файлы остаются коммерческой тайной внутри её CRM.</p></div>
+    <div id="publicCompanyGrid" class="public-company-grid"><div class="empty">Загружаем компании…</div></div>
+    <div class="community-cta"><div><strong>Работаем отдельно — помогаем друг другу вместе.</strong><span>После подключения владельцы и менеджеры получают каталог контактов и бизнес-чаты Station.</span></div><a class="button" href="/business/community/">Открыть Business Network →</a></div>
+  </section>
+
+  <section id="pricing" class="section pricing-section">
+    <div class="section-head"><div><p class="eyebrow">ПОДПИСКА RPK OS</p><h2>Небольшая цена.<br>Весь рабочий кабинет.</h2></div><p>Не считаем пользователей по головам: владелец сам формирует команду. Основные модули RPK OS входят в подписку, дополнительные автоматизации подключаются отдельно по желанию.</p></div>
+    <div id="planGrid" class="plan-grid"><div class="empty">Загружаем тарифы…</div></div>
+    <p id="paymentNotice" class="payment-notice">Онлайн-оплата пока не включена: выбранный тариф фиксируется, но списаний сейчас нет. Перед включением live-платежей Station покажет точную сумму и попросит подтверждение.</p>
+  </section>
+
+  <section id="signup" class="section signup-section">
+    <div class="signup-copy"><p class="eyebrow">СОЗДАТЬ СВОЮ РПК</p><h2>Кабинет за пару минут.</h2><p>Вы становитесь владельцем рабочего пространства. Потом сами приглашаете менеджеров, дизайнеров, печатников, бухгалтеров и остальных сотрудников — каждый под своим аккаунтом.</p><div class="signup-points"><span>✓ Чужие компании не видят вашу CRM</span><span>✓ Владелец управляет доступами</span><span>✓ Каждое действие остаётся в истории</span><span>✓ Доп. функции можно подключать позже</span></div></div>
+    <form id="signupForm" class="signup-form">
+      <label>Название компании<input id="signupCompany" required maxlength="180" placeholder="Например: Реклама Плюс"></label>
+      <label>Юридическое название <small>необязательно</small><input id="signupLegal" maxlength="220" placeholder="ООО / ИП"></label>
+      <label>Город<input id="signupCity" maxlength="180" placeholder="Бийск"></label>
+      <label>Тариф<select id="signupPlan" required></select></label>
+      <div id="newUserFields" class="new-user-fields">
+        <label>Ваше имя<input id="signupName" maxlength="120" autocomplete="name"></label>
+        <label>Email<input id="signupEmail" type="email" autocomplete="email"></label>
+        <label class="wide">Придумайте пароль<input id="signupPassword" type="password" minlength="10" autocomplete="new-password"></label>
+      </div>
+      <button class="button primary signup-submit" type="submit">Создать мой кабинет →</button>
+      <div id="signupMsg" class="signup-msg"></div>
     </form>
   </section>
 
-  <section id="workspacePanel" class="section" hidden>
-    <div class="workspace-header"><div><p class="eyebrow">ВАШИ КОМПАНИИ</p><h2>Выберите рабочий кабинет</h2></div><div><span id="identity" class="identity"></span> <button id="signOut" class="button">Выйти</button></div></div>
-    <div id="companyGrid" class="company-grid"></div>
+  <section id="login" class="auth-panel">
+    <div><p class="eyebrow">УЖЕ ЕСТЬ ДОСТУП</p><h2>Войти в рабочие пространства.</h2><p>Владелец и сотрудники заходят каждый под своим аккаунтом. В списке будут только компании, в которые вам выдан доступ.</p></div>
+    <form id="authForm" class="auth-form"><label>Email<input id="email" type="email" autocomplete="email" required></label><label>Пароль<input id="password" type="password" autocomplete="current-password" required minlength="8"></label><button class="button primary" type="submit">Войти</button><div id="authMsg" class="identity"></div></form>
   </section>
 
-  <section class="section principle">
-    <p class="eyebrow">RPK OS</p><h2>Одна отрасль.<br><span>Отдельный бизнес у каждого.</span></h2>
-    <div class="principle-grid"><div><b>01</b><strong>Общая логика отрасли</strong><p>Все РПК получают улучшения RPK OS: архив макетов, Design Factory, документы, закупки и автоматизации.</p></div><div><b>02</b><strong>Раздельные данные</strong><p>Клиенты, суммы, документы, макеты и сотрудники одной РПК не смешиваются с другой.</p></div><div><b>03</b><strong>Совместная работа</strong><p>Владелец и менеджер видят общие цифры компании, а история фиксирует, кто именно что изменил.</p></div></div>
+  <section id="workspacePanel" class="section" hidden>
+    <div class="workspace-header"><div><p class="eyebrow">ВАШИ КОМПАНИИ</p><h2>Рабочие кабинеты</h2></div><div><span id="identity" class="identity"></span> <button id="signOut" class="button">Выйти</button></div></div>
+    <div id="companyGrid" class="company-grid"></div>
+    <a class="add-another" href="#signup">+ Добавить ещё одну свою РПК</a>
   </section>
+
+  <section class="section principle"><p class="eyebrow">RPK OS</p><h2>Одна отрасль.<br><span>Отдельный бизнес у каждого.</span></h2><div class="principle-grid"><div><b>01</b><strong>Общая логика отрасли</strong><p>Все РПК получают улучшения RPK OS: архив макетов, Design Factory, документы, закупки и автоматизации.</p></div><div><b>02</b><strong>Раздельные данные</strong><p>Клиенты, суммы, документы, макеты и сотрудники одной РПК не смешиваются с другой.</p></div><div><b>03</b><strong>Связи между бизнесами</strong><p>В общей сети видны только опубликованные визитки и контакты. Внутренняя CRM остаётся закрытой.</p></div></div></section>
 </main>
 <footer>STATION FOR HUMANITY · RPK OS <span>Отраслевой модуль Business OS</span></footer>
 <script type="module" src="./rpk-hub.js"></script>
