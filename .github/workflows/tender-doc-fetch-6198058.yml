@@ -1,0 +1,101 @@
+name: Tender docs probe 6198058
+
+on:
+  push:
+    branches:
+      - ops/tender-doc-fetch-6198058
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  fetch-public-docs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Fetch public procurement card and attachments
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p out/docs
+          UA='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/151 Safari/537.36'
+          NEW='https://zakupki.mos.ru/newapi/api/Need/Get?needId=6198058'
+          OLD='https://old.zakupki.mos.ru/api/Cssp/Need/GetEntity?id=6198058'
+
+          echo 'Trying new public API...'
+          curl -fL --retry 3 --retry-delay 2 --connect-timeout 20 --max-time 90 -A "$UA" "$NEW" -o out/need-new.json || true
+          echo 'Trying old public API...'
+          curl -fL --retry 3 --retry-delay 2 --connect-timeout 20 --max-time 90 -A "$UA" "$OLD" -o out/need-old.json || true
+
+          python3 - <<'PY'
+          import json, pathlib, re, subprocess
+          root=pathlib.Path('out')
+          cards=[]
+          for p in [root/'need-new.json', root/'need-old.json']:
+              if not p.exists() or p.stat().st_size==0:
+                  continue
+              try:
+                  data=json.loads(p.read_text('utf-8'))
+              except Exception as e:
+                  print('JSON parse failed',p,e)
+                  continue
+              cards.append((p,data))
+              print('\nCARD',p)
+              print('name=',data.get('name'))
+              print('files_count=',len(data.get('files') or []))
+              print('deliveryPlace=',data.get('deliveryPlace'))
+              print('paymentTerms=',data.get('paymentTerms'))
+
+          if not cards:
+              raise SystemExit('No public API response obtained')
+
+          files=[]
+          for p,data in cards:
+              for f in data.get('files') or []:
+                  fs=f.get('fileStorage') if isinstance(f,dict) else None
+                  if isinstance(fs,dict):
+                      name=fs.get('fileName') or fs.get('name')
+                      url=fs.get('fileUrl') or fs.get('url')
+                      fid=fs.get('id')
+                  else:
+                      name=f.get('name') if isinstance(f,dict) else None
+                      fid=f.get('id') if isinstance(f,dict) else None
+                      url=f.get('url') if isinstance(f,dict) else None
+                  if not url and fid:
+                      url=f'https://zakupki.mos.ru/newapi/api/FileStorage/Download?id={fid}'
+                  if name and url:
+                      files.append((name,url))
+
+          seen=set(); uniq=[]
+          for name,url in files:
+              k=(name,url)
+              if k not in seen:
+                  seen.add(k); uniq.append(k)
+          print('\nFILES FOUND:',len(uniq))
+          manifest=[]
+          for i,(name,url) in enumerate(uniq,1):
+              safe=re.sub(r'[\\/:*?"<>|]+','_',name).strip() or f'file-{i}'
+              dst=root/'docs'/safe
+              print(i,name,'->',url)
+              r=subprocess.run(['curl','-fL','--retry','3','--connect-timeout','20','--max-time','120','-A','Mozilla/5.0',url,'-o',str(dst)])
+              manifest.append({'name':name,'url':url,'downloaded':r.returncode==0,'path':str(dst) if r.returncode==0 else None})
+          (root/'manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2),'utf-8')
+          if not any(x['downloaded'] for x in manifest):
+              raise SystemExit('Card fetched but no attachments downloaded')
+          PY
+
+      - name: Show result
+        if: always()
+        run: |
+          find out -maxdepth 2 -type f -printf '%p %s bytes\n' 2>/dev/null || true
+          cat out/manifest.json 2>/dev/null || true
+
+      - name: Upload public tender documents
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tender-6198058-public-docs
+          path: out/
+          if-no-files-found: warn
+          retention-days: 1
