@@ -24,6 +24,7 @@ async function access(userId:string,slug:string){
 }
 function canManage(role:string){return ["platform_admin","owner","manager"].includes(role)}
 function canPrinter(role:string){return ["platform_admin","owner","printer"].includes(role)}
+async function audit(uid:string,action:string,type:string,id:string,metadata:any={},beforeState:any=null,afterState:any=null){try{await db.from("audit_log").insert({actor_user_id:uid,action,entity_type:type,entity_id:id,reason:"RPK workspace action",metadata,before_state:beforeState,after_state:afterState})}catch{}}
 
 Deno.serve(async req=>{
   const origin=req.headers.get("origin");
@@ -56,6 +57,19 @@ Deno.serve(async req=>{
     const name=safe(b.name,180);if(name.length<2)return out(400,{ok:false,error:"client_name_required"},origin);
     const {data,error}=await db.from("rpk_clients").insert({workspace_id:w.id,name,legal_name:safe(b.legal_name,220)||null,phone:safe(b.phone,80)||null,email:safe(b.email,180)||null,website:safe(b.website,300)||null,address:safe(b.address,300)||null,notes:safe(b.notes,1500)||null}).select("*").single();
     if(error)return out(500,{ok:false,error:"client_create_failed",detail:error.message},origin);
+    await audit(u.user.id,"rpk.client_created","rpk_client",data.id,{workspace_id:w.id,actor_role:role,client_no:data.client_no},null,{name:data.name,legal_name:data.legal_name,phone:data.phone,email:data.email});
+    return out(200,{ok:true,client:data},origin);
+  }
+
+  if(action==="update_client"){
+    if(!canManage(role))return out(403,{ok:false,error:"manager_role_required"},origin);
+    const id=safe(b.client_id,80);const {data:old}=await db.from("rpk_clients").select("*").eq("id",id).eq("workspace_id",w.id).maybeSingle();if(!old)return out(404,{ok:false,error:"client_not_found"},origin);
+    const patch:any={updated_at:new Date().toISOString()};
+    for(const [key,max] of [["name",180],["legal_name",220],["phone",80],["email",180],["website",300],["address",300],["notes",1500]] as const){if(b[key]!==undefined)patch[key]=safe(b[key],max)||null}
+    if(patch.name===null)return out(400,{ok:false,error:"client_name_required"},origin);
+    const {data,error}=await db.from("rpk_clients").update(patch).eq("id",id).eq("workspace_id",w.id).select("*").single();
+    if(error)return out(500,{ok:false,error:"client_update_failed",detail:error.message},origin);
+    await audit(u.user.id,"rpk.client_updated","rpk_client",id,{workspace_id:w.id,actor_role:role},old,data);
     return out(200,{ok:true,client:data},origin);
   }
 
@@ -65,40 +79,32 @@ Deno.serve(async req=>{
     if(existing)return out(200,{ok:true,questionnaire:existing,created:false},origin);
     const {data,error}=await db.from("rpk_printer_questionnaires").insert({workspace_id:w.id,service_code:"billboard_3x6",title:"Профессиональный профиль печати · баннер 3×6"}).select("*").single();
     if(error)return out(500,{ok:false,error:"questionnaire_create_failed",detail:error.message},origin);
+    await audit(u.user.id,"rpk.print_questionnaire_created","rpk_printer_questionnaire",data.id,{workspace_id:w.id,actor_role:role});
     return out(200,{ok:true,questionnaire:data,created:true},origin);
   }
 
   if(action==="save_printer_questionnaire"){
     if(!["platform_admin","owner","manager","printer"].includes(role))return out(403,{ok:false,error:"printer_access_required"},origin);
     const id=safe(b.questionnaire_id,80);if(!id)return out(400,{ok:false,error:"questionnaire_id_required"},origin);
-    const patch:any={
-      printer_model:safe(b.printer_model,180)||null,printer_notes:safe(b.printer_notes,1000)||null,rip_software:safe(b.rip_software,180)||null,rip_version:safe(b.rip_version,80)||null,
-      material_name:safe(b.material_name,180)||null,material_notes:safe(b.material_notes,1000)||null,artwork_scale:b.artwork_scale==null?null:Number(b.artwork_scale),target_dpi:b.target_dpi==null?null:Number(b.target_dpi),
-      color_mode:safe(b.color_mode,80)||null,color_profile:safe(b.color_profile,180)||null,bleed_mm:b.bleed_mm==null?null:Number(b.bleed_mm),safe_zone_mm:b.safe_zone_mm==null?null:Number(b.safe_zone_mm),
-      allowed_formats:arr(b.allowed_formats,20),max_file_mb:b.max_file_mb==null?null:Number(b.max_file_mb),file_naming_rule:safe(b.file_naming_rule,400)||null,
-      rasterize_transparency:b.rasterize_transparency===true,convert_fonts_to_curves:b.convert_fonts_to_curves===true,black_generation_rule:safe(b.black_generation_rule,400)||null,other_requirements:safe(b.other_requirements,2000)||null,
-      status:b.submit===true?"awaiting_approval":"draft",updated_at:new Date().toISOString()
-    };
+    const {data:old}=await db.from("rpk_printer_questionnaires").select("*").eq("id",id).eq("workspace_id",w.id).maybeSingle();
+    const patch:any={printer_model:safe(b.printer_model,180)||null,printer_notes:safe(b.printer_notes,1000)||null,rip_software:safe(b.rip_software,180)||null,rip_version:safe(b.rip_version,80)||null,material_name:safe(b.material_name,180)||null,material_notes:safe(b.material_notes,1000)||null,artwork_scale:b.artwork_scale==null?null:Number(b.artwork_scale),target_dpi:b.target_dpi==null?null:Number(b.target_dpi),color_mode:safe(b.color_mode,80)||null,color_profile:safe(b.color_profile,180)||null,bleed_mm:b.bleed_mm==null?null:Number(b.bleed_mm),safe_zone_mm:b.safe_zone_mm==null?null:Number(b.safe_zone_mm),allowed_formats:arr(b.allowed_formats,20),max_file_mb:b.max_file_mb==null?null:Number(b.max_file_mb),file_naming_rule:safe(b.file_naming_rule,400)||null,rasterize_transparency:b.rasterize_transparency===true,convert_fonts_to_curves:b.convert_fonts_to_curves===true,black_generation_rule:safe(b.black_generation_rule,400)||null,other_requirements:safe(b.other_requirements,2000)||null,status:b.submit===true?"awaiting_approval":"draft",updated_at:new Date().toISOString()};
     const {data,error}=await db.from("rpk_printer_questionnaires").update(patch).eq("id",id).eq("workspace_id",w.id).select("*").maybeSingle();
     if(error||!data)return out(500,{ok:false,error:"questionnaire_save_failed",detail:error?.message},origin);
     const {data:validation}=await db.rpc("rpk_validate_printer_questionnaire",{p_questionnaire_id:id});
+    await audit(u.user.id,"rpk.print_questionnaire_updated","rpk_printer_questionnaire",id,{workspace_id:w.id,actor_role:role,submitted:b.submit===true},old,data);
     return out(200,{ok:true,questionnaire:data,validation},origin);
   }
 
   if(action==="confirm_printer_profile"){
     const id=safe(b.questionnaire_id,80);if(!id)return out(400,{ok:false,error:"questionnaire_id_required"},origin);
     const party=safe(b.party,30);
-    if(party==="printer"){
-      if(!canPrinter(role))return out(403,{ok:false,error:"printer_role_required"},origin);
-      await db.from("rpk_printer_questionnaires").update({printer_confirmed_at:new Date().toISOString(),printer_confirmed_by:u.user.id,status:"awaiting_approval",updated_at:new Date().toISOString()}).eq("id",id).eq("workspace_id",w.id);
-    }else if(party==="manager"){
-      if(!canManage(role))return out(403,{ok:false,error:"manager_role_required"},origin);
-      await db.from("rpk_printer_questionnaires").update({manager_confirmed_at:new Date().toISOString(),manager_confirmed_by:u.user.id,status:"awaiting_approval",updated_at:new Date().toISOString()}).eq("id",id).eq("workspace_id",w.id);
-    }else return out(400,{ok:false,error:"party_must_be_printer_or_manager"},origin);
+    if(party==="printer"){if(!canPrinter(role))return out(403,{ok:false,error:"printer_role_required"},origin);await db.from("rpk_printer_questionnaires").update({printer_confirmed_at:new Date().toISOString(),printer_confirmed_by:u.user.id,status:"awaiting_approval",updated_at:new Date().toISOString()}).eq("id",id).eq("workspace_id",w.id)}
+    else if(party==="manager"){if(!canManage(role))return out(403,{ok:false,error:"manager_role_required"},origin);await db.from("rpk_printer_questionnaires").update({manager_confirmed_at:new Date().toISOString(),manager_confirmed_by:u.user.id,status:"awaiting_approval",updated_at:new Date().toISOString()}).eq("id",id).eq("workspace_id",w.id)}
+    else return out(400,{ok:false,error:"party_must_be_printer_or_manager"},origin);
     const {data:q}=await db.from("rpk_printer_questionnaires").select("*").eq("id",id).eq("workspace_id",w.id).maybeSingle();
-    let profileId=null,validation=null;
-    const vr=await db.rpc("rpk_validate_printer_questionnaire",{p_questionnaire_id:id});validation=vr.data;
+    let profileId=null,validation=null;const vr=await db.rpc("rpk_validate_printer_questionnaire",{p_questionnaire_id:id});validation=vr.data;
     if(q?.printer_confirmed_at&&q?.manager_confirmed_at&&validation?.valid){const pr=await db.rpc("rpk_publish_verified_print_profile",{p_questionnaire_id:id});if(pr.error)return out(500,{ok:false,error:"print_profile_publish_failed",detail:pr.error.message},origin);profileId=pr.data;}
+    await audit(u.user.id,"rpk.print_profile_confirmed","rpk_printer_questionnaire",id,{workspace_id:w.id,actor_role:role,party,published_profile_id:profileId});
     return out(200,{ok:true,questionnaire:q,validation,generated_print_profile_id:profileId},origin);
   }
 
@@ -108,9 +114,7 @@ Deno.serve(async req=>{
     if(!original)return out(400,{ok:false,error:"original_name_required"},origin);if(size>104857600)return out(400,{ok:false,error:"file_too_large_100mb_max"},origin);
     let batchId=safe(b.batch_id,80);
     if(!batchId){const {data:batch,error:be}=await db.from("rpk_archive_batches").insert({workspace_id:w.id,uploaded_by:u.user.id,label:safe(b.batch_label,180)||`Импорт ${new Date().toLocaleDateString("ru-RU")}`,source_kind:safe(b.source_kind,30)||"files"}).select("id,batch_no").single();if(be)return out(500,{ok:false,error:"batch_create_failed",detail:be.message},origin);batchId=batch.id;}
-    const path=`${w.slug}/${batchId}/${crypto.randomUUID()}-${cleanFileName(original)}`;
-    const {data:signed,error:se}=await db.storage.from("rpk-archive").createSignedUploadUrl(path);
-    if(se||!signed)return out(500,{ok:false,error:"signed_upload_failed",detail:se?.message},origin);
+    const path=`${w.slug}/${batchId}/${crypto.randomUUID()}-${cleanFileName(original)}`;const {data:signed,error:se}=await db.storage.from("rpk-archive").createSignedUploadUrl(path);if(se||!signed)return out(500,{ok:false,error:"signed_upload_failed",detail:se?.message},origin);
     return out(200,{ok:true,batch_id:batchId,path,token:signed.token,signed_url:signed.signedUrl,original_name:original,mime_type:mime},origin);
   }
 
@@ -121,6 +125,7 @@ Deno.serve(async req=>{
     const {data:a,error}=await db.from("rpk_legacy_artworks").insert({workspace_id:w.id,batch_id:batchId||null,client_id:clientId,storage_path:path,original_name:original,file_ext:fileExt(original),mime_type:safe(b.mime_type,160)||null,byte_size:Number(b.byte_size||0)||null,sha256:safe(b.sha256,128)||null,product_type:safe(b.product_type,80)||null,width_mm:b.width_mm==null?null:Number(b.width_mm),height_mm:b.height_mm==null?null:Number(b.height_mm),client_match_state:clientId?"confirmed":"unmatched",status:"received",metadata:{source:"cabinet_upload"}}).select("*").single();
     if(error)return out(500,{ok:false,error:"archive_register_failed",detail:error.message},origin);
     if(batchId){const {count}=await db.from("rpk_legacy_artworks").select("id",{count:"exact",head:true}).eq("batch_id",batchId);await db.from("rpk_archive_batches").update({status:"uploaded",file_count:Number(count||0),updated_at:new Date().toISOString()}).eq("id",batchId).eq("workspace_id",w.id);}
+    await audit(u.user.id,"rpk.artwork_uploaded","rpk_legacy_artwork",a.id,{workspace_id:w.id,actor_role:role,client_id:clientId,batch_id:batchId,original_name:original,file_ext:a.file_ext});
     return out(200,{ok:true,artwork:a},origin);
   }
 
@@ -130,13 +135,19 @@ Deno.serve(async req=>{
 
   if(action==="assign_artwork_client"){
     if(!["platform_admin","owner","manager","designer"].includes(role))return out(403,{ok:false,error:"archive_write_role_required"},origin);
-    const artworkId=safe(b.artwork_id,80),clientId=safe(b.client_id,80);const {data:c}=await db.from("rpk_clients").select("id").eq("id",clientId).eq("workspace_id",w.id).maybeSingle();if(!c)return out(400,{ok:false,error:"client_not_in_workspace"},origin);const {data,error}=await db.from("rpk_legacy_artworks").update({client_id:clientId,client_match_state:"confirmed",updated_at:new Date().toISOString()}).eq("id",artworkId).eq("workspace_id",w.id).select("*").maybeSingle();if(error||!data)return out(404,{ok:false,error:"artwork_not_found"},origin);return out(200,{ok:true,artwork:data},origin);
+    const artworkId=safe(b.artwork_id,80),clientId=safe(b.client_id,80);const {data:c}=await db.from("rpk_clients").select("id").eq("id",clientId).eq("workspace_id",w.id).maybeSingle();if(!c)return out(400,{ok:false,error:"client_not_in_workspace"},origin);
+    const {data:old}=await db.from("rpk_legacy_artworks").select("id,client_id,client_match_state,original_name").eq("id",artworkId).eq("workspace_id",w.id).maybeSingle();
+    const {data,error}=await db.from("rpk_legacy_artworks").update({client_id:clientId,client_match_state:"confirmed",updated_at:new Date().toISOString()}).eq("id",artworkId).eq("workspace_id",w.id).select("*").maybeSingle();if(error||!data)return out(404,{ok:false,error:"artwork_not_found"},origin);
+    await audit(u.user.id,"rpk.artwork_client_assigned","rpk_legacy_artwork",artworkId,{workspace_id:w.id,actor_role:role,client_id:clientId},old,{client_id:data.client_id,client_match_state:data.client_match_state,original_name:data.original_name});
+    return out(200,{ok:true,artwork:data},origin);
   }
 
   if(action==="create_remake"){
     if(!["platform_admin","owner","manager","designer"].includes(role))return out(403,{ok:false,error:"design_role_required"},origin);
     const clientId=safe(b.client_id,80),artworkId=safe(b.artwork_id,80);if(!clientId||!artworkId)return out(400,{ok:false,error:"client_and_artwork_required"},origin);
-    const {data,error}=await db.rpc("rpk_create_remake_job",{p_workspace_id:w.id,p_client_id:clientId,p_artwork_id:artworkId,p_change_request:b.changes&&typeof b.changes==="object"?b.changes:{}});if(error)return out(500,{ok:false,error:"remake_create_failed",detail:error.message},origin);return out(200,{ok:true,job_id:data},origin);
+    const {data,error}=await db.rpc("rpk_create_remake_job",{p_workspace_id:w.id,p_client_id:clientId,p_artwork_id:artworkId,p_change_request:b.changes&&typeof b.changes==="object"?b.changes:{}});if(error)return out(500,{ok:false,error:"remake_create_failed",detail:error.message},origin);
+    await audit(u.user.id,"rpk.remake_created","design_job",String(data),{workspace_id:w.id,actor_role:role,client_id:clientId,source_artwork_id:artworkId,changes:b.changes&&typeof b.changes==="object"?b.changes:{}});
+    return out(200,{ok:true,job_id:data},origin);
   }
 
   return out(400,{ok:false,error:"unknown_action"},origin);
