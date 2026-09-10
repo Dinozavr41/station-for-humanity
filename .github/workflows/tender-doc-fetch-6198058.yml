@@ -1,4 +1,4 @@
-name: Tender docs probe 6198058
+name: Tender docs fetch 6198058
 
 on:
   push:
@@ -12,92 +12,50 @@ permissions:
 jobs:
   fetch-public-docs:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 12
     steps:
-      - name: Probe public mirrors for attachment links
+      - name: Download four public Portal Suppliers documents
         shell: bash
         run: |
-          set -euo pipefail
-          mkdir -p out/pages out/docs
+          set -u
+          mkdir -p out/docs
           UA='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/151 Safari/537.36'
-          SYN='https://synapsenet.ru/zakupki/zakupkimosru/6198058--altajskij-kraj-vipolnenie-rabot-po-izgotovleniyu-i-montazhu'
-          B2B='https://b2b.house/activepurchase/mb4d30fa4-c7a3-4af2-bb1b-a075c462fadc_6f1288e3/'
-          ROS='https://synapsenet.ru/zakupki/roseltorg/b0309261727418%231--altajskij-kraj-vipolnenie-rabot-po-izgotovleniyu-i'
+          BASE='https://zakupki.mos.ru/newapi/api/FileStorage/Download?id='
 
-          for spec in "synapse|$SYN" "b2b|$B2B" "ros-synapse|$ROS"; do
-            name=${spec%%|*}; url=${spec#*|}
-            echo "Fetching $name $url"
-            curl -fL --compressed --retry 2 --connect-timeout 15 --max-time 60 -A "$UA" "$url" -o "out/pages/$name.html" || true
-          done
-
-          python3 - <<'PY'
-          import html, json, pathlib, re, subprocess, urllib.parse
-          root=pathlib.Path('out')
-          needles=('doc','xls','download','file','storage','attachment','6198058','b0309261727418','ТЗ_','Форма КП','Квалификация','Список документов')
-          candidates=[]
-          bases={
-            'synapse.html':'https://synapsenet.ru',
-            'ros-synapse.html':'https://synapsenet.ru',
-            'b2b.html':'https://b2b.house',
+          fetch_one() {
+            id="$1"; name="$2"
+            url="${BASE}${id}"
+            echo "Fetching public attachment ${id} -> ${name}"
+            if curl -fL --compressed --retry 4 --retry-all-errors --retry-delay 3 \
+              --connect-timeout 30 --max-time 180 -A "$UA" \
+              -H 'Accept: */*' "$url" -o "out/docs/$name"; then
+              printf '%s\t%s\t%s\t%s\n' "$id" "$name" "$(stat -c %s "out/docs/$name")" "$(sha256sum "out/docs/$name" | cut -d' ' -f1)" >> out/manifest.tsv
+            else
+              rm -f "out/docs/$name"
+              printf '%s\t%s\tFAILED\t-\n' "$id" "$name" >> out/manifest.tsv
+            fi
           }
-          for p in (root/'pages').glob('*.html'):
-            raw=p.read_text('utf-8',errors='ignore')
-            dec=html.unescape(raw).replace('\\/','/')
-            print('\nPAGE',p,'bytes',len(raw))
-            for pat in [r'href=["\']([^"\']+)',r'src=["\']([^"\']+)',r'https?://[^"\'<>\\s]+']:
-              for m in re.finditer(pat,dec,re.I):
-                u=m.group(1) if m.lastindex else m.group(0)
-                if any(n.lower() in u.lower() for n in needles):
-                  full=urllib.parse.urljoin(bases.get(p.name,''),u)
-                  candidates.append({'page':p.name,'url':full})
-            # preserve nearby source fragments around filenames / storage IDs
-            snippets=[]
-            for n in needles:
-              pos=0
-              while True:
-                i=dec.lower().find(n.lower(),pos)
-                if i<0: break
-                snippets.append(dec[max(0,i-700):min(len(dec),i+1500)])
-                pos=i+len(n)
-            (root/'pages'/f'{p.stem}-snippets.txt').write_text('\n\n-----\n\n'.join(snippets[:100]),'utf-8')
 
-          uniq=[]; seen=set()
-          for x in candidates:
-            if x['url'] not in seen:
-              seen.add(x['url']); uniq.append(x)
-          (root/'candidates.json').write_text(json.dumps(uniq,ensure_ascii=False,indent=2),'utf-8')
-          print('\nCANDIDATES',len(uniq))
-          for x in uniq[:200]: print(x['page'],x['url'])
+          printf 'attachment_id\tfilename\tsize\tsha256\n' > out/manifest.tsv
+          fetch_one 282575525 '01_TZ_03-09-2026.doc'
+          fetch_one 282575526 '02_Forma_KP.xlsx'
+          fetch_one 282575527 '03_Kvalifikaciya_Necenovye_kriterii.xlsx'
+          fetch_one 282575528 '04_Spisok_dokumentov_specialistov.docx'
 
-          # Download only obvious public document links from the mirrors themselves.
-          manifest=[]
-          for i,x in enumerate(uniq,1):
-            u=x['url']; low=u.lower()
-            if not any(k in low for k in ('.doc','.docx','.xls','.xlsx','download','attachment','filestorage')): continue
-            host=urllib.parse.urlparse(u).hostname or ''
-            if host not in ('synapsenet.ru','www.synapsenet.ru','b2b.house','www.b2b.house','zakupki.mos.ru','old.zakupki.mos.ru'): continue
-            dst=root/'docs'/f'{i:03d}.bin'
-            r=subprocess.run(['curl','-fL','--compressed','--retry','1','--connect-timeout','12','--max-time','45','-A','Mozilla/5.0',u,'-o',str(dst)])
-            ok=r.returncode==0 and dst.exists() and dst.stat().st_size>0
-            manifest.append({'url':u,'page':x['page'],'downloaded':ok,'path':str(dst) if ok else None,'size':dst.stat().st_size if ok else 0})
-          (root/'manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2),'utf-8')
-          print('\nDOWNLOADS',json.dumps(manifest,ensure_ascii=False,indent=2))
-          PY
-
-      - name: Show result
-        if: always()
-        run: |
-          find out -maxdepth 2 -type f -printf '%p %s bytes\n' 2>/dev/null || true
-          echo '--- candidates ---'
-          cat out/candidates.json 2>/dev/null || true
           echo '--- manifest ---'
-          cat out/manifest.json 2>/dev/null || true
+          cat out/manifest.tsv
+          echo '--- file types ---'
+          file out/docs/* 2>/dev/null || true
 
-      - name: Upload mirror evidence
+          count=$(find out/docs -type f | wc -l)
+          echo "Downloaded: $count / 4"
+          test "$count" -ge 1
+
+      - name: Upload source documents
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: tender-6198058-mirror-evidence
+          name: tender-6198058-source-documents
           path: out/
-          if-no-files-found: warn
+          if-no-files-found: error
           retention-days: 1
