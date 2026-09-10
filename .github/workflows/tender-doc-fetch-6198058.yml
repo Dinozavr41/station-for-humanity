@@ -12,13 +12,13 @@ permissions:
 jobs:
   fetch-public-docs:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 5
     steps:
-      - name: Download four public Portal Suppliers documents
+      - name: Download four public Portal Suppliers documents in parallel
         shell: bash
         run: |
           set -u
-          mkdir -p out/docs
+          mkdir -p out/docs out/status
           UA='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/151 Safari/537.36'
           BASE='https://zakupki.mos.ru/newapi/api/FileStorage/Download?id='
 
@@ -26,27 +26,28 @@ jobs:
             id="$1"; name="$2"
             url="${BASE}${id}"
             echo "Fetching public attachment ${id} -> ${name}"
-            if curl -fL --compressed --retry 4 --retry-all-errors --retry-delay 3 \
-              --connect-timeout 30 --max-time 180 -A "$UA" \
-              -H 'Accept: */*' "$url" -o "out/docs/$name"; then
-              printf '%s\t%s\t%s\t%s\n' "$id" "$name" "$(stat -c %s "out/docs/$name")" "$(sha256sum "out/docs/$name" | cut -d' ' -f1)" >> out/manifest.tsv
+            if curl -fL --compressed --retry 1 --retry-all-errors --retry-delay 2 \
+              --connect-timeout 20 --max-time 90 -A "$UA" -H 'Accept: */*' \
+              "$url" -o "out/docs/$name"; then
+              printf '%s\t%s\t%s\t%s\n' "$id" "$name" "$(stat -c %s "out/docs/$name")" "$(sha256sum "out/docs/$name" | cut -d' ' -f1)" > "out/status/$id.tsv"
             else
               rm -f "out/docs/$name"
-              printf '%s\t%s\tFAILED\t-\n' "$id" "$name" >> out/manifest.tsv
+              printf '%s\t%s\tFAILED\t-\n' "$id" "$name" > "out/status/$id.tsv"
             fi
           }
 
-          printf 'attachment_id\tfilename\tsize\tsha256\n' > out/manifest.tsv
-          fetch_one 282575525 '01_TZ_03-09-2026.doc'
-          fetch_one 282575526 '02_Forma_KP.xlsx'
-          fetch_one 282575527 '03_Kvalifikaciya_Necenovye_kriterii.xlsx'
-          fetch_one 282575528 '04_Spisok_dokumentov_specialistov.docx'
+          fetch_one 282575525 '01_TZ_03-09-2026.doc' &
+          fetch_one 282575526 '02_Forma_KP.xlsx' &
+          fetch_one 282575527 '03_Kvalifikaciya_Necenovye_kriterii.xlsx' &
+          fetch_one 282575528 '04_Spisok_dokumentov_specialistov.docx' &
+          wait
 
+          printf 'attachment_id\tfilename\tsize\tsha256\n' > out/manifest.tsv
+          cat out/status/*.tsv >> out/manifest.tsv
           echo '--- manifest ---'
           cat out/manifest.tsv
           echo '--- file types ---'
           file out/docs/* 2>/dev/null || true
-
           count=$(find out/docs -type f | wc -l)
           echo "Downloaded: $count / 4"
           test "$count" -ge 1
