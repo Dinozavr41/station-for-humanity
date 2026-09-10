@@ -55,7 +55,7 @@ Deno.serve(async req=>{
     if(b.next_action_at)row.next_action_at=new Date(b.next_action_at).toISOString();
     const {data,error}=await db.from("rpk_deals").insert(row).select("*").single();
     if(error)return out(500,{ok:false,error:"deal_create_failed",detail:error.message},origin);
-    await audit(u.user.id,"rpk.deal_created","rpk_deal",data.id,{workspace_id:w.id,deal_no:data.deal_no});
+    await audit(u.user.id,"rpk.deal_created","rpk_deal",data.id,{workspace_id:w.id,actor_role:role,deal_no:data.deal_no});
     return out(200,{ok:true,deal:data},origin);
   }
 
@@ -73,7 +73,7 @@ Deno.serve(async req=>{
     if(b.notes!==undefined)patch.notes=safe(b.notes,2000)||null;
     const {data,error}=await db.from("rpk_deals").update(patch).eq("id",id).eq("workspace_id",w.id).select("*").single();
     if(error)return out(500,{ok:false,error:"deal_update_failed",detail:error.message},origin);
-    await audit(u.user.id,"rpk.deal_updated","rpk_deal",id,{workspace_id:w.id,from_stage:old.stage,to_stage:data.stage});
+    await audit(u.user.id,"rpk.deal_updated","rpk_deal",id,{workspace_id:w.id,actor_role:role,from_stage:old.stage,to_stage:data.stage});
     return out(200,{ok:true,deal:data},origin);
   }
 
@@ -85,7 +85,7 @@ Deno.serve(async req=>{
     const occurred=safe(b.occurred_on,20)||new Date().toISOString().slice(0,10);
     const {data,error}=await db.from("rpk_cash_entries").insert({workspace_id:w.id,deal_id:dealId,direction,category:safe(b.category,120)||null,amount,currency:"RUB",occurred_on:occurred,counterparty:safe(b.counterparty,220)||null,note:safe(b.note,1000)||null,source:"manual"}).select("*").single();
     if(error)return out(500,{ok:false,error:"cash_entry_create_failed",detail:error.message},origin);
-    await audit(u.user.id,"rpk.cash_entry_created","rpk_cash_entry",data.id,{workspace_id:w.id,direction,amount});
+    await audit(u.user.id,"rpk.cash_entry_created","rpk_cash_entry",data.id,{workspace_id:w.id,actor_role:role,direction,amount});
     return out(200,{ok:true,cash_entry:data},origin);
   }
 
@@ -96,7 +96,7 @@ Deno.serve(async req=>{
     const total=b.total===undefined?(deal.amount==null?null:Number(deal.amount)):num(b.total);if(total!=null&&total<0)return out(400,{ok:false,error:"negative_total_not_allowed"},origin);
     const {data,error}=await db.from("rpk_documents").insert({workspace_id:w.id,deal_id:deal.id,client_id:deal.client_id,document_type:type,status:"draft",total,currency:"RUB",payload:{source:"rpk_os",deal_title:deal.title,created_by:u.user.id}}).select("*").single();
     if(error)return out(500,{ok:false,error:"document_draft_create_failed",detail:error.message},origin);
-    await audit(u.user.id,"rpk.document_draft_created","rpk_document",data.id,{workspace_id:w.id,deal_id:deal.id,document_type:type});
+    await audit(u.user.id,"rpk.document_draft_created","rpk_document",data.id,{workspace_id:w.id,actor_role:role,deal_id:deal.id,document_type:type});
     return out(200,{ok:true,document:data,note:"Draft record created. PDF/DOCX rendering is a separate controlled step."},origin);
   }
 
@@ -105,12 +105,12 @@ Deno.serve(async req=>{
     const name=safe(b.name,220);if(name.length<2)return out(400,{ok:false,error:"supplier_name_required"},origin);
     const {data,error}=await db.from("rpk_suppliers").insert({workspace_id:w.id,name,legal_name:safe(b.legal_name,240)||null,contact_name:safe(b.contact_name,180)||null,phone:safe(b.phone,80)||null,email:safe(b.email,180)||null,website:safe(b.website,300)||null,notes:safe(b.notes,1000)||null}).select("*").single();
     if(error)return out(500,{ok:false,error:"supplier_create_failed",detail:error.message},origin);
-    await audit(u.user.id,"rpk.supplier_created","rpk_supplier",data.id,{workspace_id:w.id});
+    await audit(u.user.id,"rpk.supplier_created","rpk_supplier",data.id,{workspace_id:w.id,actor_role:role});
     return out(200,{ok:true,supplier:data},origin);
   }
 
   if(action==="toggle_module"){
-    if(!["platform_admin","owner"].includes(role))return out(403,{ok:false,error:"owner_role_required"},origin);
+    if(!MANAGE_ROLES.has(role))return out(403,{ok:false,error:"manager_role_required"},origin);
     const code=safe(b.module_code,80),enabled=b.enabled===true;
     const [{data:mods},{data:states}]=await Promise.all([db.from("rpk_modules").select("code,dependencies").order("sort_order"),db.from("rpk_workspace_modules").select("module_code,enabled").eq("workspace_id",w.id)]);
     const mod=(mods||[]).find((x:any)=>x.code===code);if(!mod)return out(404,{ok:false,error:"module_not_found"},origin);
@@ -119,7 +119,7 @@ Deno.serve(async req=>{
     else{const dependents=(mods||[]).filter((m:any)=>(m.dependencies||[]).includes(code)&&state.get(m.code)===true).map((m:any)=>m.code);if(dependents.length)return out(409,{ok:false,error:"enabled_modules_depend_on_this",dependents},origin);}
     const {error}=await db.from("rpk_workspace_modules").upsert({workspace_id:w.id,module_code:code,enabled,enabled_at:new Date().toISOString(),disabled_at:enabled?null:new Date().toISOString()},{onConflict:"workspace_id,module_code"});
     if(error)return out(500,{ok:false,error:"module_toggle_failed",detail:error.message},origin);
-    await audit(u.user.id,"rpk.module_toggled","rpk_workspace",w.id,{module_code:code,enabled});
+    await audit(u.user.id,"rpk.module_toggled","rpk_workspace",w.id,{workspace_id:w.id,actor_role:role,module_code:code,enabled});
     return out(200,{ok:true,module_code:code,enabled},origin);
   }
 
