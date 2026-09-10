@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#07111f">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Station — Бизнес-сообщество</title>
+  <link rel="stylesheet" href="../business.css">
+  <link rel="stylesheet" href="./community.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="/business/"><span class="mark">SFH</span><span><strong>STATION</strong><small>BUSINESS NETWORK</small></span></a>
+  <a class="home-link" href="/business/">← CRM для бизнеса</a>
+</header>
+<main>
+  <section class="network-hero">
+    <div><p class="eyebrow">STATION · BUSINESS NETWORK</p><h1>Бизнесы отдельно.<br><span>Люди — вместе.</span></h1><p class="lead">Никаких чужих сделок, клиентов, денег и документов. Только добровольная визитка компании, полезные контакты и пространство, где владельцы и менеджеры могут давать друг другу заказы, материалы, подрядчиков и опыт.</p></div>
+    <div class="network-counter"><small>КОМПАНИЙ В STATION</small><strong id="companyCount">—</strong><span>CRM-данные каждой компании изолированы</span></div>
+  </section>
+  <section id="authPanel" class="auth-panel"><div><p class="eyebrow">ТОЛЬКО ДЛЯ УЧАСТНИКОВ</p><h2>Войдите в Station.</h2><p>Каталог контактов и чаты доступны сотрудникам подключённых бизнесов. Вход в чужую CRM при этом невозможен.</p></div><form id="authForm" class="auth-form"><label>Email<input id="email" type="email" required autocomplete="email"></label><label>Пароль<input id="password" type="password" required autocomplete="current-password"></label><button class="button primary" type="submit">Войти</button><div id="authMsg" class="identity"></div></form></section>
+  <section id="networkApp" hidden><div class="network-top"><div><p class="eyebrow">СЕТЬ STATION</p><h2>Компании и связи</h2></div><div><span id="identity" class="identity"></span> <button id="signOut" class="button">Выйти</button></div></div><div class="network-tabs"><button class="active" data-tab="directory">Компании</button><button data-tab="chat">Общий чат</button><button data-tab="profile">Моя карточка</button></div>
+    <section id="directoryTab" class="network-panel"><div class="panel-head"><div><p class="eyebrow">КАТАЛОГ</p><h2>Кто уже здесь</h2></div><p>В каталоге видны только данные, которые компания решила показать другим участникам Station.</p></div><div id="directory" class="company-directory"></div></section>
+    <section id="chatTab" class="network-panel" hidden><div class="chat-layout"><aside><p class="eyebrow">КАНАЛЫ</p><div id="channels" class="channel-list"></div></aside><div class="chat-box"><div id="chatTitle" class="chat-title">Выберите канал</div><div id="messages" class="messages"></div><form id="messageForm" class="message-form"><select id="postAs"></select><textarea id="messageText" rows="2" maxlength="4000" placeholder="Напишите сообщение…"></textarea><button class="button primary" type="submit">Отправить</button></form></div></div></section>
+    <section id="profileTab" class="network-panel" hidden><div class="panel-head"><div><p class="eyebrow">ПУБЛИЧНАЯ ВИЗИТКА</p><h2>Что увидят другие бизнесы</h2></div><p>Это не CRM. Здесь нет клиентов, сумм, документов или внутренних файлов — только то, чем вы сами готовы поделиться.</p></div><form id="profileForm" class="profile-form"><label>Компания<select id="profileWorkspace"></select></label><label>Короткий заголовок<input id="headline" maxlength="240" placeholder="Например: наружная реклама и широкоформатная печать"></label><label class="wide">О компании<textarea id="about" rows="4" maxlength="2000"></textarea></label><label class="wide">Что можем предложить<input id="offers" placeholder="печать 3×6, монтаж, дизайн — через запятую"></label><label class="wide">Что ищем / где нужна помощь<input id="needs" placeholder="подрядчики, материалы, заказы — через запятую"></label><label>Контактное лицо<input id="contactPerson" maxlength="180"></label><label>Телефон<input id="publicPhone" maxlength="80"></label><label>Email<input id="publicEmail" type="email" maxlength="180"></label><label>Telegram<input id="telegram" maxlength="180"></label><label>MAX<input id="maxContact" maxlength="180"></label><label>Сайт<input id="website" maxlength="300"></label><div class="wide profile-actions"><label class="check"><input id="discoverable" type="checkbox" checked> Показывать компанию в каталоге</label><button class="button primary" type="submit">Сохранить визитку</button></div><div id="profileMsg" class="identity wide"></div></form></section>
+  </section>
+</main>
+<footer>STATION FOR HUMANITY · BUSINESS NETWORK <span>Коммерческая тайна остаётся внутри каждого рабочего пространства.</span></footer>
+<script type="module" src="./community.js"></script>
+</body>
+</html>
