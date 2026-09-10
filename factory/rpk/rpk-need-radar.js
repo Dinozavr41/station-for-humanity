@@ -1,0 +1,66 @@
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+const URL='https://xwapzjsnqyfiqbzeycyh.supabase.co';
+const KEY='sb_publishable_mVOY1vbk6e6jiBnT0VAX9w_sFXODDsi';
+const sb=createClient(URL,KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+const WORKSPACE=new URLSearchParams(location.search).get('w')||'focus-biysk';
+const $=s=>document.querySelector(s);
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const day=v=>v?new Date(v).toLocaleDateString('ru-RU',{day:'2-digit',month:'short',year:'numeric'}):'—';
+
+async function api(action,payload={}){
+  const {data,error}=await sb.functions.invoke('need-radar',{body:{action,workspace_slug:WORKSPACE,...payload}});
+  if(error){let m=error.message;try{if(error.context){const j=await error.context.json();m=j.error+(j.detail?`: ${j.detail}`:'')}}catch{}throw new Error(m)}
+  if(!data?.ok)throw new Error(data?.error||'need_radar_error');
+  return data;
+}
+function scoreClass(n){return Number(n)>=75?'ok':Number(n)>=55?'warn':''}
+function reasons(v){return (v||[]).map(x=>x?.label).filter(Boolean).slice(0,6).join(' · ')}
+function services(v){return (v||[]).filter(Boolean).join(' · ')}
+
+function inject(){
+  if($('#needRadar'))return;
+  const ws=$('#workspace'),opp=$('#opportunities');if(!ws||!opp)return;
+  const sec=document.createElement('section');sec.id='needRadar';sec.className='panel section';sec.innerHTML=`
+    <div class="section-head"><div><p class="eyebrow">STATION NEED RADAR · EARLY DEMAND</p><h2>Кому мы можем понадобиться раньше тендера</h2></div><button id="needRescore" class="primary">Обновить прогноз</button></div>
+    <p class="muted">Это не опубликованные заказы, а подтверждённые публичными событиями сигналы будущей потребности. Station показывает источник, вероятность и окно времени; менеджер решает, стоит ли действовать.</p>
+    <div class="money-strip"><div><small>Сигналов</small><strong id="needTotal">0</strong></div><div><small>Новых</small><strong id="needNew">0</strong></div><div><small>Горячих ≥75</small><strong id="needHot">0</strong></div><div><small>Передано в Opportunity</small><strong id="needPromoted">0</strong></div></div>
+    <pre id="needStatus"></pre><div id="needList" class="deal-list"><div class="empty-box">Need Radar загружается…</div></div>`;
+  ws.insertBefore(sec,opp);
+
+  const nav=$('#moduleNav');if(nav&&!nav.querySelector('[data-jump="needRadar"]')){const b=document.createElement('button');b.dataset.jump='needRadar';b.textContent='Need Radar';nav.insertBefore(b,nav.querySelector('[data-jump="opportunities"]')||nav.children[1]||null)}
+  const quick=$('.quick-actions');if(quick&&!quick.querySelector('[data-jump="needRadar"]')){const b=document.createElement('button');b.className='quick';b.dataset.jump='needRadar';b.innerHTML='<b>📡 Need Radar</b><span>Кому скоро понадобимся</span>';quick.insertBefore(b,quick.children[1]||null)}
+  const metrics=$('.owner-metrics');if(metrics&&!$('#needHotMetric')){const a=document.createElement('article');a.className='metric-card';a.innerHTML='<small>РАННИЕ СИГНАЛЫ</small><strong id="needHotMetric">0</strong><span>горячих прогнозов спроса</span>';metrics.appendChild(a)}
+  document.querySelectorAll('[data-jump="needRadar"]').forEach(b=>b.addEventListener('click',()=>sec.scrollIntoView({behavior:'smooth',block:'start'})));
+  $('#needRescore')?.addEventListener('click',rescore);
+  const st=document.createElement('style');st.textContent=`.need-card .need-services{margin-top:7px;color:#d6e7ef;font-size:13px;line-height:1.5}.need-card .need-proof{font-size:12px;color:#9fb4c3;line-height:1.5}.need-card .need-window{font-size:12px;color:#9fb4c3}.need-card .need-probability{font-size:20px;font-weight:800}`;document.head.appendChild(st);
+}
+function card(x){
+  const s=x.signal||{},promoted=x.status==='promoted';
+  return `<div class="deal-card need-card">
+    <div class="deal-title"><strong>${esc(s.entity_name||s.title||'Сигнал')}</strong><small>${esc(s.source_label||'Источник')}${s.region?` · ${esc(s.region)}`:''}${s.city?` · ${esc(s.city)}`:''}</small><div class="need-services">Вероятно понадобится: ${esc(services(x.predicted_services)||'уточнить')}</div></div>
+    <div><span class="badge ${scoreClass(x.score)}">NEED ${esc(x.score)}/100</span><div class="need-probability">${Math.round(Number(x.need_probability||0)*100)}%</div><small>вероятность потребности</small></div>
+    <div class="deal-money"><strong>${day(x.need_window_start)} — ${day(x.need_window_end)}</strong><small>окно для контакта</small></div>
+    <div class="deal-next"><small>Почему Station так думает</small><br><span class="need-proof">${esc(reasons(x.reasons)||s.title||'Публичный сигнал')}</span></div>
+    <div class="item-actions deal-actions">
+      ${s.source_url?`<a class="mini" href="${esc(s.source_url)}" target="_blank" rel="noopener noreferrer">Доказательство ↗</a>`:''}
+      ${promoted?'<span class="badge ok">УЖЕ В ВОЗМОЖНОСТЯХ</span>':`<button class="mini need-save" data-id="${x.id}">Сохранить</button><button class="mini need-reject" data-id="${x.id}">Неинтересно</button><button class="mini primary need-promote" data-id="${x.id}">В возможность →</button>`}
+    </div>
+  </div>`;
+}
+function render(d){
+  const s=d.summary||{};$('#needTotal').textContent=s.total||0;$('#needNew').textContent=s.new||0;$('#needHot').textContent=s.hot||0;$('#needPromoted').textContent=s.promoted||0;if($('#needHotMetric'))$('#needHotMetric').textContent=s.hot||0;
+  $('#needList').innerHTML=(d.items||[]).length?(d.items||[]).map(card).join(''):'<div class="empty-box"><b>Пока ранних сигналов нет.</b><br>Когда Station увидит открытие, стройку, новый филиал, ребрендинг или мероприятие — прогноз появится здесь.</div>';
+  document.querySelectorAll('.need-save').forEach(b=>b.onclick=()=>status(b.dataset.id,'saved'));
+  document.querySelectorAll('.need-reject').forEach(b=>b.onclick=()=>status(b.dataset.id,'rejected'));
+  document.querySelectorAll('.need-promote').forEach(b=>b.onclick=()=>promote(b.dataset.id));
+}
+async function load(auto=true){
+  const {data:{session}}=await sb.auth.getSession();if(!session)return;
+  try{let d=await api('snapshot');if(auto&&!(d.items||[]).length){await api('rescore');d=await api('snapshot')}render(d);$('#needStatus').textContent=''}catch(e){$('#needStatus').textContent='Need Radar: '+e.message}
+}
+async function rescore(){const b=$('#needRescore');b.disabled=true;$('#needStatus').textContent='Пересчитываем ранние сигналы…';try{const r=await api('rescore');$('#needStatus').textContent=`Проверено ${r.scored}, подходит ${r.matched}.`;await load(false)}catch(e){$('#needStatus').textContent=e.message}finally{b.disabled=false}}
+async function status(id,status){try{await api('set_prediction_status',{prediction_id:id,status});await load(false)}catch(e){alert(e.message)}}
+async function promote(id){if(!confirm('Перевести этот прогноз в обычную возможность Opportunity Engine? Это ещё не означает, что заказ подтверждён.'))return;try{await api('promote_to_opportunity',{prediction_id:id});await load(false);alert('Прогноз передан в «Заказы рядом». Там менеджер сможет продолжить проверку.')}catch(e){alert(e.message)}}
+
+inject();sb.auth.onAuthStateChange(()=>setTimeout(()=>load(true),500));setTimeout(()=>load(true),1100);
