@@ -68,9 +68,23 @@
     <section id="queue" class="panel section"><div class="section-head"><div><p class="eyebrow">PRODUCTION</p><h2>Очередь макетов</h2></div></div><div id="jobList" class="list"></div></section>
 
     <section id="documents" class="panel section">
-      <div class="section-head"><div><p class="eyebrow">ДОКУМЕНТЫ</p><h2>КП, счета и задания</h2></div></div>
-      <p class="muted">Черновики создаются из сделки без повторного набора клиента и суммы. Выпуск PDF/DOCX и юридически значимая отправка будут отдельным контролируемым шагом.</p>
-      <div id="documentList" class="list"></div>
+      <div class="section-head"><div><p class="eyebrow">DOCUMENT VAULT</p><h2>КП, счета, задания и старый архив</h2></div><div class="row"><button id="uploadDocuments" class="primary">↑ Загрузить документы</button><button id="requestAccounting" class="ghost">Запрос бухгалтеру</button></div></div>
+      <p class="muted">Загружайте старые Word, PDF и Excel. Отработанные КП становятся шаблонами: из любого документа можно создать новый черновик, сохранив связь с исходником.</p>
+      <div class="upload-grid">
+        <label>Клиент<select id="documentClient"><option value="">Не привязывать</option></select></label>
+        <label>Тип документа<select id="documentType"><option value="quote">КП</option><option value="invoice">Счёт</option><option value="work_order">Производственное задание</option><option value="contract">Договор</option><option value="act">Акт</option><option value="other">Другое</option></select></label>
+        <label class="drop">Word / PDF / Excel<input id="documentFiles" type="file" multiple accept=".doc,.docx,.pdf,.xls,.xlsx,.odt,.ods,.csv,.txt,.jpg,.jpeg,.png,application/octet-stream"></label>
+      </div>
+      <pre id="documentUploadStatus"></pre>
+      <details class="subsection" open><summary>Архив документов</summary><div id="documentVaultList" class="list"></div></details>
+      <details class="subsection"><summary>Черновики и последние документы из сделок</summary><div id="documentList" class="list"></div></details>
+
+      <div class="subsection">
+        <div class="section-head"><div><p class="eyebrow">ACCOUNTING BRIDGE</p><h2>Связь с бухгалтером</h2></div><button id="registerMailbox" class="ghost">+ Почта</button></div>
+        <p class="muted">Запрос на счёт/акт/договор ведём как маленький процесс: запросили → отправили бухгалтеру → получили → отправили клиенту → оплачено. Email, MAX и звонки складываются в одну историю.</p>
+        <div id="mailboxState" class="empty-box"></div>
+        <div id="accountingList" class="list"></div>
+      </div>
     </section>
 
     <section id="money" class="panel section">
@@ -103,5 +117,6 @@
   </section>
 </main>
 <script type="module" src="./rpk.js"></script>
+<script type="module" src="./rpk-documents.js"></script>
 </body>
 </html>
