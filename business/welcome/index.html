@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="referrer" content="no-referrer">
+  <meta name="theme-color" content="#07111f">
+  <title>Station — Первый вход</title>
+  <link rel="stylesheet" href="../business.css">
+</head>
+<body>
+<header class="topbar"><a class="brand" href="/"><span class="mark">SFH</span><span><strong>STATION</strong><small>BUSINESS OS</small></span></a><a class="home-link" href="/business/">CRM для бизнеса</a></header>
+<main style="max-width:820px;padding:80px 0 120px">
+  <section class="auth-panel" style="grid-template-columns:1fr">
+    <div><p class="eyebrow">ПЕРВЫЙ ВХОД</p><h1 style="font-size:clamp(42px,7vw,78px);margin:0">Добро пожаловать<br>в Station.</h1><p class="lead" style="font-size:18px">Приглашение уже привязано к вашему email. Укажите имя и придумайте собственный пароль. Пароль никому не отправляйте — ни владельцу компании, ни администратору Station.</p></div>
+    <form id="setupForm" class="auth-form">
+      <label>Ваше имя<input id="fullName" maxlength="120" autocomplete="name" required></label>
+      <label>Новый пароль<input id="password" type="password" minlength="10" autocomplete="new-password" required></label>
+      <label>Повторите пароль<input id="password2" type="password" minlength="10" autocomplete="new-password" required></label>
+      <button class="button primary" type="submit">Создать пароль и войти</button>
+      <div id="msg" class="identity"></div>
+    </form>
+  </section>
+</main>
+<script type="module" src="./welcome.js"></script>
+</body>
+</html>
