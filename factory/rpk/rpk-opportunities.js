@@ -5,7 +5,7 @@ const KEY='sb_publishable_mVOY1vbk6e6jiBnT0VAX9w_sFXODDsi';
 const sb=createClient(URL,KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 const WORKSPACE=new URLSearchParams(location.search).get('w')||'focus-biysk';
 const $=s=>document.querySelector(s);
-const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[c]));
 const money=(v,c='RUB')=>v==null?'—':new Intl.NumberFormat('ru-RU',{style:'currency',currency:c,maximumFractionDigits:0}).format(Number(v)||0);
 const dt=v=>v?new Date(v).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
 
@@ -68,4 +68,5 @@ document.querySelectorAll('[data-jump="opportunities"]').forEach(b=>b.addEventLi
 sb.auth.onAuthStateChange(()=>setTimeout(load,500));
 setTimeout(load,900);
 import('./rpk-need-radar.js?v=20260910-need1').catch(err=>console.error('Need Radar UI load failed',err));
-import('./rpk-tender-economics.js?v=20260910-te1').catch(err=>console.error('Tender Economics UI load failed',err));
+import('./rpk-44fz-radar.js?v=20260911-44fz1').catch(err=>console.error('44-FZ Radar UI load failed',err));
+import('./rpk-tender-economics.js?v=20260911-te2').catch(err=>console.error('Tender Economics UI load failed',err));
