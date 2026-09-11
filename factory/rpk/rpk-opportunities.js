@@ -68,4 +68,5 @@ document.querySelectorAll('[data-jump="opportunities"]').forEach(b=>b.addEventLi
 sb.auth.onAuthStateChange(()=>setTimeout(load,500));
 setTimeout(load,900);
 import('./rpk-need-radar.js?v=20260910-need1').catch(err=>console.error('Need Radar UI load failed',err));
-import('./rpk-tender-economics.js?v=20260910-te1').catch(err=>console.error('Tender Economics UI load failed',err));
+import('./rpk-44fz-radar.js?v=20260911-44fz1').catch(err=>console.error('44-FZ Radar UI load failed',err));
+import('./rpk-tender-economics.js?v=20260911-te2').catch(err=>console.error('Tender Economics UI load failed',err));
