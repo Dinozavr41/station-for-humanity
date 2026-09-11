@@ -28,7 +28,10 @@ function money(text=''){
 }
 function deadline(text=''){
   const m=text.match(/(?:окончани(?:е|я) подачи|дата окончания|прием заявок до)[^\d]{0,80}(\d{2})\.(\d{2})\.(\d{4})(?:[^\d]{0,12}(\d{1,2}):(\d{2}))?/iu);
-  if(!m)return null;const dt=new Date(Date.UTC(Number(m[3]),Number(m[2])-1,Number(m[1]),Number(m[4]||23),Number(m[5]||59)));return Number.isNaN(dt.getTime())?null:dt.toISOString();
+  if(!m)return null;
+  // В карточках ЕИС время процедур публикуется по МСК; фиксируем +03:00 явно, чтобы браузер корректно перевёл в локальное время пользователя.
+  const iso=`${m[3]}-${m[2]}-${m[1]}T${String(m[4]||23).padStart(2,'0')}:${String(m[5]||59).padStart(2,'0')}:00+03:00`;const dt=new Date(iso);
+  return Number.isNaN(dt.getTime())?null:dt.toISOString();
 }
 function parseFeed(xml,key,search){
   const blocks=[];let m;const rx=/<item\b[^>]*>([\s\S]*?)<\/item>/gi;
