@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Мой отсек — DIMA.OS</title>
+  <link rel="stylesheet" href="/operator.css">
+  <link rel="stylesheet" href="/my-bay/my-bay.css">
+</head>
+<body>
+<header class="topbar">
+  <a href="/operator.html" class="brand">DIMA.OS <span>МОЙ ОТСЕК</span></a>
+  <div class="top-actions"><span id="identity">ПРОВЕРКА…</span><button id="refreshAll" class="ghost">Обновить</button></div>
+</header>
+<main>
+  <section id="accessPanel" class="panel"><p class="eyebrow">PRIVATE CONTROL PLANE</p><h1>Мой отсек</h1><p id="accessText" class="muted">Проверяю доступ…</p><a id="loginLink" class="primary link-button" href="/operator.html" hidden>Войти через операторский пульт</a></section>
+
+  <section id="app" hidden>
+    <div class="bay-stats">
+      <article class="panel metric"><small>АГЕНТ</small><strong id="agentState">—</strong><span id="agentMeta">ожидание heartbeat</span></article>
+      <article class="panel metric"><small>В РАБОТЕ</small><strong id="activeCount">0</strong><span>CODING / QA / BUILD</span></article>
+      <article class="panel metric"><small>ГОТОВО</small><strong id="readyCount">0</strong><span>READY</span></article>
+      <article class="panel metric"><small>НУЖЕН Я</small><strong id="gateCount">0</strong><span>HUMAN_GATE</span></article>
+    </div>
+
+    <section class="panel create-panel">
+      <div><p class="eyebrow">NEW PROJECT</p><h2>Поставить задачу фабрике</h2><p class="muted">Пишешь цель обычным языком. Дальше DevFactory сама ведёт Codex → QA → BUILD → READY.</p></div>
+      <form id="newProjectForm">
+        <label>Название<input id="projectName" required maxlength="180" placeholder="Например: Shadow Shift v0.5.1"></label>
+        <label>Что должно получиться<textarea id="projectGoal" required minlength="3" maxlength="20000" placeholder="Опиши конечный результат и важные ограничения"></textarea></label>
+        <div class="form-row"><label>Приоритет<input id="projectPriority" type="number" min="1" max="1000" value="100"></label><label>Макс. попыток<input id="projectAttempts" type="number" min="1" max="20" value="4"></label></div>
+        <button class="primary" type="submit">Запустить проект</button><span id="createStatus" class="muted"></span>
+      </form>
+    </section>
+
+    <div class="toolbar"><div><p class="eyebrow">PROJECT QUEUE</p><h2>Наши проекты</h2></div><div class="filters"><button class="ghost filter active" data-filter="all">Все</button><button class="ghost filter" data-filter="active">В работе</button><button class="ghost filter" data-filter="attention">Нужен я</button><button class="ghost filter" data-filter="done">Готово</button></div></div>
+    <section id="projects" class="project-grid"></section>
+
+    <section id="gatePanel" class="panel gate-panel" hidden><div class="toolbar compact"><div><p class="eyebrow">HUMAN GATES</p><h2>Нужно твоё действие</h2></div></div><section id="gates" class="cards"></section></section>
+
+    <section id="detailPanel" class="panel detail-panel" hidden><div class="toolbar compact"><div><p class="eyebrow">PROJECT DETAIL</p><h2 id="detailTitle">Проект</h2></div><button id="closeDetail" class="ghost">Закрыть</button></div><div id="detailSummary" class="detail-summary"></div><h3>Хронология</h3><section id="detailEvents" class="event-list"></section></section>
+  </section>
+</main>
+<script type="module" src="/my-bay/my-bay.js"></script>
+</body>
+</html>
