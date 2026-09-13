@@ -10,19 +10,29 @@
 </head>
 <body>
 <header class="topbar">
-  <a href="/operator.html" class="brand">DIMA.OS <span>МОЙ ОТСЕК</span></a>
-  <div class="top-actions"><span id="identity">ПРОВЕРКА…</span><button id="refreshAll" class="ghost">Обновить</button></div>
+  <a href="/" class="brand">DIMA.OS <span>МОЙ ОТСЕК</span></a>
+  <div class="top-actions"><a class="ghost nav-link" href="/operator.html">Оператор</a><span id="identity">ПРОВЕРКА…</span><button id="refreshAll" class="ghost">Обновить</button></div>
 </header>
 <main>
   <section id="accessPanel" class="panel"><p class="eyebrow">PRIVATE CONTROL PLANE</p><h1>Мой отсек</h1><p id="accessText" class="muted">Проверяю доступ…</p><a id="loginLink" class="primary link-button" href="/operator.html" hidden>Войти через операторский пульт</a></section>
 
   <section id="app" hidden>
     <div class="bay-stats">
-      <article class="panel metric"><small>АГЕНТ</small><strong id="agentState">—</strong><span id="agentMeta">ожидание heartbeat</span></article>
+      <article class="panel metric"><small>WINDOWS АГЕНТ</small><strong id="agentState">—</strong><span id="agentMeta">ожидание heartbeat</span></article>
+      <article class="panel metric"><small>CHATGPT ДИСПЕТЧЕР</small><strong id="assistantState">—</strong><span id="assistantMeta">ожидание control plane</span></article>
       <article class="panel metric"><small>В РАБОТЕ</small><strong id="activeCount">0</strong><span>CODING / QA / BUILD</span></article>
       <article class="panel metric"><small>ГОТОВО</small><strong id="readyCount">0</strong><span>READY</span></article>
       <article class="panel metric"><small>НУЖЕН Я</small><strong id="gateCount">0</strong><span>HUMAN_GATE</span></article>
     </div>
+
+    <section class="panel assistant-panel">
+      <div class="toolbar compact"><div><p class="eyebrow">CHATGPT CONTROL</p><h2>Диспетчер и память системы</h2></div><span id="assistantQueueBadge" class="badge">QUEUE 0</span></div>
+      <div class="assistant-grid"><div><small>ТЕКУЩАЯ ЦЕЛЬ</small><p id="assistantObjective">—</p></div><div><small>ПОСЛЕДНИЙ CHECKPOINT</small><p id="assistantCheckpoint">—</p></div><div><small>ПОСЛЕДНЕЕ СОБЫТИЕ</small><p id="assistantEvent">—</p></div></div>
+      <div class="doc-tabs"><button class="ghost doc-tab active" data-doc="handoff_md">HANDOFF.md</button><button class="ghost doc-tab" data-doc="context_md">CONTEXT.md</button><button class="ghost doc-tab" data-doc="decisions_md">DECISIONS.md</button><button class="ghost doc-tab" data-doc="roadmap_md">ROADMAP.md</button></div>
+      <pre id="canonicalDoc" class="canonical-doc">Загрузка…</pre>
+      <div class="toolbar compact"><h3>Очередь реакции ChatGPT</h3><span class="muted">обновляется автоматически</span></div>
+      <section id="assistantQueue" class="queue-list"></section>
+    </section>
 
     <section class="panel create-panel">
       <div><p class="eyebrow">NEW PROJECT</p><h2>Поставить задачу фабрике</h2><p class="muted">Пишешь цель обычным языком. Дальше DevFactory сама ведёт Codex → QA → BUILD → READY.</p></div>
@@ -39,7 +49,11 @@
 
     <section id="gatePanel" class="panel gate-panel" hidden><div class="toolbar compact"><div><p class="eyebrow">HUMAN GATES</p><h2>Нужно твоё действие</h2></div></div><section id="gates" class="cards"></section></section>
 
-    <section id="detailPanel" class="panel detail-panel" hidden><div class="toolbar compact"><div><p class="eyebrow">PROJECT DETAIL</p><h2 id="detailTitle">Проект</h2></div><button id="closeDetail" class="ghost">Закрыть</button></div><div id="detailSummary" class="detail-summary"></div><h3>Хронология</h3><section id="detailEvents" class="event-list"></section></section>
+    <section id="detailPanel" class="panel detail-panel" hidden>
+      <div class="toolbar compact"><div><p class="eyebrow">PROJECT DETAIL</p><h2 id="detailTitle">Проект</h2></div><div class="row"><button id="downloadArtifact" class="primary" hidden>Скачать результат</button><button id="closeDetail" class="ghost">Закрыть</button></div></div>
+      <div id="detailSummary" class="detail-summary"></div>
+      <h3>Хронология</h3><section id="detailEvents" class="event-list"></section>
+    </section>
   </section>
 </main>
 <script type="module" src="/my-bay/my-bay.js"></script>
