@@ -21,6 +21,8 @@
       <button class="bay-tab" data-panel="projects">Проекты</button>
       <button class="bay-tab" data-panel="assistant">Диспетчер</button>
       <button class="bay-tab" data-panel="memory">Память</button>
+      <button class="bay-tab" data-panel="telegram">Telegram</button>
+      <button class="bay-tab" data-panel="secrets">Секреты</button>
       <button class="bay-tab attention-tab" data-panel="gates">Нужно мне <span id="gateTabCount">0</span></button>
     </nav>
     <section class="bay-panel active" data-bay-panel="overview">
@@ -66,6 +68,12 @@
         <div class="doc-tabs"><button class="ghost doc-tab active" data-doc="handoff_md">HANDOFF.md</button><button class="ghost doc-tab" data-doc="context_md">CONTEXT.md</button><button class="ghost doc-tab" data-doc="decisions_md">DECISIONS.md</button><button class="ghost doc-tab" data-doc="roadmap_md">ROADMAP.md</button></div>
         <pre id="canonicalDoc" class="canonical-doc">Загрузка…</pre>
       </section>
+    </section>
+    <section class="bay-panel" data-bay-panel="telegram">
+      <section class="panel"><p class="eyebrow">DIMA.OS TELEGRAM</p><h2>Общий канал</h2><p class="muted">Сюда идут READY / FAILED / HUMAN_GATE, решения диспетчера и твои сообщения обратно в DIMA.OS.</p><div id="telegramStatus" class="secret-grid"></div><div class="row"><button id="tgPair" class="primary">Получить код привязки</button><button id="tgWebhook" class="ghost">Установить webhook</button><button id="tgTest" class="ghost">Тест сообщения</button></div><pre id="tgPairCode" class="canonical-doc">Сначала сохрани свежий bot token в разделе «Секреты».</pre></section>
+    </section>
+    <section class="bay-panel" data-bay-panel="secrets">
+      <section class="panel"><p class="eyebrow">SECRET VAULT</p><h2>Секреты сервисов</h2><p class="muted">Значения хранятся только в Supabase Vault и никогда не возвращаются в браузер после сохранения.</p><section id="secretList" class="secret-grid"></section><form id="secretForm" class="secret-form"><label>Сервис<input id="secretService" value="telegram" required></label><label>Ключ<input id="secretKey" value="bot_token" required></label><label>Новое значение<input id="secretValue" type="password" autocomplete="off" required></label><button class="primary" type="submit">Сохранить в Vault</button><span id="secretStatus" class="muted"></span></form></section>
     </section>
     <section class="bay-panel" data-bay-panel="gates">
       <section class="panel gate-panel">
