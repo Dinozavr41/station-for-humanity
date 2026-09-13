@@ -15,44 +15,77 @@
 </header>
 <main>
   <section id="accessPanel" class="panel"><p class="eyebrow">PRIVATE CONTROL PLANE</p><h1>Мой отсек</h1><p id="accessText" class="muted">Проверяю доступ…</p><a id="loginLink" class="primary link-button" href="/operator.html" hidden>Войти через операторский пульт</a></section>
-
   <section id="app" hidden>
-    <div class="bay-stats">
-      <article class="panel metric"><small>WINDOWS АГЕНТ</small><strong id="agentState">—</strong><span id="agentMeta">ожидание heartbeat</span></article>
-      <article class="panel metric"><small>CHATGPT ДИСПЕТЧЕР</small><strong id="assistantState">—</strong><span id="assistantMeta">ожидание control plane</span></article>
-      <article class="panel metric"><small>В РАБОТЕ</small><strong id="activeCount">0</strong><span>CODING / QA / BUILD</span></article>
-      <article class="panel metric"><small>ГОТОВО</small><strong id="readyCount">0</strong><span>READY</span></article>
-      <article class="panel metric"><small>НУЖЕН Я</small><strong id="gateCount">0</strong><span>HUMAN_GATE</span></article>
-    </div>
-
-    <section class="panel assistant-panel">
-      <div class="toolbar compact"><div><p class="eyebrow">CHATGPT CONTROL</p><h2>Диспетчер и память системы</h2></div><span id="assistantQueueBadge" class="badge">QUEUE 0</span></div>
-      <div class="assistant-grid"><div><small>ТЕКУЩАЯ ЦЕЛЬ</small><p id="assistantObjective">—</p></div><div><small>ПОСЛЕДНИЙ CHECKPOINT</small><p id="assistantCheckpoint">—</p></div><div><small>ПОСЛЕДНЕЕ СОБЫТИЕ</small><p id="assistantEvent">—</p></div></div>
-      <div class="doc-tabs"><button class="ghost doc-tab active" data-doc="handoff_md">HANDOFF.md</button><button class="ghost doc-tab" data-doc="context_md">CONTEXT.md</button><button class="ghost doc-tab" data-doc="decisions_md">DECISIONS.md</button><button class="ghost doc-tab" data-doc="roadmap_md">ROADMAP.md</button></div>
-      <pre id="canonicalDoc" class="canonical-doc">Загрузка…</pre>
-      <div class="toolbar compact"><h3>Очередь реакции ChatGPT</h3><span class="muted">обновляется автоматически</span></div>
-      <section id="assistantQueue" class="queue-list"></section>
+    <nav class="bay-tabs" aria-label="Разделы Моего отсека">
+      <button class="bay-tab active" data-panel="overview">Обзор</button>
+      <button class="bay-tab" data-panel="projects">Проекты</button>
+      <button class="bay-tab" data-panel="assistant">Диспетчер</button>
+      <button class="bay-tab" data-panel="memory">Память</button>
+      <button class="bay-tab attention-tab" data-panel="gates">Нужно мне <span id="gateTabCount">0</span></button>
+    </nav>
+    <section class="bay-panel active" data-bay-panel="overview">
+      <div class="bay-stats">
+        <article class="panel metric"><small>WINDOWS АГЕНТ</small><strong id="agentState">—</strong><span id="agentMeta">ожидание heartbeat</span></article>
+        <article class="panel metric"><small>CHATGPT ДИСПЕТЧЕР</small><strong id="assistantState">—</strong><span id="assistantMeta">ожидание control plane</span></article>
+        <article class="panel metric"><small>В РАБОТЕ</small><strong id="activeCount">0</strong><span>CODING / QA / BUILD</span></article>
+        <article class="panel metric"><small>ГОТОВО</small><strong id="readyCount">0</strong><span>READY</span></article>
+        <article class="panel metric"><small>НУЖЕН Я</small><strong id="gateCount">0</strong><span>HUMAN_GATE</span></article>
+      </div>
+      <section class="panel overview-panel">
+        <div class="toolbar compact"><div><p class="eyebrow">СЕЙЧАС</p><h2>Активные проекты</h2></div><button class="ghost jump-tab" data-panel="projects">Открыть проекты</button></div>
+        <section id="overviewProjects" class="project-grid compact-grid"></section>
+      </section>
     </section>
 
-    <section class="panel create-panel">
-      <div><p class="eyebrow">NEW PROJECT</p><h2>Поставить задачу фабрике</h2><p class="muted">Пишешь цель обычным языком. Дальше DevFactory сама ведёт Codex → QA → BUILD → READY.</p></div>
-      <form id="newProjectForm">
-        <label>Название<input id="projectName" required maxlength="180" placeholder="Например: Shadow Shift v0.5.1"></label>
-        <label>Что должно получиться<textarea id="projectGoal" required minlength="3" maxlength="20000" placeholder="Опиши конечный результат и важные ограничения"></textarea></label>
-        <div class="form-row"><label>Приоритет<input id="projectPriority" type="number" min="1" max="1000" value="100"></label><label>Макс. попыток<input id="projectAttempts" type="number" min="1" max="20" value="4"></label></div>
-        <button class="primary" type="submit">Запустить проект</button><span id="createStatus" class="muted"></span>
-      </form>
+    <section class="bay-panel" data-bay-panel="projects">
+      <section class="panel create-panel">
+        <div><p class="eyebrow">NEW PROJECT</p><h2>Поставить задачу фабрике</h2><p class="muted">Каждый проект — отдельный контур. Внутри проекта есть свои подзадачи, события и файлы.</p></div>
+        <form id="newProjectForm">
+          <label>Название<input id="projectName" required maxlength="180" placeholder="Например: Shadow Shift v0.5.2"></label>
+          <label>Что должно получиться<textarea id="projectGoal" required minlength="3" maxlength="20000" placeholder="Опиши конечный результат и важные ограничения"></textarea></label>
+          <div class="form-row"><label>Приоритет<input id="projectPriority" type="number" min="1" max="1000" value="100"></label><label>Макс. попыток<input id="projectAttempts" type="number" min="1" max="20" value="4"></label></div>
+          <button class="primary" type="submit">Запустить проект</button><span id="createStatus" class="muted"></span>
+        </form>
+      </section>
+      <div class="toolbar"><div><p class="eyebrow">PROJECT QUEUE</p><h2>Наши проекты</h2></div><div class="filters"><button class="ghost filter active" data-filter="all">Все</button><button class="ghost filter" data-filter="active">В работе</button><button class="ghost filter" data-filter="attention">Требуют внимания</button><button class="ghost filter" data-filter="done">Готово</button></div></div>
+      <section id="projects" class="project-grid"></section>
     </section>
 
-    <div class="toolbar"><div><p class="eyebrow">PROJECT QUEUE</p><h2>Наши проекты</h2></div><div class="filters"><button class="ghost filter active" data-filter="all">Все</button><button class="ghost filter" data-filter="active">В работе</button><button class="ghost filter" data-filter="attention">Нужен я</button><button class="ghost filter" data-filter="done">Готово</button></div></div>
-    <section id="projects" class="project-grid"></section>
+    <section class="bay-panel" data-bay-panel="assistant">
+      <section class="panel assistant-panel">
+        <div class="toolbar compact"><div><p class="eyebrow">CHATGPT CONTROL</p><h2>Диспетчер</h2></div><span id="assistantQueueBadge" class="badge">QUEUE 0</span></div>
+        <div class="assistant-grid"><div><small>ТЕКУЩАЯ ЦЕЛЬ</small><p id="assistantObjective">—</p></div><div><small>ПОСЛЕДНИЙ CHECKPOINT</small><p id="assistantCheckpoint">—</p></div><div><small>ПОСЛЕДНЕЕ СОБЫТИЕ</small><p id="assistantEvent">—</p></div></div>
+        <div class="toolbar compact"><h3>Очередь реакции ChatGPT</h3><span class="muted">новые задачи и события</span></div>
+        <section id="assistantQueue" class="queue-list"></section>
+      </section>
+    </section>
 
-    <section id="gatePanel" class="panel gate-panel" hidden><div class="toolbar compact"><div><p class="eyebrow">HUMAN GATES</p><h2>Нужно твоё действие</h2></div></div><section id="gates" class="cards"></section></section>
+    <section class="bay-panel" data-bay-panel="memory">
+      <section class="panel memory-panel">
+        <div class="toolbar compact"><div><p class="eyebrow">CANONICAL MEMORY</p><h2>Память проекта</h2></div><span class="muted">переживает смену чатов</span></div>
+        <div class="doc-tabs"><button class="ghost doc-tab active" data-doc="handoff_md">HANDOFF.md</button><button class="ghost doc-tab" data-doc="context_md">CONTEXT.md</button><button class="ghost doc-tab" data-doc="decisions_md">DECISIONS.md</button><button class="ghost doc-tab" data-doc="roadmap_md">ROADMAP.md</button></div>
+        <pre id="canonicalDoc" class="canonical-doc">Загрузка…</pre>
+      </section>
+    </section>
+    <section class="bay-panel" data-bay-panel="gates">
+      <section class="panel gate-panel">
+        <div class="toolbar compact"><div><p class="eyebrow">HUMAN GATES</p><h2>Нужно твоё действие</h2></div><span class="muted">только реальные точки подтверждения</span></div>
+        <section id="gates" class="cards"></section>
+      </section>
+    </section>
 
     <section id="detailPanel" class="panel detail-panel" hidden>
       <div class="toolbar compact"><div><p class="eyebrow">PROJECT DETAIL</p><h2 id="detailTitle">Проект</h2></div><div class="row"><button id="downloadArtifact" class="primary" hidden>Скачать результат</button><button id="closeDetail" class="ghost">Закрыть</button></div></div>
-      <div id="detailSummary" class="detail-summary"></div>
-      <h3>Хронология</h3><section id="detailEvents" class="event-list"></section>
+      <nav class="project-tabs">
+        <button class="project-tab active" data-project-panel="summary">Сводка</button>
+        <button class="project-tab" data-project-panel="subtasks">Подзадачи <span id="subtaskCount">0</span></button>
+        <button class="project-tab" data-project-panel="events">Хронология</button>
+        <button class="project-tab" data-project-panel="files">Файлы</button>
+      </nav>
+      <section class="project-panel active" data-project-panel-content="summary"><div id="detailSummary" class="detail-summary"></div><p id="detailGoal" class="goal full-goal"></p></section>
+      <section class="project-panel" data-project-panel-content="subtasks"><form id="subtaskForm" class="subtask-form"><input id="subtaskTitle" maxlength="240" placeholder="Новая подзадача"><button class="primary" type="submit">Добавить</button></form><section id="subtasks" class="subtask-list"></section></section>
+      <section class="project-panel" data-project-panel-content="events"><section id="detailEvents" class="event-list"></section></section>
+      <section class="project-panel" data-project-panel-content="files"><section id="detailFiles" class="files-panel"></section></section>
     </section>
   </section>
 </main>
