@@ -1,0 +1,1 @@
+The exact-design preview is intentionally isolated. Do not merge until visual approval.

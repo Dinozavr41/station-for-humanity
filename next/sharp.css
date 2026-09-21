@@ -1,0 +1,82 @@
+/* Mobile/desktop image layout V4. Drawings are the specification.
+   One vertical sprite contains eight dedicated 600x200 stage banners.
+   No 8x horizontal slicing. No tall side-column stretching on phones. */
+
+.hero-bg{
+  transform:scale(1.03);
+  filter:saturate(1.10) contrast(1.05) brightness(.96);
+}
+.story-bg{
+  transform:scale(1.03);
+  filter:saturate(1.06) contrast(1.03) brightness(.72);
+}
+
+.stage .thumb{
+  background-image:url('./art/stages-v4.jpg') !important;
+  background-repeat:no-repeat !important;
+  background-size:auto 800% !important;
+  background-position-x:center !important;
+  image-rendering:auto;
+  filter:saturate(1.08) contrast(1.03);
+}
+.s1 .thumb{background-position-y:0% !important}
+.s2 .thumb{background-position-y:14.2857% !important}
+.s3 .thumb{background-position-y:28.5714% !important}
+.s4 .thumb{background-position-y:42.8571% !important}
+.s5 .thumb{background-position-y:57.1428% !important}
+.s6 .thumb{background-position-y:71.4285% !important}
+.s7 .thumb{background-position-y:85.7142% !important}
+.s8 .thumb{background-position-y:100% !important}
+
+@media(max-width:720px){
+  .hero-bg{
+    transform:none !important;
+    background-size:auto 54% !important;
+    background-position:58% 8% !important;
+    background-color:#03101d;
+  }
+  .story-bg{
+    transform:none !important;
+    background-size:100% auto !important;
+    background-position:center top !important;
+    background-color:#03111f;
+  }
+
+  .journey{
+    display:block !important;
+    overflow:visible !important;
+    padding-bottom:0 !important;
+  }
+  .journey-line{display:none !important}
+  .stage{
+    display:block !important;
+    min-height:0 !important;
+    margin:0 0 18px !important;
+    overflow:hidden !important;
+    border-radius:16px !important;
+  }
+  .stage .thumb{
+    width:100% !important;
+    height:200px !important;
+    min-height:200px !important;
+    background-size:100% auto !important;
+    background-position-x:center !important;
+  }
+  .stage b{
+    top:174px !important;
+    left:18px !important;
+    width:52px !important;
+    height:52px !important;
+    font-size:20px !important;
+  }
+  .stage h3{
+    margin:38px 18px 8px !important;
+    font-size:23px !important;
+    line-height:1.08 !important;
+  }
+  .stage p{
+    margin:0 18px 22px !important;
+    font-size:15px !important;
+    line-height:1.52 !important;
+  }
+}

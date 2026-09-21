@@ -1,0 +1,1 @@
+Plan: hero.jpg, story.jpg and timeline.jpg will be used only by the isolated frontend-v2 preview. Production main branch remains untouched.
